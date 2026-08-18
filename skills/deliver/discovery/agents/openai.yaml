@@ -1,0 +1,5 @@
+interface:
+  display_name: Discovery
+  short_description: A structured interview that pins down what you are actually building before you build it.
+policy:
+  allow_implicit_invocation: false
