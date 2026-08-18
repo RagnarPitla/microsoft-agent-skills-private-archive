@@ -1,0 +1,15 @@
+# Local scrub denylist. Copy to .scrub-denylist.txt and fill in.
+# .scrub-denylist.txt is gitignored and must NEVER be committed:
+# writing these terms into a public repo file would itself be the disclosure.
+#
+# One term per line, case-insensitive substring match. Add:
+#   - every customer name you have worked with, plus their abbreviations
+#   - every internal project codename
+#   - every colleague name that could appear in a pasted example
+#   - internal system, tool and repo names
+#   - internal org and project identifiers
+#
+# Examples of the SHAPE (not real):
+# northwind-traders
+# projectbluebird
+# internal-tool-name

@@ -1,0 +1,4 @@
+node_modules
+
+# Local confidentiality denylist. Never commit: the terms are themselves the disclosure.
+.scrub-denylist.txt
