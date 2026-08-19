@@ -1,6 +1,6 @@
 ---
+name: copilot-studio-knowledge-grounding
 description: "Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently. Use when an agent fabricates details not in its knowledge sources, when citations link to irrelevant or non-existent pages, when the same question gets different answers in different sessions, or when curating knowledge sources before go-live."
-applyTo: "**"
 ---
 
 <!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->

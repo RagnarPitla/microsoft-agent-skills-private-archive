@@ -31,16 +31,16 @@ The repo is its own single-plugin marketplace, which is why the second command n
 
 ### GitHub Copilot
 
-Copilot reads prompt files, chat modes and instructions straight from the repository. Clone it into your workspace, or copy the generated folders into your own repo:
+Copilot reads the [Agent Skills](https://code.visualstudio.com/docs/agent-customization/agent-skills) open standard natively - the same `SKILL.md` format this repo is written in - in VS Code, the Copilot CLI and the Copilot cloud agent. Clone the repo into your workspace, or copy the generated folder into your own:
 
 ```
 git clone https://github.com/RagnarPitla/microsoft-agent-skills
-cp -r microsoft-agent-skills/.github/prompts      .github/
-cp -r microsoft-agent-skills/.github/chatmodes    .github/
-cp -r microsoft-agent-skills/.github/instructions .github/
+cp -r microsoft-agent-skills/.github/skills .github/
 ```
 
-User-invoked skills appear as slash commands. Model-invoked skills load themselves when the task fits.
+Every skill appears as a slash command. Model-invoked skills also load themselves when the task matches their description; user-invoked ones carry `disable-model-invocation: true` and wait to be asked.
+
+These are deliberately **not** shipped as `.instructions.md` files. An instructions file is applied by glob, and `applyTo: "**"` means always-on: every skill in this repo would be loaded into every request whether or not it was relevant, and an interview skill that is always applied does not wait to be asked. Two skills here warn about that failure in print, so the build must not commit it.
 
 ### Codex
 

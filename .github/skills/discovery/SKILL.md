@@ -1,5 +1,7 @@
 ---
+name: discovery
 description: "A structured interview that pins down what you are actually building before you build it."
+disable-model-invocation: true
 ---
 
 <!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->

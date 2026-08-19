@@ -44,46 +44,29 @@ for (const skill of skills) {
     "",
   ].join("\n");
 
-  if (skill.userInvoked) {
-    artefacts.set(
-      `.github/prompts/${skill.name}.prompt.md`,
-      [
-        "---",
-        `description: ${yamlString(skill.description)}`,
-        "---",
-        "",
-        header + skill.body,
-        "",
-      ].join("\n"),
-    );
+  // GitHub Copilot reads the agentskills.io standard natively from
+  // .github/skills/<name>/SKILL.md, in VS Code, the CLI and the cloud agent.
+  // That is the same standard this repo authors in, so the emitted file is
+  // very close to the source: name, the trigger description, and the one
+  // frontmatter field that decides whether the agent may load it on its own.
+  //
+  // This deliberately does NOT emit .instructions.md. An instructions file is
+  // applied by glob, and applyTo "**" makes it always-on for every request -
+  // which is exactly the failure write-a-skill and migrate-agent-to-skills
+  // both warn about in print. An interview skill that is always applied does
+  // not wait to be asked; it interrogates someone who wanted a one-line fix.
+  const ghFrontmatter = [
+    "---",
+    `name: ${skill.name}`,
+    `description: ${yamlString(skill.description)}`,
+  ];
+  if (skill.userInvoked) ghFrontmatter.push("disable-model-invocation: true");
+  ghFrontmatter.push("---");
 
-    artefacts.set(
-      `.github/chatmodes/${skill.name}.chatmode.md`,
-      [
-        "---",
-        `description: ${yamlString(skill.description)}`,
-        "---",
-        "",
-        header + skill.body,
-        "",
-      ].join("\n"),
-    );
-  } else {
-    // Model-invoked skills must stay reachable mid-conversation, so they are
-    // rendered as always-available instructions rather than a slash command.
-    artefacts.set(
-      `.github/instructions/${skill.name}.instructions.md`,
-      [
-        "---",
-        `description: ${yamlString(skill.description)}`,
-        'applyTo: "**"',
-        "---",
-        "",
-        header + skill.body,
-        "",
-      ].join("\n"),
-    );
-  }
+  artefacts.set(
+    `.github/skills/${skill.name}/SKILL.md`,
+    [...ghFrontmatter, "", header + skill.body, ""].join("\n"),
+  );
 
   artefacts.set(
     `.cursor/rules/${skill.name}.mdc`,
@@ -152,6 +135,9 @@ artefacts.set(
 
 /** Every directory we own end to end, so stale files are removed, not left behind. */
 const OWNED_DIRS = [
+  ".github/skills",
+  // Retired GitHub Copilot artefact shapes. Kept in this list so the staleness
+  // check reports any left on disk from an older build and deletes them.
   ".github/prompts",
   ".github/chatmodes",
   ".github/instructions",
@@ -160,13 +146,16 @@ const OWNED_DIRS = [
 
 function listOwnedFiles() {
   const found = [];
-  for (const dir of OWNED_DIRS) {
+  const walk = (dir) => {
     const abs = path.join(ROOT, dir);
-    if (!existsSync(abs)) continue;
-    for (const f of readdirSync(abs)) {
-      found.push(`${dir}/${f}`);
+    if (!existsSync(abs)) return;
+    for (const entry of readdirSync(abs, { withFileTypes: true })) {
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walk(rel);
+      else found.push(rel);
     }
-  }
+  };
+  for (const dir of OWNED_DIRS) walk(dir);
   if (existsSync(path.join(ROOT, "agents/openai.yaml"))) found.push("agents/openai.yaml");
   if (existsSync(path.join(ROOT, "skills/index.json"))) found.push("skills/index.json");
   return found;

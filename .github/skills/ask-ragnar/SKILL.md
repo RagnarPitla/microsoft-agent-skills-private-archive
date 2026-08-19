@@ -1,5 +1,7 @@
 ---
+name: ask-ragnar
 description: "Work out which skill in this repo fits the situation in front of you, and say so plainly."
+disable-model-invocation: true
 ---
 
 <!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->

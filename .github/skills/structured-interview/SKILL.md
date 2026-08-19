@@ -1,6 +1,6 @@
 ---
+name: structured-interview
 description: "Interview the user about a plan, design or decision until every open branch is resolved. Use when a request is ambiguous, when scope is unclear, before writing a spec or estimate, when the user asks to be challenged or stress-tested, or when you are about to build something and are not certain what \"done\" means."
-applyTo: "**"
 ---
 
 <!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->

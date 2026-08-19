@@ -1,5 +1,7 @@
 ---
+name: choose-agent-platform
 description: "Work out which Microsoft platform an agent should be built on, and write down why."
+disable-model-invocation: true
 ---
 
 <!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->
