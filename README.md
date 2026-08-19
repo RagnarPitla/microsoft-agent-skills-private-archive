@@ -110,12 +110,28 @@ Read [AGENTS.md](./AGENTS.md) first. It describes the bucket taxonomy, the invoc
 npm run build     # regenerate every harness artefact from SKILL.md
 npm run check     # scrub gate, staleness check and repo validation
 npm run validate  # repo validation on its own
+
+npm run refresh:stars  # re-pull registry star counts and archive flags from GitHub
 ```
 
 Two things are enforced rather than trusted:
 
 - **The scrub gate.** This is a public repo written by someone who works on real customer engagements. `npm run scrub` runs on every commit. Read [.agents/confidentiality.md](./.agents/confidentiality.md) before publishing anything.
 - **Accuracy.** Our readers spot a wrong CLI flag or an invented connector instantly, and that costs more credibility than a missing skill. Verify against `learn.microsoft.com` before writing it down, and say so where you could not.
+
+## Who writes this
+
+Ragnar Pitla - Principal PM on Microsoft's agentic team, and founder of [RBuild.ai](https://rbuild.ai).
+
+These skills come out of real implementation work, which is why they are opinionated about
+order and blunt about what does not work. Everything customer-specific is scrubbed before it
+lands here; see [.agents/confidentiality.md](./.agents/confidentiality.md).
+
+- [LinkedIn](https://www.linkedin.com/in/ragnarpitla) - where the thinking behind most of these skills gets argued out first
+- [YouTube](https://www.youtube.com/@RagnarPitla) - longer walkthroughs
+- [GitHub](https://github.com/RagnarPitla)
+
+Views here are my own and do not represent Microsoft's official position.
 
 ## Licence
 
