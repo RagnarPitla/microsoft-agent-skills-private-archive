@@ -6,9 +6,8 @@
 # trailing version comment together, which is the whole reason the comment is
 # there.
 #
-# The npm ecosystem is watched despite this repo having no dependencies at all.
-# That is deliberate: if a dependency is ever added, it should be watched from
-# the first day rather than from whenever someone remembers to add it here.
+# The npm ecosystem is watched for the small Changesets release toolchain.
+# Repository validation and tests still run on Node's standard library alone.
 
 version: 2
 updates:

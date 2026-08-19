@@ -6,7 +6,7 @@
 
 Skills for anything you need on the Microsoft ecosystem.
 
-A skill is a folder with a `SKILL.md` in it: a piece of hard-won practice, written down once, that your coding agent loads when it is relevant. These cover the Microsoft stack specifically - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 and Azure.
+A skill is a folder with a `SKILL.md` in it: a piece of hard-won practice, written down once, that your coding agent loads when it is relevant. These cover the Microsoft stack specifically - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ, Scout and Azure.
 
 **This repo is harness-agnostic by construction.** Most people working on this stack hold a GitHub Copilot licence rather than a Claude subscription, so GitHub Copilot is the primary target and Claude Code, Codex and Cursor are peers. `SKILL.md` is the single source of truth; every harness format is generated from it.
 

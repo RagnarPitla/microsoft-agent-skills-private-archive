@@ -13,7 +13,7 @@ Nothing yet.
 
 ## 0.1.0
 
-First public cut. 15 skills across six promoted buckets, two registries, and the
+First public cut. 19 skills across six promoted buckets, two registries, and the
 tooling that keeps them honest.
 
 **Skills**
@@ -22,7 +22,9 @@ tooling that keeps them honest.
   `migrate-agent-to-skills`, `write-a-skill`
 - `connect`: `copilot-studio-auth-patterns`, `ground-agents-in-work-context`
 - `review`: `evaluate-agent-quality`, `review-copilot-studio-agent`
-- `operate`: `power-platform-alm-connection-refs`
+- `operate`: `govern-agent-lifecycle`, `monitor-agent-telemetry`,
+  `plan-agent-capacity-and-cost`, `power-platform-alm-connection-refs`,
+  `respond-to-agent-incidents`
 - `deliver`: `ask-ragnar`, `choose-agent-platform`, `discovery`,
   `structured-interview`, `what-should-i-build`
 - `learn`: `explain-concept`

@@ -173,7 +173,7 @@ In roughly the order it happens:
 ## Running things
 
 ```bash
-npm install        # installs nothing; wires up the pre-commit scrub gate
+npm install        # installs release tooling and wires up the pre-commit scrub gate
 npm run build      # regenerate harness artefacts from SKILL.md
 npm run check      # scrub + staleness + validation + version sync
 npm test           # fixture tests: prove each gate fails on bad input

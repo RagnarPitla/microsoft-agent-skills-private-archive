@@ -1,6 +1,6 @@
 {
   "name": "microsoft-agent-skills",
-  "description": "Ragnar Pitla's skills for building agents on the Microsoft stack - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ and Azure",
+  "description": "Ragnar Pitla's skills for building agents on the Microsoft stack - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ, Scout and Azure",
   "owner": {
     "name": "Ragnar Pitla",
     "url": "https://github.com/RagnarPitla"
@@ -10,7 +10,7 @@
       "name": "microsoft-agent-skills",
       "source": "./",
       "version": "0.1.0",
-      "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 and Azure"
+      "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ, Scout and Azure"
     }
   ]
 }
