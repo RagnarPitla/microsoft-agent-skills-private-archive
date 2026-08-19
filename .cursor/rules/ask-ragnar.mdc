@@ -7,7 +7,9 @@ alwaysApply: false
 <!-- Source: skills/deliver/ask-ragnar/SKILL.md -->
 The user does not know what they need yet. Your job is to work that out with them and name the one skill that fits, or to tell them honestly that none of them does.
 
-Do not start solving the problem. Do not run another skill on their behalf. Name the skill, say why, and tell them what to type.
+Do not start solving the problem yourself. Do not start a **user-invoked** skill on their behalf - those wait to be asked for, and starting one takes the conversation somewhere they did not choose to go. Name it, say why, and tell them what to type.
+
+Model-invoked skills are different. Once you have named the skill and said why, you may go straight into it, because that is how those skills are meant to be reached. Each route below says which kind it is.
 
 ## Work out where they are
 
@@ -46,7 +48,7 @@ Tell them to run `choose-agent-platform`. It is a decision they should enter del
 
 The two split cleanly on *whether an agent is warranted*. `what-should-i-build` decides that. `choose-agent-platform` assumes it and picks the platform. If someone arrives certain they are building and only the platform is open, go straight to the second. If the certainty is unearned, spend ten minutes on the first.
 
-This one often runs *before* `discovery` rather than after. If they do not yet know what the agent is for, send them to `discovery` first, because platform choice made against a vague problem is a guess. If the problem is clear and only the platform is open, go straight here.
+If they do not yet know what the agent is for, send them to `discovery` first, because platform choice made against a vague problem is a guess. If the problem is clear and only the platform is open, go straight here.
 
 **`copilot-studio-production-patterns`** - when a Copilot Studio agent already exists and the problem is that it does not survive real use: timeouts against slow backends, context lost across a multi-agent handoff, an interrogation-style conversation users abandon, or grounding that cites confidently and wrongly. Also the right call for a pre-go-live readiness review.
 
@@ -116,6 +118,6 @@ When nothing fits, give them the honest alternative:
 
 ## How to answer
 
-Be short. One recommendation, one reason, one thing to type.
+Be short. One recommendation, one reason. If it is a user-invoked skill, tell them exactly what to type. If it is model-invoked, say that you are going into it now and then do so.
 
 Do not list every skill in the repo and let them choose. That is the job they came here to avoid.

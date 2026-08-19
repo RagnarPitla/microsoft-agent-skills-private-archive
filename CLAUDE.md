@@ -25,7 +25,7 @@ Each bucket folder has a `README.md` listing every skill in the bucket with a on
 
 Every `SKILL.md` is either user-invoked (`disable-model-invocation: true` in front matter, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`, reachable only by the human) or model-invoked (reachable by the human *or* reached for automatically). A user-invoked skill may invoke model-invoked skills, but never another user-invoked one. See [.agents/invocation.md](./.agents/invocation.md).
 
-Keep user-invoked skills thin. Reusable behaviour belongs in a model-invoked primitive that several user-invoked wrappers call. [`structured-interview`](./skills/deliver/structured-interview/SKILL.md) is the reference example: it holds the interview discipline, and [`discovery`](./skills/deliver/discovery/SKILL.md), [`solution-review`](./skills/review/solution-review/SKILL.md) and others are thin wrappers over it.
+Keep user-invoked skills thin. Reusable behaviour belongs in a model-invoked primitive that several user-invoked wrappers call. [`structured-interview`](./skills/deliver/structured-interview/SKILL.md) is the reference example: it holds the interview discipline, and [`discovery`](./skills/deliver/discovery/SKILL.md) is a thin wrapper over it.
 
 ## Harnesses
 

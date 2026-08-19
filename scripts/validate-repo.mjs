@@ -155,17 +155,28 @@ if (existsSync(docsRoot)) {
   }
 }
 
-// relative paths referenced from README must exist on disk. A broken hero image
-// or a dead skill link is visible on the repo front page to every visitor.
+// relative paths referenced from the front-page and contributor docs must exist
+// on disk. A broken hero image or a dead skill link is visible to every visitor,
+// and a dead link in the file contributors are told to read first is worse: the
+// README promises that "a registry entry that 404s costs more trust than a
+// missing skill", so the repo has to hold itself to that internally too.
 {
-  const readme = read("README.md") || "";
-  const rel = new Set();
-  for (const m of readme.matchAll(/(?:src|href)="(\.[^"]+)"/g)) rel.add(m[1]);
-  for (const m of readme.matchAll(/\]\((\.[^)\s]+)\)/g)) rel.add(m[1]);
-  for (const r of rel) {
-    const target = r.replace(/[#?].*$/, "");
-    if (!existsSync(path.join(ROOT, target))) {
-      err(`README.md references "${r}", which does not exist on disk.`);
+  const rootDocs = ["README.md", "CLAUDE.md"];
+  for (const f of readdirSync(path.join(ROOT, ".agents"))) {
+    if (f.endsWith(".md")) rootDocs.push(`.agents/${f}`);
+  }
+  for (const doc of rootDocs) {
+    const body = read(doc);
+    if (!body) continue;
+    const base = path.dirname(path.join(ROOT, doc));
+    const rel = new Set();
+    for (const m of body.matchAll(/(?:src|href)="(\.[^"]+)"/g)) rel.add(m[1]);
+    for (const m of body.matchAll(/\]\((\.[^)\s]+)\)/g)) rel.add(m[1]);
+    for (const r of rel) {
+      const target = r.replace(/[#?].*$/, "");
+      if (!existsSync(path.resolve(base, target))) {
+        err(`${doc} references "${r}", which does not exist on disk.`);
+      }
     }
   }
 }

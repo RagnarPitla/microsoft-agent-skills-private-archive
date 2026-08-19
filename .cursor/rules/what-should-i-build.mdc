@@ -153,24 +153,15 @@ deliverable from that meeting is an inventory and an owner, not a design.
 Once the rounds have ruled out nothing, consume and govern, you have a
 build - and this skill stops here, deliberately.
 
-What you are choosing between is roughly this shape, and no further: a
-low-code SaaS agent in **Copilot Studio**
-(https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio);
-a **declarative agent** for Microsoft 365 Copilot, which is a manifest and
-some knowledge with no runtime you own
-(https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-declarative-agent);
-a pro-code agent on **Microsoft Foundry**, running in your own Azure
-subscription
-(https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview); or a
-fully **custom Azure-hosted agent**, where you own the runtime and
-everything underneath it.
+Do not compare platforms here. `choose-agent-platform` owns that decision,
+holds the canonical list of options, and asks a different set of questions to
+reach it. It is user-invoked, so it will not start by itself: tell the user to
+run it by name, and hand over what the rounds already established so they are
+not interrogated twice.
 
-Do not run that comparison here. `choose-agent-platform` owns the platform
-decision and asks a different set of questions to reach it. That skill is
-user-invoked, so it will not start by itself: tell the user to run it by
-name, and hand over what the rounds already established so they are not
-interrogated twice. Repeating the platform argument in this skill only
-produces two answers that drift apart.
+Naming a shortlist in this skill as well is how two answers drift apart. There
+would then be two lists maintained in two places, and the one you are reading
+is the one nobody remembers to update when a product is renamed.
 
 ## Licensing gates this, and this skill will not answer it
 
