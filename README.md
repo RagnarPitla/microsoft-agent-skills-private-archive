@@ -97,7 +97,7 @@ Being an honest index matters as much as the skills. Where Microsoft already sol
 - [registry/microsoft-ecosystem.yaml](./registry/microsoft-ecosystem.yaml) - official Microsoft and community repositories worth linking to, including the archived ones you should stop recommending.
 - [registry/connectors.yaml](./registry/connectors.yaml) - how to connect an agent to a given system, what it authenticates as, and what will bite you.
 
-Both are link-checked in CI.
+Both are link-checked, as is every URL cited inside a skill or docs page. A link that 404s costs more trust than a missing skill.
 
 ## Contributing
 

@@ -37,7 +37,7 @@ Because a skill body is rendered into harnesses that do not share Claude's tooli
 
 ## The registry
 
-`registry/` holds the machine-readable catalogues that make this repo a one-stop shop: `microsoft-ecosystem.yaml` (official Microsoft and community repos we link to rather than duplicate) and `connectors.yaml` (how to connect an agent to a given system). Being an honest index matters as much as the skills: when Microsoft already solves something well, route to them and say so. A registry entry that 404s costs more trust than a missing skill, so `npm run validate` link-checks both files.
+`registry/` holds the machine-readable catalogues that make this repo a one-stop shop: `microsoft-ecosystem.yaml` (official Microsoft and community repos we link to rather than duplicate) and `connectors.yaml` (how to connect an agent to a given system). Being an honest index matters as much as the skills: when Microsoft already solves something well, route to them and say so. A registry entry that 404s costs more trust than a missing skill, so `npm run validate -- --links` checks them - along with every URL cited in a skill body or docs page, since a skill that sends a reader to a 404 is worse than one that stays silent.
 
 ## Docs
 

@@ -178,14 +178,35 @@ if (!router) {
 
 // ------------------------------------------------------------------- registries
 const REGISTRIES = ["registry/microsoft-ecosystem.yaml", "registry/connectors.yaml"];
-const urls = new Set();
+
+// url -> the files that cite it, so a dead link names its own fix site.
+const urls = new Map();
+const harvest = (text, rel) => {
+  for (const [, raw] of text.matchAll(/(https?:\/\/[^\s"'<>)\]]+)/g)) {
+    const u = raw.replace(/[.,;:]+$/, "");
+    if (!urls.has(u)) urls.set(u, new Set());
+    urls.get(u).add(rel);
+  }
+};
+
 for (const rel of REGISTRIES) {
   const text = read(rel);
   if (text === null) {
     err(`Missing ${rel}. AGENTS.md requires both registry catalogues.`);
     continue;
   }
-  for (const [, u] of text.matchAll(/(https?:\/\/[^\s"'<>)]+)/g)) urls.add(u.replace(/[.,]$/, ""));
+  harvest(text, rel);
+}
+
+// Skills and docs cite documentation directly. Those links rot exactly like
+// registry entries do, and a skill that sends a reader to a 404 is worse than
+// one that stays silent -- so they are held to the same standard.
+for (const s of skills) {
+  harvest(read(`${s.relDir}/SKILL.md`) ?? "", `${s.relDir}/SKILL.md`);
+  if (PROMOTED.includes(s.bucket)) {
+    const d = `docs/${s.bucket}/${s.dirName}.md`;
+    harvest(read(d) ?? "", d);
+  }
 }
 
 // ------------------------------------------------------------- bucket coverage
@@ -222,28 +243,64 @@ for (const bucket of ALL_BUCKETS) {
 }
 
 // ------------------------------------------------------------------ link check
+// Bounded concurrency: the skill bodies push this well past the registry's
+// 20 URLs, and firing all of them at Microsoft Learn at once earns a 429 that
+// looks exactly like a dead link.
+//
+// HEAD is only an optimisation. Plenty of Microsoft hosts answer it with 400,
+// 403 or 405 while serving the page perfectly well on GET, so a non-ok HEAD is
+// never trusted on its own -- GET is the arbiter. A checker that reports live
+// links as dead is worse than no checker, because people learn to ignore it.
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
+
 async function verifyLinks() {
   const bad = [];
-  await Promise.all(
-    [...urls].map(async (u) => {
+  const queue = [...urls.keys()];
+
+  const probe = async (u) => {
+    let last = "no response";
+    for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        let res = await fetch(u, { method: "HEAD", redirect: "follow" });
-        if (res.status === 405 || res.status === 403) {
-          res = await fetch(u, { method: "GET", redirect: "follow" });
-        }
-        if (!res.ok) bad.push(`${u} -> HTTP ${res.status}`);
+        const head = await fetch(u, {
+          method: "HEAD",
+          redirect: "follow",
+          headers: { "user-agent": UA },
+        });
+        if (head.ok) return null;
+
+        const get = await fetch(u, {
+          method: "GET",
+          redirect: "follow",
+          headers: { "user-agent": UA },
+        });
+        if (get.ok) return null;
+
+        last = `HTTP ${get.status}`;
+        // A rate-limited or flaky host is not a broken link. Back off and retry.
+        if (![429, 503, 504].includes(get.status)) return last;
       } catch (e) {
-        bad.push(`${u} -> ${e.message}`);
+        last = e.message;
       }
-    }),
-  );
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+    }
+    return last;
+  };
+
+  const worker = async () => {
+    for (let u = queue.pop(); u !== undefined; u = queue.pop()) {
+      const fail = await probe(u);
+      if (fail) bad.push(`${u} -> ${fail}\n      cited in: ${[...urls.get(u)].join(", ")}`);
+    }
+  };
+  await Promise.all(Array.from({ length: 6 }, worker));
   return bad;
 }
 
 if (checkLinks && urls.size) {
   const bad = await verifyLinks();
-  bad.forEach((b) => err(`Dead registry link: ${b}`));
-  console.log(`Link-checked ${urls.size} registry URL(s).`);
+  bad.forEach((b) => err(`Dead link: ${b}`));
+  console.log(`Link-checked ${urls.size} URL(s) across registries, skills and docs.`);
 }
 
 // ---------------------------------------------------------------------- report
@@ -262,5 +319,5 @@ if (errors.length) {
 
 const promotedCount = skills.filter((s) => s.promoted).length;
 console.log(
-  `Repository validation passed: ${skills.length} skill(s), ${promotedCount} promoted, ${urls.size} registry URL(s)${checkLinks ? " (link-checked)" : ""}.`,
+  `Repository validation passed: ${skills.length} skill(s), ${promotedCount} promoted, ${urls.size} URL(s)${checkLinks ? " (link-checked)" : ""}.`,
 );
