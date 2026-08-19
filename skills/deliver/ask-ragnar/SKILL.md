@@ -57,6 +57,12 @@ Model-invoked, so you can start using it directly.
 
 Watch for this one hiding behind a Copilot Studio question. "My agent works in test but not production" is sometimes a grounding or production-patterns problem and sometimes a deployment problem. Ask whether the agent *behaves* differently or was never correctly deployed - those go to different skills.
 
+**`review-copilot-studio-agent`** - when they want judgement passed on an agent that already exists: a pull request that changes it, a promotion decision, or an agent they have inherited and do not trust. It reads the YAML and reports what would hurt in production, ordered worst first.
+
+Model-invoked, and often already applicable, since agent YAML is usually in context when someone asks this.
+
+The clean split across the Copilot Studio skills is *what kind of wrong*. Configuration wrong is this one. Content wrong is `copilot-studio-knowledge-grounding`. Behaviour wrong under load is `copilot-studio-production-patterns`. Never deployed properly is `power-platform-alm-connection-refs`.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.

@@ -48,6 +48,14 @@ skills:
       short_description: "Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership."
     policy:
       allow_implicit_invocation: true
+  - name: review-copilot-studio-agent
+    bucket: review
+    path: skills/review/review-copilot-studio-agent/SKILL.md
+    interface:
+      display_name: "Review Copilot Studio Agent"
+      short_description: "Review a Copilot Studio agent's YAML for defects that matter before it ships."
+    policy:
+      allow_implicit_invocation: true
   - name: structured-interview
     bucket: deliver
     path: skills/deliver/structured-interview/SKILL.md
