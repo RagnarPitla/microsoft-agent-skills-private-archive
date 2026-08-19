@@ -11,6 +11,7 @@
   "skills": [
     "skills/build/copilot-studio-knowledge-grounding/SKILL.md",
     "skills/build/copilot-studio-production-patterns/SKILL.md",
+    "skills/build/migrate-agent-to-skills/SKILL.md",
     "skills/build/write-a-skill/SKILL.md",
     "skills/connect/copilot-studio-auth-patterns/SKILL.md",
     "skills/deliver/ask-ragnar/SKILL.md",

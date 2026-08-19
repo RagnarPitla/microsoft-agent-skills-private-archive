@@ -82,6 +82,12 @@ Model-invoked, so you can start using it directly.
 
 The give-away is that the thing being built is instructions for an agent rather than an agent. "My agent ignores my skill" sounds like an agent problem and is almost always a description problem, so ask what the description says before routing anywhere else.
 
+**`migrate-agent-to-skills`** - when an agent already exists somewhere else and needs to move: a system prompt nobody can review any more, a monolithic assistant someone wants broken up, a move off Power Virtual Agents or a hand-rolled framework, or a requirement that the same behaviour run in GitHub Copilot, Claude Code, Cursor and Codex at once.
+
+Model-invoked, so you can start using it directly.
+
+It pairs with `write-a-skill` rather than competing: this one decides what should become a skill at all and what should become code, configuration or a deleted rule, and `write-a-skill` is how each surviving piece gets written. If someone has already decided what the skills are and only needs them written well, skip straight to `write-a-skill`.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.

@@ -27,7 +27,7 @@ repositories:
     provenance: official-microsoft
     description: Course-style introduction to building AI agents, with runnable lessons.
     covers: [learn]
-    stars: 72579
+    stars: 72581
     verdict: route
     why: The best onboarding path that exists. Send newcomers here rather than writing an intro skill.
 
@@ -53,7 +53,7 @@ repositories:
     provenance: official-microsoft
     description: Orchestration framework consolidating patterns from Semantic Kernel and AutoGen.
     covers: [build]
-    stars: 12883
+    stars: 12884
     verdict: route
     why: Moving quickly. Confirm the current guidance before writing anything durable against it.
 
@@ -104,7 +104,7 @@ repositories:
     provenance: official-microsoft
     description: Skills for Power Platform build and deploy workflows.
     covers: [build, operate]
-    stars: 731
+    stars: 732
     verdict: route
 
   - name: microsoft/skills-for-copilot-studio
@@ -121,16 +121,61 @@ repositories:
     provenance: official-microsoft
     description: Research on optimising skill definitions for agent performance.
     covers: [learn, operate]
-    stars: 16132
+    stars: 16133
     verdict: route
     why: Its best_skill.md pattern is directly relevant to how skills here are written.
+
+  - name: microsoft/mcp
+    url: https://github.com/microsoft/mcp
+    provenance: official-microsoft
+    description: Catalogue of Microsoft's official Model Context Protocol server implementations.
+    covers: [connect]
+    stars: 3583
+    verdict: route
+    why: The answer to "is there an official MCP server for this Microsoft system" before anyone writes one by hand.
+
+  - name: microsoft/work-iq
+    url: https://github.com/microsoft/work-iq
+    provenance: official-microsoft
+    description: MCP server and CLI for reaching Work IQ, the Microsoft 365 work-context layer.
+    covers: [connect, build]
+    stars: 971
+    verdict: route
+    why: Work IQ is young enough that this repo moves faster than the documentation, so read it before designing against it.
+
+  - name: microsoft/work-iq-samples
+    url: https://github.com/microsoft/work-iq-samples
+    provenance: official-microsoft
+    description: Worked samples for the Work IQ APIs.
+    covers: [build, connect]
+    stars: 15
+    verdict: wrap
+    why: Small, but the only end-to-end examples that exist while the reference documentation is still thin.
+
+  - name: microsoft/wiqd
+    url: https://github.com/microsoft/wiqd
+    provenance: official-microsoft
+    description: Tooling for building, debugging, validating and monitoring declarative agents for Work IQ.
+    covers: [build, review, operate]
+    stars: 13
+    verdict: wrap
+    why: Covers the debug and validate loop for declarative agents, which is the part people discover they are missing after the first one misbehaves.
+
+  - name: microsoft/microsoft-iq-solution-accelerator
+    url: https://github.com/microsoft/microsoft-iq-solution-accelerator
+    provenance: official-microsoft
+    description: Reference implementation joining Work IQ, Foundry IQ and Fabric IQ into one intelligence layer.
+    covers: [build, connect]
+    stars: 30
+    verdict: route
+    why: The clearest available statement of how the three IQ layers are meant to fit together, which the separate product docs do not make obvious.
 
   - name: microsoft/agent-lightning
     url: https://github.com/microsoft/agent-lightning
     provenance: official-microsoft
     description: Trainer for optimising agents through reinforcement learning.
     covers: [operate]
-    stars: 17496
+    stars: 17497
     verdict: route
 
 # Prior art in the skills space itself. None of it is Microsoft-specific, which
@@ -141,7 +186,7 @@ repositories:
     provenance: community
     description: The reference implementation of agent skills, from the people who defined the format.
     covers: [build, learn]
-    stars: 170306
+    stars: 170309
     verdict: route
     why: Read this first for what a skill is. It sets the format; nothing here should contradict it.
 
@@ -150,7 +195,7 @@ repositories:
     provenance: community
     description: A skills framework and software development methodology, unusually opinionated about process.
     covers: [build, deliver]
-    stars: 273721
+    stars: 273729
     verdict: route
     why: The strongest argument that skills encode methodology rather than reference material. Borrow the stance, not the content.
 
@@ -159,7 +204,7 @@ repositories:
     provenance: community
     description: Engineering skills with a strict bucket taxonomy, invocation model and validated sync obligations.
     covers: [build, review, operate]
-    stars: 221593
+    stars: 221637
     verdict: route
     why: The structural model this repo is built on - buckets, user versus model invocation, and a validator that enforces the contract.
 
@@ -168,7 +213,7 @@ repositories:
     provenance: microsoft-adjacent
     description: Community-contributed instructions, agents, skills and configurations for GitHub Copilot.
     covers: [build]
-    stars: 37990
+    stars: 37991
     verdict: wrap
     why: Large and genuinely useful, but a catalogue rather than a curriculum. Closest thing to a competitor for Microsoft-flavoured content; check here before building.
 
@@ -177,7 +222,7 @@ repositories:
     provenance: community
     description: Curated index of tooling, workflows and resources across the agentic coding ecosystem.
     covers: [learn]
-    stars: 52584
+    stars: 52587
     verdict: route
     why: Use as a discovery surface before building anything - it is the fastest way to find out something already exists.
 
@@ -195,7 +240,7 @@ repositories:
     provenance: community
     description: Collection of Cursor rules files across languages and frameworks.
     covers: [build]
-    stars: 40607
+    stars: 40608
     verdict: route
     why: Relevant only because this repo emits Cursor rules. Useful as a format reference, not as content.
 
@@ -204,7 +249,7 @@ repositories:
     provenance: community
     description: Over a hundred specialised subagent definitions covering a wide range of roles.
     covers: [build]
-    stars: 24447
+    stars: 24448
     verdict: rebuild
     why: Illustrates the persona trap. Most entries define a role rather than a discipline, which is the failure mode this repo exists to avoid.
 

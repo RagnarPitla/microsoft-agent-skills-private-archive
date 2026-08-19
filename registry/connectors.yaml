@@ -71,3 +71,124 @@ connectors:
     watch_out: >
       A logged-in browser profile gives the agent every session that profile
       holds. Use a dedicated profile for agent runs.
+
+
+  - system: Power Platform certified connectors
+    surfaces: [copilot-studio, power-platform]
+    mechanism: Microsoft certified connector catalogue, exposed as agent tools or flow actions
+    identity: Usually a Power Platform connection owned by the maker or run-only user; exact identity depends on the connector and connection reference
+    docs: https://learn.microsoft.com/en-us/connectors/connector-reference/
+    watch_out: >
+      A certified connector is not the same thing as an agent-safe tool. Check
+      whether the operation is delegated or app-style, whether it prompts for a
+      connection, and whether its outputs are shaped well enough for orchestration.
+
+  - system: Custom APIs described by OpenAPI
+    surfaces: [copilot-studio, power-platform]
+    mechanism: Power Platform custom connector imported from an OpenAPI definition
+    identity: A connector connection using the auth scheme declared by the custom connector
+    docs: https://learn.microsoft.com/en-us/connectors/custom-connectors/define-openapi-definition
+    watch_out: >
+      The OpenAPI file is the agent contract. Missing operation IDs, vague
+      descriptions, weak schemas, or chatty multi-step APIs make the action hard
+      for an orchestrator to choose and hard for makers to govern.
+
+  - system: Model Context Protocol servers
+    surfaces: [copilot-studio]
+    mechanism: MCP server connected to Copilot Studio as tools and resources
+    identity: The identity and consent model exposed by the MCP connector or server
+    docs: https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
+    watch_out: >
+      MCP in Copilot Studio requires generative orchestration. The server can
+      publish many tools at once, so stale or over-broad tool descriptions become
+      an orchestration and security problem immediately.
+
+  - system: Agent flows and Power Automate
+    surfaces: [copilot-studio, power-platform]
+    mechanism: Agent flows added as tools, backed by Power Automate connectors and workflow logic
+    identity: Flow connection references and run context, often the maker connection or the invoking user depending on configuration
+    docs: https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-flow
+    watch_out: >
+      Flows are the escape hatch when a connector action is not enough, but they
+      also hide business logic from the agent surface. Make input and output
+      schemas explicit or the agent will call a black box it cannot reason about.
+
+  - system: Dataverse tables as Copilot Studio knowledge
+    surfaces: [copilot-studio, power-platform]
+    mechanism: Dataverse tables added as a knowledge source, backed by Dataverse search
+    identity: End-user authentication with Microsoft, constrained by Dataverse table permissions
+    docs: https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-dataverse
+    watch_out: >
+      This is grounding, not arbitrary table querying. Dataverse search must be
+      enabled, table and column metadata need business synonyms, and permissions
+      decide what the agent can see.
+
+  - system: Dataverse tables for agent memory and state
+    surfaces: [copilot-studio, power-platform, foundry, custom]
+    mechanism: Dataverse Web API or connector operations against purpose-built memory tables
+    identity: Signed-in user, flow connection, or Entra application user with Dataverse security roles
+    docs: https://learn.microsoft.com/power-apps/developer/data-platform/webapi/overview
+    watch_out: >
+      Dataverse can store durable agent memory, preferences, approvals, and task
+      state, but it is not automatic conversational memory. Design retention,
+      consent, row ownership, and security roles before the agent starts writing.
+
+  - system: Microsoft Graph connectors for Microsoft 365 content
+    surfaces: [m365-copilot, microsoft-search]
+    mechanism: Microsoft Graph connectors index external content into Microsoft Search and Microsoft 365 Copilot grounding
+    identity: Connector crawler identity for ingestion; query-time trimming depends on indexed access control lists
+    docs: https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview
+    watch_out: >
+      Graph connectors connect content, not arbitrary transactions. If ACLs,
+      freshness, or schema mappings are wrong, Copilot grounds on content users
+      should not see or cannot find content they expect.
+
+  - system: Work IQ APIs
+    surfaces: [m365-copilot, custom, foundry]
+    mechanism: Work IQ extensibility APIs for workplace intelligence signals and organizational context
+    identity: Microsoft 365 and Microsoft Graph permission model for the calling app or delegated user
+    docs: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/
+    watch_out: >
+      Work IQ is for contextual workplace intelligence, not a replacement for a
+      system-of-record API. Treat its signals as governed context and validate
+      consent, tenant readiness, and data boundary assumptions early.
+
+  - system: Azure API Management protected APIs
+    surfaces: [copilot-studio, foundry, custom, power-platform]
+    mechanism: Azure API Management fronting internal or partner HTTP APIs
+    identity: Managed identity, subscription key, OAuth, client certificate, or backend auth configured through API Management
+    docs: https://learn.microsoft.com/en-us/azure/api-management/api-management-key-concepts
+    watch_out: >
+      API Management makes an API governable, not automatically agent-ready.
+      Preserve auth boundaries, publish a small task-shaped surface, and avoid
+      exposing internal CRUD endpoints directly to an agent.
+
+  - system: Firewalled and on-premises systems
+    surfaces: [power-platform, copilot-studio]
+    mechanism: On-premises data gateway used by Power Platform connectors and flows
+    identity: Gateway plus connector credentials configured for the data source
+    docs: https://learn.microsoft.com/en-us/data-integration/gateway/service-gateway-onprem
+    watch_out: >
+      The gateway solves network reachability, not data modeling or least
+      privilege. Agents inherit whatever the connector and gateway credentials
+      can reach, so shared admin-style connections are dangerous.
+
+  - system: Foundry Agent Service OpenAPI tools
+    surfaces: [foundry]
+    mechanism: OpenAPI tool registration for Microsoft Foundry agents
+    identity: Anonymous, API key, or managed identity depending on the OpenAPI tool configuration
+    docs: https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/openapi
+    watch_out: >
+      Foundry can call an OpenAPI-described tool, but the spec still has to be
+      written for tool use. Operation names, auth, response schemas, and error
+      shapes decide whether the agent can safely use it.
+
+  - system: External OData sources through Dataverse virtual tables
+    surfaces: [power-platform, copilot-studio, custom]
+    mechanism: Dataverse virtual tables backed by an external OData v4 data source
+    identity: Data source credentials configured for the virtual table provider, plus Dataverse security at the table layer
+    docs: https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-virtual-entities
+    watch_out: >
+      Virtual tables make external data look like Dataverse, but they do not make
+      the remote system behave like Dataverse. Latency, filtering, write support,
+      and remote permissions still come from the external source.

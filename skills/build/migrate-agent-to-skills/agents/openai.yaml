@@ -1,0 +1,5 @@
+interface:
+  display_name: Migrate Agent To Skills
+  short_description: Move an existing agent off a monolithic system prompt onto portable, versioned skill files without carrying its rot forward.
+policy:
+  allow_implicit_invocation: true

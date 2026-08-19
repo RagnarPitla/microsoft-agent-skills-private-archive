@@ -56,6 +56,14 @@ skills:
       short_description: "Explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands."
     policy:
       allow_implicit_invocation: true
+  - name: migrate-agent-to-skills
+    bucket: build
+    path: skills/build/migrate-agent-to-skills/SKILL.md
+    interface:
+      display_name: "Migrate Agent To Skills"
+      short_description: "Move an existing agent off a monolithic system prompt onto portable, versioned skill files without carrying its rot forward."
+    policy:
+      allow_implicit_invocation: true
   - name: power-platform-alm-connection-refs
     bucket: operate
     path: skills/operate/power-platform-alm-connection-refs/SKILL.md
