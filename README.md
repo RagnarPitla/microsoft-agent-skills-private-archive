@@ -77,10 +77,12 @@ Your agent reaches for these on its own when the task fits.
 - [copilot-studio-knowledge-grounding](./skills/build/copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./skills/build/copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
 - [explain-concept](./skills/learn/explain-concept/SKILL.md) - explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands.
+- [ground-agents-in-work-context](./skills/connect/ground-agents-in-work-context/SKILL.md) - choose the right grounding layer across the Microsoft IQ stack, and avoid the naming collision that sends people to the wrong one.
 - [migrate-agent-to-skills](./skills/build/migrate-agent-to-skills/SKILL.md) - move a prompt-stuffed or legacy agent onto a portable skills-based harness without carrying its rot forward.
 - [power-platform-alm-connection-refs](./skills/operate/power-platform-alm-connection-refs/SKILL.md) - fix and prevent solution imports that break on connection references, environment variables and flow ownership.
 - [review-copilot-studio-agent](./skills/review/review-copilot-studio-agent/SKILL.md) - review a Copilot Studio agent's YAML for defects that matter before it ships.
 - [structured-interview](./skills/deliver/structured-interview/SKILL.md) - interview the user about a plan, design or decision until every open branch is resolved.
+- [what-should-i-build](./skills/deliver/what-should-i-build/SKILL.md) - work out whether this needs an agent at all, and if so whether to consume one, govern the ones you have, or build.
 - [write-a-skill](./skills/build/write-a-skill/SKILL.md) - write or repair an agent skill so it fires when it should and stays quiet when it should not.
 
 ## Buckets

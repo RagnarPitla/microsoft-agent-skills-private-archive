@@ -1,7 +1,7 @@
 {
   "$comment": "Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.",
   "generator": "scripts/build-harnesses.mjs",
-  "count": 12,
+  "count": 14,
   "skills": [
     {
       "name": "ask-ragnar",
@@ -67,6 +67,15 @@
       "docs": "docs/learn/explain-concept.md"
     },
     {
+      "name": "ground-agents-in-work-context",
+      "bucket": "connect",
+      "description": "Choose the right grounding layer for an agent across the Microsoft IQ stack - Work IQ, Fabric IQ, Foundry IQ, Web IQ. Use when an agent can see someone's email, calendar and Teams messages but not the approval rules or business entities it needs, when deciding between workplace signals and an ontology over business data, when someone maps a conceptual \"Business IQ\" or \"Work IQ\" onto Microsoft's products and gets the opposite of what they expected, when an agent needs GL accounts, vendors or authorisation thresholds rather than documents, or when an unattended background agent is being designed on top of Work IQ.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/connect/ground-agents-in-work-context/SKILL.md",
+      "docs": "docs/connect/ground-agents-in-work-context.md"
+    },
+    {
       "name": "migrate-agent-to-skills",
       "bucket": "build",
       "description": "Move an existing agent - a prompt-stuffed assistant, a legacy chatbot, a pile of custom instructions, a hand-rolled Python agent - onto a portable skills-based harness without carrying its rot forward. Use when a system prompt has grown past what anyone can review, when someone wants to break a monolithic agent into skills, when moving off Power Virtual Agents or a bespoke framework, when the same behaviour has to run in GitHub Copilot, Claude Code, Cursor and Codex, or when a migration has produced skill files that nothing ever reaches for.",
@@ -101,6 +110,15 @@
       "promoted": true,
       "path": "skills/deliver/structured-interview/SKILL.md",
       "docs": "docs/deliver/structured-interview.md"
+    },
+    {
+      "name": "what-should-i-build",
+      "bucket": "deliver",
+      "description": "Work out whether the thing in front of you needs an agent at all, and if it does, whether you should consume one, govern the ones you already have, or build a new one. Use when someone has asked for \"an agent\" and you are not convinced they need one, when the honest answer might be a Power Automate flow or a better search box, when Scout, Copilot Studio and Azure-hosted agents are all being proposed for the same problem, when nobody in the room can say which Copilot they mean, or when the real problem is that twenty agents already exist and nobody knows what they do.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/deliver/what-should-i-build/SKILL.md",
+      "docs": "docs/deliver/what-should-i-build.md"
     },
     {
       "name": "write-a-skill",

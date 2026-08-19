@@ -1,0 +1,5 @@
+interface:
+  display_name: What should I build
+  short_description: Work out whether this needs an agent at all, and whether to consume, govern or build.
+policy:
+  allow_implicit_invocation: true

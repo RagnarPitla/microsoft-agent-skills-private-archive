@@ -9,3 +9,4 @@ An agent that cannot reach anything is a chat window. These are the skills for t
 Reachable by you, or reached for automatically when the task fits.
 
 - [copilot-studio-auth-patterns](./copilot-studio-auth-patterns/SKILL.md) - choose and debug authentication for a Copilot Studio agent, including which channels a choice forecloses and whether it can ever yield a token.
+- [ground-agents-in-work-context](./ground-agents-in-work-context/SKILL.md) - choose the right grounding layer across the Microsoft IQ stack, and avoid the naming collision that sends people to the wrong one.

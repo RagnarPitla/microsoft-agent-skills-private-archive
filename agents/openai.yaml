@@ -56,6 +56,14 @@ skills:
       short_description: "Explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands."
     policy:
       allow_implicit_invocation: true
+  - name: ground-agents-in-work-context
+    bucket: connect
+    path: skills/connect/ground-agents-in-work-context/SKILL.md
+    interface:
+      display_name: "Ground Agents In Work Context"
+      short_description: "Choose the right grounding layer for an agent across the Microsoft IQ stack, and live with what that choice costs."
+    policy:
+      allow_implicit_invocation: true
   - name: migrate-agent-to-skills
     bucket: build
     path: skills/build/migrate-agent-to-skills/SKILL.md
@@ -86,6 +94,14 @@ skills:
     interface:
       display_name: "Structured interview"
       short_description: "Interview the user until every open branch of a plan or design is resolved."
+    policy:
+      allow_implicit_invocation: true
+  - name: what-should-i-build
+    bucket: deliver
+    path: skills/deliver/what-should-i-build/SKILL.md
+    interface:
+      display_name: "What should I build"
+      short_description: "Work out whether this needs an agent at all, and whether to consume, govern or build."
     policy:
       allow_implicit_invocation: true
   - name: write-a-skill

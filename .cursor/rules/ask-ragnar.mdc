@@ -34,9 +34,17 @@ Tell them to run `discovery`. Do not run it for them; it takes over the conversa
 
 If they are torn between the two: `discovery` is for when the problem is unclear, `structured-interview` is for when the solution is unclear.
 
+**`what-should-i-build`** - when someone has asked for "an agent" and it is not yet established that they need one. It has four honest outcomes, and only one is a build: nothing (the requirement is deterministic and wants a flow, a report, a form or a page), consume (Scout or Cowork already do this and they are the user, not the builder), govern (the agents exist and the real problem is that nobody can inventory them, which is Agent 365), or build.
+
+Model-invoked, so you can start using it directly.
+
+Route here *before* `choose-agent-platform` whenever the need for an agent is itself unproven. Picking a platform for a problem that did not need an agent is a confident answer to the wrong question, and it is expensive to unwind. The tell is a requirement phrased as "when this happens, do that", with no judgement anywhere in it.
+
 **`choose-agent-platform`** - when the question is which Microsoft platform to build an agent on: Agent Builder, Copilot Studio, the Microsoft 365 Agents SDK or Microsoft Foundry. It asks the questions that actually separate them, which are mostly about ownership, authentication and what happens when the agent is wrong, and it ends with a recommendation plus the rejected runner-up and why.
 
 Tell them to run `choose-agent-platform`. It is a decision they should enter deliberately, so let them start it.
+
+The two split cleanly on *whether an agent is warranted*. `what-should-i-build` decides that. `choose-agent-platform` assumes it and picks the platform. If someone arrives certain they are building and only the platform is open, go straight to the second. If the certainty is unearned, spend ten minutes on the first.
 
 This one often runs *before* `discovery` rather than after. If they do not yet know what the agent is for, send them to `discovery` first, because platform choice made against a vague problem is a guess. If the problem is clear and only the platform is open, go straight here.
 
@@ -63,6 +71,14 @@ Watch for this one hiding behind a Copilot Studio question. "My agent works in t
 Model-invoked, so you can start using it directly.
 
 The distinction that matters here is *whose identity is the problem*. If the question is how the **person** signs in and what the agent knows about them, this is the one. If the question is what the **agent** authenticates as when it reaches SharePoint, Dataverse or an API in another environment, that is `power-platform-alm-connection-refs`. People bring the second one described as the first constantly, so ask which identity is failing before routing.
+
+**`ground-agents-in-work-context`** - when the agent can reach *something* but it is the wrong kind of context: it can see someone's email, calendar and Teams messages but not the approval thresholds or business entities it needs, or someone is choosing between Work IQ, Fabric IQ, Foundry IQ and Web IQ and cannot tell which answers their problem.
+
+Model-invoked, so you can start using it directly.
+
+Two reasons to reach for this quickly. First, there is a genuine naming collision: the conceptual "Work IQ" and "Business IQ" people carry into the conversation map close to the *inverse* of Microsoft's products, so somebody can wire up exactly the wrong layer and the failure is silent - a fluent answer built on the wrong kind of context. Second, Work IQ is delegated-auth only, which quietly kills any unattended background agent designed on top of it. Both are cheaper to hear now than after the build.
+
+Against the two grounding-adjacent skills: if the agent cites a document you can point at and it is the wrong document, that is `copilot-studio-knowledge-grounding`. If no document could ever have answered because the agent is grounded in the wrong kind of context entirely, that is this one.
 
 **`review-copilot-studio-agent`** - when they want judgement passed on an agent that already exists: a pull request that changes it, a promotion decision, or an agent they have inherited and do not trust. It reads the YAML and reports what would hurt in production, ordered worst first.
 

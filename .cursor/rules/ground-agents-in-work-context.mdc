@@ -1,0 +1,263 @@
+---
+description: "Choose the right grounding layer for an agent across the Microsoft IQ stack - Work IQ, Fabric IQ, Foundry IQ, Web IQ. Use when an agent can see someone's email, calendar and Teams messages but not the approval rules or business entities it needs, when deciding between workplace signals and an ontology over business data, when someone maps a conceptual \"Business IQ\" or \"Work IQ\" onto Microsoft's products and gets the opposite of what they expected, when an agent needs GL accounts, vendors or authorisation thresholds rather than documents, or when an unattended background agent is being designed on top of Work IQ."
+alwaysApply: false
+---
+
+<!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->
+<!-- Source: skills/connect/ground-agents-in-work-context/SKILL.md -->
+People arrive asking how to connect an agent to Work IQ. That question has
+already chosen a layer, and choosing the layer is the decision they got
+wrong. The useful question is what kind of context is actually missing.
+There are four kinds, they live in four different places, and picking the
+wrong one fails silently - the agent does not error, it answers fluently
+from the wrong kind of knowledge.
+
+Before anything else, resolve the naming collision, because it is the
+reason the wrong layer gets picked in the first place.
+
+## Two different things are called Work IQ
+
+Microsoft ships a product called Work IQ. Separately, a lot of practitioner
+writing about enterprise agents - including framing used elsewhere in this
+collection - uses "Work IQ" as a *conceptual* layer meaning workflows,
+state machines, approval thresholds and who is allowed to authorise what,
+sitting above a conceptual "Business IQ" layer meaning entities, rules, GL
+accounts, vendors and purchase orders.
+
+These are not the same thing. They are close to inverted.
+
+Microsoft Work IQ is a workplace context layer. It reasons over email,
+calendar, Teams messages, files, people and Planner. It knows who sent
+what, who works with whom, who was in the meeting and what was said. It
+knows nothing about GL accounts, authorisation thresholds, or the rule that
+a purchase order above some value needs two distinct approvers. Those are
+outside its scope and no amount of configuration puts them inside it.
+
+The map that matters:
+
+- Conceptual **Business IQ** - entities, relationships, rules, GL accounts,
+  vendors, purchase orders - is **Fabric IQ Ontology**. Not Microsoft Work
+  IQ.
+- Conceptual **Work IQ** - workflows, approval thresholds, authorisation
+  rules - is mostly **Fabric IQ Ontology** too, expressed as constraints
+  and actions on entity types, plus **Foundry IQ** for the policy and
+  procedure documents that state the rule in prose.
+- Microsoft **Work IQ**, the product, serves a third thing that neither
+  conceptual layer names: who is asking, who they delegate to, what they
+  last discussed, who else is involved.
+
+There is no Microsoft product called Business IQ. So someone who reads the
+conceptual framing, goes to Microsoft's documentation, searches for the
+only term that appears in both, and wires up what they find, gets an agent
+grounded in meeting invitations and email threads for a question that
+needed a chart of accounts. It will answer. It will sound right. Nothing in
+the transcript will show what went wrong.
+
+Say the mapping out loud to whoever you are working with before designing
+anything. It costs one sentence and it is the whole value of this skill.
+
+## Diagnose which context is missing
+
+Ask what the agent needed to know and could not. The answer sorts cleanly
+into four buckets, and each points at a different layer:
+
+- **Workplace signals.** Who is asking, what they discussed last Tuesday,
+  who their manager is, which file the team has been editing, who is out of
+  office. This is Microsoft Work IQ, and nothing else in the stack does it.
+- **Business entities and the rules that bind them.** What a customer is,
+  which accounts are expense accounts, which cost centres are valid for
+  this posting, how many approvers a purchase order needs, whether the
+  period is open. This is Fabric IQ Ontology, over data in OneLake.
+- **Policy and institutional knowledge.** The written procedure, the
+  authoritative version of the travel policy, the standard operating
+  document. This is Foundry IQ.
+- **Public, current, external facts.** Market data, current events, a
+  vendor's published pricing page. This is Web IQ.
+
+Most enterprise agents that fail in an interesting way needed the second.
+Most builders reach for the first, because it has the friendliest on-ramp
+and because the demo that sold the project was a workplace demo.
+
+The second half of the diagnosis is that serious agents usually need two
+layers, and the split runs down the middle of a single decision. Take an
+approval: *who* the right approver is, who they delegate to, who is
+available, is workplace context. *How many* approvers this transaction
+requires, and whether this person is permitted to be one of them, is a
+business rule on the entity. One decision, two layers, and an agent given
+only the first will route the approval to a real, plausible, correctly
+delegated human and quietly break dual control.
+
+## Delegated identity only, and what that kills
+
+Every Work IQ request runs in the context of a signed-in user. Entra ID
+delegated authentication, including on-behalf-of flows. Application-only
+authentication is not supported, so there is no way to run it as a
+background service principal.
+
+This kills a design people attempt constantly: the overnight agent that
+sweeps the tenant, reads mailboxes, reconciles something and files a
+summary while nobody is logged in. You cannot build it on Work IQ. Not with
+a workaround, and specifically not with a service account that a human
+"just signs in as" once - that is a shared credential with a person's name
+on it, and it will be killed in a security review later, at a worse moment,
+after the thing is built.
+
+What to do instead. Split the workload by whether a user is present.
+Interactive work, where a real person is in the loop and their context is
+the point, sits on Work IQ. Unattended work sits on a surface that supports
+application identity, grounded in business data rather than personal
+signals - which is usually the right grounding for it anyway, because an
+overnight reconciliation needs the ledger, not somebody's inbox. If a
+background process genuinely needs one user's workplace context, the honest
+design is to trigger it from that user's action rather than to manufacture
+a standing identity for it.
+
+Two related facts worth designing around from the start. Write operations
+are off by default and an administrator has to enable them, so assume
+read-only until proven otherwise and do not design a write path you have
+not confirmed you will be allowed to have. And the agents themselves are
+governed separately from the data they reach: Agent 365 is the control
+plane for observing, securing and governing agents, and it is a different
+conversation from grounding, with different owners. Find out early who owns
+it, because that person can stop your rollout.
+
+## Why workplace context is not business context
+
+Four failure modes. None appear in Microsoft's documentation, because they
+require domain knowledge the documentation does not have. All four are
+generic and invented; they are also the ones you will actually meet.
+
+**Posting to the wrong GL account.** The instruction says "post the vendor
+invoice to facilities". Two accounts have "Facilities" in the name - one a
+maintenance expense account, one an operating lease account. The agent
+matched a string and picked one. Nothing in anyone's email says which is
+right. In an ontology, the account is an entity with a type, a category and
+valid cost centres, and the agent resolves a *concept* rather than a
+substring.
+
+**Bypassing dual control.** The agent routes a large purchase order to a
+manager who is genuinely in the requester's delegation chain. Workplace
+context is exactly what makes this plausible, which is exactly why the
+wrong answer looks right. The requirement that transactions above a
+threshold need two distinct approvers is not in the delegation graph and
+never will be. It belongs as a constraint on the purchase order entity,
+with the policy prose behind it in Foundry IQ.
+
+**Refunding the wrong party.** A customer has a billing entity and an
+operating entity with different bank details. In prose, "the customer"
+resolves ambiguously and the agent picks one. In an ontology graph, the
+invoice relates to exactly one billed party, which has exactly one default
+payment instrument, and the ambiguity does not exist to be resolved.
+
+**Posting into a locked period.** Someone pasted the wrong date and a
+December accrual goes to a January period. The ERP accepts it, because it
+is structurally valid. Only a model that knows the live status of each
+period can refuse it.
+
+The pattern underneath all four: structural validation at the door,
+semantic validation at the ledger. Type checks, required fields and schema
+validation at the API boundary are cheap and stateless and catch none of
+these, because every one of them is a fact about business *state* - which
+account is which type, how many approvers, which instrument, whether the
+period is open. A schema cannot know them. A prompt cannot enforce them
+either, because a probabilistic loop satisfices: given something ambiguous
+it produces the plausible answer and moves on, and plausible-but-wrong is
+precisely the failure that matters in finance and compliance. Constraints
+held in a model the agent has to query are checked when the action runs,
+and the agent cannot talk its way past them.
+
+That is the real argument for an ontology. The documentation explains how
+to connect; it does not tell you why you would.
+
+## When you need none of this
+
+If the answer lives in one SharePoint site, or a folder of well-maintained
+documents, an ordinary knowledge source is the right answer and the IQ
+stack is expensive overkill. The same is true of an agent whose whole job
+is answering questions from one policy corpus. Adding a semantic layer buys
+you nothing there and costs you a preview dependency, a second team, and a
+governance conversation.
+
+Reach for this stack when at least one is true: the agent must reason
+across systems that disagree about what a customer or an account is; the
+agent takes an action that can be wrong in a way that costs money; or there
+is a rule it must not be able to break, no matter how the request is
+phrased. If none of those hold, say so plainly and stop.
+
+## Which skill is this
+
+If the agent cites the wrong document, invents a policy that is not in its
+sources, or answers differently for different users, the grounding layer is
+probably right and retrieval is wrong. That is
+`copilot-studio-knowledge-grounding`, and it is about answer quality inside
+a layer you have already chosen correctly.
+
+This skill is the prior question: whether the agent is connected to the
+right *kind* of context at all, and what that choice costs in identity and
+architecture. The tell that separates them is what the wrong answer looks
+like. A retrieval problem produces a wrong citation you can point at. A
+layer problem produces a confident answer with no citation that could ever
+have been right, because the fact the agent needed was not in anything it
+could reach.
+
+## Maturity, checked once
+
+Checked on 2026-08-18: the Work IQ APIs are generally available; Work IQ
+inside Copilot Studio is preview; Fabric IQ and its ontology item are
+preview; and the Copilot Studio path to Fabric IQ over MCP is preview.
+
+Re-check that paragraph before you design around any of it - it is the
+shortest-lived thing in this skill and it is deliberately stated once
+rather than repeated, so there is only one place to correct. Two rules
+outlast the churn: do not put a preview integration on a production
+critical path, and do not give a customer a date for one. Build against the
+APIs, pilot the connectors.
+
+## Do not
+
+- Do not accept "connect it to Work IQ" as the requirement. Establish which
+  of the four kinds of context is missing first, in one sentence, and let
+  the user correct you cheaply if you have it wrong.
+- Do not promise an unattended agent on Work IQ, and do not route around
+  the delegated-identity constraint with a shared sign-in.
+- Do not put a business rule in a prompt and call it enforced. A prompt is
+  a request; a constraint is a check.
+- Do not recite tool counts, quotas, prices or exact portal navigation for
+  any of these products. They move, and a confident stale number makes a
+  reader re-check everything else you said.
+- Do not reach for the IQ stack when a single curated knowledge source
+  answers the question. Say the cheaper thing out loud even when the
+  ambitious one is more interesting.
+
+## Sources
+
+Verified as resolving on 2026-08-18.
+
+- Microsoft IQ, the four-layer stack in one place:
+  https://learn.microsoft.com/en-us/microsoft-iq/
+- Work IQ overview, for what workplace context does and does not include:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/
+- Work IQ APIs, including the authentication model and licensing:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/api-overview
+- Work IQ over MCP:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/mcp/overview
+- Enabling Work IQ in a tenant, including the write-operations control:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/enable-work-iq
+- Work IQ from Copilot Studio:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-work-iq
+- Fabric IQ overview: https://learn.microsoft.com/en-us/fabric/iq/overview
+- Ontology concepts - entity types, properties, relationships, bindings:
+  https://learn.microsoft.com/en-us/fabric/iq/ontology/overview
+- The ontology MCP server:
+  https://learn.microsoft.com/en-us/fabric/iq/ontology/how-to-use-ontology-mcp-server
+- Building a Copilot Studio agent over an ontology:
+  https://learn.microsoft.com/en-us/fabric/iq/ontology/how-to-create-agent-copilot-studio
+- Fabric IQ in Cowork, the narrower Power BI grounding path:
+  https://learn.microsoft.com/en-us/fabric/iq/connectors/cowork-overview
+- Foundry IQ, for policy and knowledge grounding:
+  https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq
+- Agent 365, for governing the agents themselves:
+  https://learn.microsoft.com/en-us/microsoft-agent-365/overview
+
+If a link 404s, the page was renamed. Say you could not verify it rather
+than guessing a replacement URL.

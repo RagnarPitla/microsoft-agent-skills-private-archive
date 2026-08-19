@@ -17,3 +17,4 @@ Reachable only when you ask for them by name.
 Reachable by you, or reached for automatically when the task fits.
 
 - [structured-interview](./structured-interview/SKILL.md) - interview the user about a plan, design or decision until every open branch is resolved.
+- [what-should-i-build](./what-should-i-build/SKILL.md) - work out whether this needs an agent at all, and if so whether to consume, govern or build one.
