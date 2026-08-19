@@ -1,6 +1,8 @@
 ---
 name: respond-to-agent-incidents
 description: Triage and recover when a live agent is failing right now and users are affected, rather than reviewing its configuration after the fact. Use when an agent has gone down or is answering badly in production and someone is asking what to do in the next few minutes, when it is unclear whether the outage is the agent, the underlying platform or a dependency, when a fix needs to be rolled back safely, when an incident needs a plain-language update sent to stakeholders, or when a postmortem needs to turn into a prevention item rather than a shrug.
+verified_on: 2026-08-19
+provenance: "Microsoft's Power Platform service health, admin notification and ALM documentation, framed around outages where nobody could tell a platform incident from their own change."
 ---
 
 The moment an agent is visibly broken in production is the wrong moment to be

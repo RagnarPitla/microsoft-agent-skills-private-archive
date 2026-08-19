@@ -1,21 +1,49 @@
-## What this changes
+<!--
+Keep the description short. Every box below is enforced by `npm run check` or
+`npm test`, so ticking one you have not verified only delays the same answer.
+-->
 
-<!-- One or two sentences: what does this PR add, fix or change? -->
+## What this changes, and why
 
-## Why
+One or two sentences. If it is a correction, say what was wrong and how you know
+what is right. For a new skill, give the trigger in the reader's own words.
 
-<!-- The situation this addresses. For a new skill, the trigger in the reader's own words. -->
+## Confidentiality
 
-## Checklist
+- [ ] No customer name, tenant identifier, internal Microsoft tooling, roadmap or
+      NDA material. Worked examples use invented companies and synthetic data.
+- [ ] `npm run scrub` passes locally, with a filled-in `.scrub-denylist.txt`
+      (a copied-but-empty one is not protection, and the gate now says so).
 
-- [ ] Read [AGENTS.md](../AGENTS.md) and, for a skill change, [.agents/invocation.md](../.agents/invocation.md) and [.agents/writing-docs.md](../.agents/writing-docs.md).
-- [ ] Checked [.agents/confidentiality.md](../.agents/confidentiality.md) - no customer names, tenant identifiers, internal tooling or unannounced features anywhere in the diff.
-- [ ] Verified every Microsoft technical claim against `learn.microsoft.com` (or said plainly in the skill that it could not be verified).
-- [ ] If a promoted skill was added, renamed or removed: updated the top-level `README.md`, the bucket `README.md`, `.claude-plugin/plugin.json`, the `docs/<bucket>/<name>.md` page, and [`ask-ragnar`](../skills/deliver/ask-ragnar/SKILL.md) if the skill is user-reachable.
-- [ ] Ran `npm run build` and committed the regenerated harness artefacts (never hand-edited).
-- [ ] Ran `npm run check` and it passes locally.
-- [ ] Ran `npm test` (after `npm install`) and it passes, with new/updated tests for any script behaviour changed.
-- [ ] Added a changeset (`npx changeset`) for tooling changes; skipped it for skill-only changes.
-- [ ] No new dependency was added without checking it against the GitHub Advisory Database.
+## Checks
 
-<!-- See CONTRIBUTING.md for the full explanation of each item. -->
+- [ ] `npm run build` re-run, and no generated file hand-edited
+      (`.github/skills/`, `.cursor/rules/`, `agents/openai.yaml`, `skills/index.json`).
+- [ ] `npm run check` passes.
+- [ ] `npm test` passes, with new or updated tests for any script behaviour changed.
+- [ ] Added a changeset (`npx changeset`) for tooling changes; skipped it for
+      skill-only changes.
+- [ ] No new dependency added without checking it against the GitHub Advisory Database.
+
+## Sync obligations
+
+Skip this section if no promoted skill was added, renamed, removed or changed in
+behaviour. Otherwise all five, or validation fails on the one you missed:
+
+- [ ] Linked from the top-level `README.md`.
+- [ ] Listed in `.claude-plugin/plugin.json`.
+- [ ] Listed in the bucket `README.md`, under the right invocation heading.
+- [ ] Docs page at `docs/<bucket>/<skill-name>.md` with all four sections.
+- [ ] Indexed in `docs/README.md`, which is what GitHub Pages publishes.
+
+And one the validator cannot check for you:
+
+- [ ] If the skill is user-reachable, routed from
+      [`ask-ragnar`](../skills/deliver/ask-ragnar/SKILL.md).
+
+## Accuracy
+
+- [ ] Every Microsoft technical claim verified against `learn.microsoft.com`, or
+      explicitly marked as unverified in the skill.
+- [ ] `verified_on` set to the date you actually checked, not the date you wrote it.
+- [ ] `provenance` says where the practice came from, in general terms.

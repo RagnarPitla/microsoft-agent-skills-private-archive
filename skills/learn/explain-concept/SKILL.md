@@ -1,6 +1,8 @@
 ---
 name: explain-concept
 description: Explain a Microsoft ecosystem concept to someone who is confused by it, after working out what they actually misunderstand. Use when someone asks what something is or why it behaves the way it does across Copilot Studio, Power Platform, Dataverse, Dynamics 365, Microsoft Foundry or Entra - particularly when they have already read the documentation and are still stuck.
+verified_on: 2026-08-18
+provenance: "Explanations that answered the question asked rather than the misunderstanding underneath it, and had to be given twice."
 ---
 
 Microsoft Learn is free, enormous and genuinely good. Restating it adds

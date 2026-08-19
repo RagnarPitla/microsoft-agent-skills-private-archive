@@ -1,6 +1,8 @@
 ---
 name: ground-agents-in-work-context
 description: Choose the right grounding layer for an agent across the Microsoft IQ stack - Work IQ, Fabric IQ, Foundry IQ, Web IQ. Use when an agent can see someone's email, calendar and Teams messages but not the approval rules or business entities it needs, when deciding between workplace signals and an ontology over business data, when someone maps a conceptual "Business IQ" or "Work IQ" onto Microsoft's products and gets the opposite of what they expected, when an agent needs GL accounts, vendors or authorisation thresholds rather than documents, or when an unattended background agent is being designed on top of Work IQ.
+verified_on: 2026-08-18
+provenance: "Grounding conversations that opened with a named product and had to be walked back to what context was actually missing."
 ---
 
 People arrive asking how to connect an agent to Work IQ. That question has

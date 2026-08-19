@@ -1,6 +1,8 @@
 ---
 name: copilot-studio-production-patterns
 description: The patterns that separate a Copilot Studio agent that demos well from one that survives production. Use when an agent is being designed for or promoted to production, when an agent works in test but fails with real users, when calls to slow backend systems time out, when context is lost across a multi-agent handoff, or when preparing a production readiness review.
+verified_on: 2026-08-18
+provenance: "Agents that passed a demo and then failed against real tenant latency, real volumes and real users."
 ---
 
 Most Copilot Studio material teaches you to build a chatbot. Almost none of it

@@ -1,49 +1,52 @@
 # Security policy
 
-## Scope
+## What this repository is
 
-This repository contains Markdown skill files, small Node.js build/validation scripts, and
-registry data (YAML/JSON). There is no running service, no deployed application and no
-production data - the "attack surface" is limited to:
+Markdown skills, two YAML registries, and about 1,500 lines of dependency-free
+Node scripts that check them. Nothing here is deployed, nothing here is published
+to a package registry, and nothing here holds a credential. That shapes what
+counts as a vulnerability.
 
-- The Node scripts under `scripts/` (parsing, validation, harness generation).
-- GitHub Actions workflows under `.github/workflows/`.
-- Content that could accidentally disclose a secret, tenant identifier or customer detail (see
-  [.agents/confidentiality.md](./.agents/confidentiality.md), enforced by `npm run scrub`).
+## Reporting
 
-## Reporting a vulnerability
+Report privately through GitHub's
+[private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability)
+on this repository. Do not open a public issue for anything in the first two
+categories below.
 
-If you find a security issue - a script that can be made to execute untrusted input, a
-GitHub Actions workflow with an injectable expression, a dependency with a known
-vulnerability, or a credential accidentally committed - please **do not open a public issue**.
+Expect an acknowledgement within a week. This is maintained by one person around
+a full-time job, so a fix may take longer than that - you will be told which.
 
-Instead, use GitHub's private reporting flow:
+## What we treat as a security issue
 
-1. Go to the [Security tab](https://github.com/RagnarPitla/microsoft-agent-skills/security) of
-   this repository.
-2. Click **Report a vulnerability** to open a draft
-   [security advisory](https://github.com/RagnarPitla/microsoft-agent-skills/security/advisories/new).
-3. Describe the issue, the affected file(s) or workflow, and, if you have one, a reproduction.
+**Disclosure.** Anything in this repository that identifies a real customer,
+exposes tenant data, or reproduces internal Microsoft material. This is the most
+likely and most damaging failure mode here, and it is the reason the scrub gate
+exists. Report it privately; it will be removed and the history dealt with.
 
-You should expect an acknowledgement within 5 business days. If the report turns out to be a
-leaked secret rather than a code vulnerability, see the incident steps below - they apply
-regardless of how the report arrives.
+**A live credential**, in any file or in git history, including an expired one -
+expired secrets still reveal structure.
 
-## If a secret or customer detail leaks
+**A bypass in `scripts/scrub.mjs`** that lets a real secret or an internal term
+through. The gate has already had one silent bypass, where a placeholder anywhere
+on a line suppressed every rule on that line; a credential could ship with the
+build green. Finding the next one of those is genuinely valuable.
 
-This is covered in detail in [.agents/confidentiality.md](./.agents/confidentiality.md). In
-short: deleting the commit is not enough because history and forks persist. Any credential that
-was committed must be rotated immediately, the history rewritten and force-pushed, and anyone
-affected told directly rather than left to find out from the diff.
+**Supply chain.** Anything that causes untrusted content to execute in CI with
+write permissions. Actions are pinned by commit SHA, `check.yml` runs with
+`contents: read`, and `link-rot.yml` holds `issues: write` - that job is the one
+worth reading closely.
+
+## What we do not treat as a security issue
+
+- A dead or hijacked link in a registry entry. Real, and handled by the weekly
+  link-rot job. Open a normal issue.
+- Advice in a skill you disagree with, including advice you think is insecure to
+  follow. That is a correctness argument, and a public issue is the right place
+  for it - we would rather have it in the open.
+- Anything requiring an attacker to already control the maintainer's machine.
 
 ## Supported versions
 
-This is a skills repository, not a versioned library with a support matrix. The `main` branch
-is the only supported line; there are no backported security fixes to older tags.
-
-## Dependencies
-
-Dependencies are kept deliberately minimal (see `package.json`). New dependencies are checked
-against the GitHub Advisory Database before being added, and Dependabot
-(`.github/dependabot.yml`) opens pull requests for known-vulnerable or outdated versions on a
-weekly schedule for both npm packages and GitHub Actions.
+The default branch. There are no maintained release branches, and a fix ships as
+the next commit rather than as a backport.

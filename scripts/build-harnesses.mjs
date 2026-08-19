@@ -22,8 +22,9 @@
  * prints the report.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, readdirSync, realpathSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { ROOT, loadSkills, GENERATED_BANNER } from "./lib/skills.mjs";
 import { yamlString, reanchorLinks, diffArtifacts } from "./lib/harness-core.mjs";
 
@@ -160,6 +161,11 @@ export function buildArtifacts(skillList, root = ROOT) {
             promoted: s.promoted,
             path: `skills/${s.bucket}/${s.dirName}/SKILL.md`,
             docs: s.promoted ? `docs/${s.bucket}/${s.dirName}.md` : null,
+            // Freshness metadata belongs in the manifest, not just the source
+            // file: a consumer reading index.json is exactly who needs to know
+            // how old a skill's claims are and where they came from.
+            verified_on: s.frontMatter?.verified_on ?? null,
+            provenance: s.frontMatter?.provenance ?? null,
           })),
       },
       null,
@@ -189,7 +195,21 @@ function listOwnedFiles() {
 
 // Only run the CLI body when this file is executed directly, not when
 // buildArtifacts is imported for testing.
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname;
+//
+// Compare real paths, not raw strings. Node resolves import.meta.url to the
+// realpath, so on macOS a repo under /var (a symlink to /private/var) never
+// matched argv[1] and this gate silently exited 0 having checked nothing.
+// `.pathname` is also percent-encoded, so any repo path containing a space
+// failed the same way -- hence fileURLToPath rather than new URL().pathname.
+const realpathOrNull = (p) => {
+  try {
+    return realpathSync(p);
+  } catch {
+    return null;
+  }
+};
+const invokedAs = process.argv[1] && realpathOrNull(path.resolve(process.argv[1]));
+const isMain = Boolean(invokedAs) && invokedAs === realpathOrNull(fileURLToPath(import.meta.url));
 if (isMain) {
   const artefacts = buildArtifacts(skills);
 

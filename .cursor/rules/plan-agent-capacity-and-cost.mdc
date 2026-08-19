@@ -90,7 +90,7 @@ Verified as resolving on 2026-08-19.
 Review by 2026-11-17.
 
 - Manage Copilot Studio credits and capacity:
-  https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-messages-capacity
+  https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-copilot-credits-capacity
 - Microsoft Copilot Studio billing rates and management:
   https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management
 - Microsoft Foundry Models quotas and limits:

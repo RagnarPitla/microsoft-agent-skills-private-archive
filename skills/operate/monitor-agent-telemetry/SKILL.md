@@ -1,6 +1,8 @@
 ---
 name: monitor-agent-telemetry
 description: Set up the signals that tell you an agent is healthy, being used and starting to misbehave before a user has to report it. Use when an agent has shipped with no dashboard, alert or usage number behind it, when you cannot say how many sessions escalated to a human last week, when latency or error rates need to be watched continuously rather than sampled by hand, when Application Insights or Foundry tracing needs to be wired up for an agent, or when a stakeholder asks for a usage report and the only source is memory.
+verified_on: 2026-08-19
+provenance: "Microsoft's Copilot Studio analytics and Foundry observability documentation, framed around agents that were live for months before anyone could say whether they worked."
 ---
 
 An agent that shipped without telemetry is not actually finished, it just

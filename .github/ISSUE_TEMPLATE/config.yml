@@ -1,8 +1,8 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
-  - name: Ask a question / start a discussion
-    url: https://github.com/RagnarPitla/microsoft-agent-skills/discussions
-    about: Not sure if something is a bug, a gap, or a "how do I..."? Start here.
-  - name: Report a security issue
-    url: https://github.com/RagnarPitla/microsoft-agent-skills/security/advisories/new
-    about: Do not open a public issue for a security vulnerability or a leaked secret. See SECURITY.md.
+  - name: Which skill fits my situation?
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/blob/main/skills/deliver/ask-ragnar/SKILL.md
+    about: Install the collection and run ask-ragnar. It routes to the skill that fits, or tells you none does.
+  - name: Report a confidentiality slip or a security issue
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/security/policy
+    about: Report privately, never as a public issue. A named customer or a live credential belongs here.

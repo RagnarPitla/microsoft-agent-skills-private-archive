@@ -1,6 +1,8 @@
 ---
 name: power-platform-alm-connection-refs
 description: Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership. Use when a solution import fails or needs manual reconnection in the target environment, when flows turn themselves off after deployment, when a departing employee breaks production, or when setting up a deployment pipeline that should not need hand-holding.
+verified_on: 2026-08-18
+provenance: "Solution imports that failed on connection references, environment variables and flow ownership, across many environment promotions."
 ---
 
 Connection reference breakage on import is the most reported ALM pain in Power

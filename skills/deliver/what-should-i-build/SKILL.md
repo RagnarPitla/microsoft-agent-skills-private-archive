@@ -1,6 +1,8 @@
 ---
 name: what-should-i-build
 description: Work out whether the thing in front of you needs an agent at all, and if it does, whether you should consume one, govern the ones you already have, or build a new one. Use when someone has asked for "an agent" and you are not convinced they need one, when the honest answer might be a Power Automate flow or a better search box, when Scout, Copilot Studio and Azure-hosted agents are all being proposed for the same problem, when nobody in the room can say which Copilot they mean, or when the real problem is that twenty agents already exist and nobody knows what they do.
+verified_on: 2026-08-18
+provenance: "Requests for an agent that turned out to need governance of existing agents, or nothing built at all."
 ---
 
 "Which agent should we build?" is the wrong question, and it is wrong in a

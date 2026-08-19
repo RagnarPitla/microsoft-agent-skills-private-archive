@@ -2,8 +2,16 @@
 /**
  * Keep the Claude plugin manifest's version in step with package.json.
  *
- * Changesets bumps package.json; the plugin manifest has to follow, or users
- * installing the plugin see a version that does not match the release notes.
+ * Releases here are hand-cut: bump the version in package.json, run this, add a
+ * CHANGELOG entry. Changesets was wired into package.json for a while and never
+ * initialised, which meant `npm run changeset` failed for anyone who tried it -
+ * a half-installed release process is worse than none, because it only breaks
+ * for the first outside contributor. Removed rather than finished: this repo
+ * publishes nothing to a package registry, and its whole toolchain otherwise
+ * runs on a fresh clone with no `npm install`.
+ *
+ * The version that matters to a user is the one in the plugin manifest, so
+ * `--check` runs as part of `npm run check` and drift fails the build.
  *
  * Usage:
  *   node scripts/sync-plugin-version.mjs           write the version across

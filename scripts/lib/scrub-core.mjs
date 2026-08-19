@@ -16,7 +16,13 @@ export const STRUCTURAL = [
   { id: "tenant-oms", re: /[a-z0-9-]+\.onmicrosoft\.com/gi, why: "Entra tenant domain" },
   { id: "guid", re: /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, why: "GUID: tenant, subscription, app or environment ID" },
   { id: "msft-email", re: /[a-z0-9._%+-]+@microsoft\.com/gi, why: "Microsoft corporate email address" },
-  { id: "secret-kv", re: /\b(client_?secret|api_?key|password|connection_?string|sas_?token)\b\s*[:=]\s*["']?[^\s"'<>{}]{8,}/gi, why: "credential-shaped assignment" },
+  // AccountKey / SharedAccessKey / primaryKey are the tokens that actually carry
+  // the secret inside an Azure connection string. A pasted Storage, Service Bus
+  // or Cosmos connection string contains none of the words above, so without
+  // these it sails straight through the gate - the single most likely secret to
+  // land in a Microsoft-ecosystem repo. `;` is excluded from the value class
+  // because connection strings are semicolon-delimited.
+  { id: "secret-kv", re: /\b(client_?secret|api_?key|password|connection_?string|sas_?token|account_?key|shared_?access_?key|primary_?key|secondary_?key|access_?key)\b\s*[:=]\s*["']?[^\s"'<>{};]{8,}/gi, why: "credential-shaped assignment" },
   { id: "bearer", re: /\bBearer\s+[A-Za-z0-9._-]{20,}/g, why: "bearer token" },
   { id: "pem", re: /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/g, why: "private key" },
   { id: "ms-internal", re: /Microsoft Internal|Microsoft Confidential/gi, why: "explicit Microsoft internal marking" },

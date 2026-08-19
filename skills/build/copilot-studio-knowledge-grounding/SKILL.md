@@ -1,6 +1,8 @@
 ---
 name: copilot-studio-knowledge-grounding
 description: Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently. Use when an agent fabricates details not in its knowledge sources, when citations link to irrelevant or non-existent pages, when the same question gets different answers in different sessions, or when curating knowledge sources before go-live.
+verified_on: 2026-08-18
+provenance: "Repeated go-live escalations where an agent was blamed for hallucinating and the knowledge sources turned out to be the cause."
 ---
 
 Hallucination is the most common complaint about Copilot Studio agents, and it

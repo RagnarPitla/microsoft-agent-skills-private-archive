@@ -31,8 +31,19 @@ const args = new Set(process.argv.slice(2));
 const requireDenylist = args.has("--require-denylist") || process.env.SCRUB_REQUIRE_DENYLIST === "true";
 
 function loadDenylist() {
-  const sources = [];
+  // Two layers, deliberately kept separate.
+  //
+  // The baseline is committed: every term in it is a *marking* that only ever
+  // appears on internal material, so writing it down discloses nothing. It is
+  // the only layer a fork pull request can have, since forks never receive
+  // repository secrets, and it is what stops that path from being structural-only.
+  const basePath = path.join(root, ".scrub-baseline-denylist.txt");
+  const baselineRules = existsSync(basePath) ? parseDenylist(readFileSync(basePath, "utf8")) : [];
 
+  // The private layer is the customer names and codenames. Naming them in the
+  // repository would itself be the disclosure, so it is gitignored locally and
+  // supplied as a secret in trusted CI.
+  const sources = [];
   const p = path.join(root, ".scrub-denylist.txt");
   if (existsSync(p)) sources.push(readFileSync(p, "utf8"));
 
@@ -40,8 +51,13 @@ function loadDenylist() {
   // straight from the environment and discarded when the process exits.
   if (process.env.SCRUB_DENYLIST) sources.push(process.env.SCRUB_DENYLIST);
 
+  const privateRules = sources.flatMap(parseDenylist);
+
   return {
-    rules: sources.flatMap(parseDenylist),
+    rules: [...baselineRules, ...privateRules],
+    baselineCount: baselineRules.length,
+    baselineFound: existsSync(basePath),
+    privateCount: privateRules.length,
     hasFile: existsSync(p),
     hasEnv: Boolean(process.env.SCRUB_DENYLIST),
   };
@@ -61,18 +77,35 @@ function filesToScan() {
 const BINARY = /\.(png|jpe?g|gif|webp|pdf|zip|mp4|mov|woff2?|ico|docx?|xlsx?|pptx?)$/i;
 
 function scan() {
-  const { rules: denylistRules, hasFile, hasEnv } = loadDenylist();
+  const { rules: denylistRules, hasFile, hasEnv, baselineCount, baselineFound, privateCount } = loadDenylist();
   const rules = [...STRUCTURAL, ...denylistRules];
   const findings = [];
   const images = [];
 
   for (const rel of filesToScan()) {
-    if (rel.startsWith(".scrub-denylist")) continue;
+    // A denylist file is a list of the very terms the scanner looks for, so
+    // scanning it always flags every entry. Matched on the `.scrub-` prefix
+    // rather than an exact name because the two denylists this repo carries
+    // are named `.scrub-denylist*` and `.scrub-baseline-denylist*`, and an
+    // exemption that covers only one of them turns the other into a permanent
+    // self-inflicted failure.
+    if (/^\.scrub-[a-z-]*denylist/.test(rel)) continue;
     // These deliberately contain pattern-shaped fixture strings (GUIDs, a fake
     // PEM header, "Microsoft Confidential", etc.) to prove the scanner catches
     // them. None of it is real: it exists to test scanFileText/STRUCTURAL, the
     // same way scrub.mjs and scrub-core.mjs already exclude their own source.
-    if (rel === "scripts/scrub.mjs" || rel === "scripts/lib/scrub-core.mjs" || rel === "tests/scrub-core.test.mjs") continue;
+    //
+    // Kept as an explicit file list rather than a `tests/` glob on purpose. A
+    // glob would exempt every future test file from the secret scan, and the
+    // point of this gate is that nothing gets a standing exemption by virtue of
+    // where it lives. Adding a path here should feel like a decision.
+    const SELF_EXEMPT = [
+      "scripts/scrub.mjs",
+      "scripts/lib/scrub-core.mjs",
+      "tests/scrub-core.test.mjs",
+      "tests/scrub.test.mjs",
+    ];
+    if (SELF_EXEMPT.includes(rel)) continue;
     const abs = path.join(root, rel);
     if (!existsSync(abs)) continue;
     if (BINARY.test(rel)) {
@@ -84,21 +117,46 @@ function scan() {
 
     findings.push(...scanFileText(rel, text, rules));
   }
-  return { findings, images, hasFile, hasEnv, denylistCount: denylistRules.length };
+  return { findings, images, hasFile, hasEnv, denylistCount: denylistRules.length, baselineCount, baselineFound, privateCount };
 }
 
-const { findings, images, hasFile, hasEnv, denylistCount } = scan();
-const denylistSupplied = hasFile || hasEnv;
+const { findings, images, hasFile, hasEnv, denylistCount, baselineCount, baselineFound, privateCount } = scan();
+
+// The committed baseline is the layer that survives into a fork pull request,
+// so it failing quietly would take the only real term coverage that path has
+// with it. Its own header promises this is enforced; this is that enforcement.
+if (!baselineCount) {
+  console.error(
+    baselineFound
+      ? "Scrub gate FAILED: .scrub-baseline-denylist.txt is present but empty (every line blank or commented out)."
+      : "Scrub gate FAILED: .scrub-baseline-denylist.txt is missing.",
+  );
+  console.error("It is committed on purpose and is the only denylist layer a fork pull request can use.");
+  process.exit(1);
+}
+
+// Presence of a file is not protection. A copied-but-unfilled .scrub-denylist.txt
+// (every line still commented out) used to count as "supplied", so the gate
+// reported a clean pass while checking no customer names at all -- identical
+// output to a run that genuinely enforced them, which is the one thing the
+// trusted path must never do. Supplied means it actually contributes terms.
+const denylistPresent = hasFile || hasEnv;
+const denylistSupplied = privateCount > 0;
 
 if (!denylistSupplied) {
+  const emptySource = denylistPresent
+    ? "A denylist was found, but it contains no usable terms (every line is blank or commented out)."
+    : "Neither .scrub-denylist.txt nor the SCRUB_DENYLIST environment variable was present.";
+
   if (requireDenylist) {
-    console.error("Scrub gate FAILED: --require-denylist was set, but no denylist was supplied.");
-    console.error("Neither .scrub-denylist.txt nor the SCRUB_DENYLIST environment variable was present.");
+    console.error("Scrub gate FAILED: --require-denylist was set, but no denylist terms were loaded.");
+    console.error(emptySource);
     console.error("This run is treated as trusted (main/schedule/release), where the denylist is mandatory.");
     process.exit(1);
   }
-  console.warn("WARNING: no denylist found (.scrub-denylist.txt or SCRUB_DENYLIST). Structural checks ran, but");
-  console.warn("customer names and internal codenames were NOT checked.");
+  console.warn(`WARNING: no customer/codename denylist terms loaded. ${emptySource}`);
+  console.warn(`The ${baselineCount} committed baseline term(s) still ran, but customer names and`);
+  console.warn("internal codenames were NOT checked.");
   console.warn("Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in, or set SCRUB_DENYLIST.\n");
 }
 
@@ -110,9 +168,12 @@ if (images.length) {
 }
 
 if (findings.length === 0) {
+  // Report the layers separately. "12 denylist terms" reads as full protection
+  // even when every one of them came from the committed baseline and no
+  // customer name was ever checked.
   const mode = denylistSupplied
-    ? `structural checks plus ${denylistCount} denylist term(s)`
-    : "structural checks only - no denylist supplied";
+    ? `structural checks plus ${baselineCount} baseline and ${privateCount} customer/codename term(s)`
+    : `structural checks plus ${baselineCount} baseline term(s) only - no customer/codename denylist supplied`;
   console.log(`Scrub gate passed (${mode}). Remember: automated checks cannot catch a paraphrased`);
   console.log("customer story. Re-read .agents/confidentiality.md before publishing.");
   process.exit(0);

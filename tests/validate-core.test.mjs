@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import {
   checkDescriptionIsTrigger,
   checkSkillIdentity,
+  checkSkillProvenance,
   checkSyncObligations,
   checkDocsPageSections,
   DOCS_SECTIONS,
@@ -270,4 +271,53 @@ test("checkRegistrySchema only requires url and reason for do_not_link entries",
     "    reason: Retired; no longer maintained.",
   ].join("\n");
   assert.deepEqual(checkRegistrySchema(text, BUCKETS), []);
+});
+
+// --------------------------------------------------------- skill provenance
+// Every SKILL.md carries verified_on and provenance. The fields were present
+// on all 15 skills but nothing read them, which is the failure mode the fields
+// exist to prevent: metadata that looks like accountability and enforces none.
+
+const NOW = new Date("2026-08-19T00:00:00Z");
+const GOOD_PROV = "Repeated go-live escalations where knowledge sources turned out to be the cause.";
+
+test("checkSkillProvenance accepts a sound front matter", () => {
+  assert.deepEqual(checkSkillProvenance({ verified_on: "2026-08-18", provenance: GOOD_PROV }, { now: NOW }), []);
+});
+
+test("checkSkillProvenance requires both fields", () => {
+  const problems = checkSkillProvenance({}, { now: NOW });
+  assert.equal(problems.length, 2);
+  assert.ok(problems.some((p) => p.includes("verified_on")));
+  assert.ok(problems.some((p) => p.includes("provenance")));
+});
+
+test("checkSkillProvenance rejects a future verified_on", () => {
+  const problems = checkSkillProvenance({ verified_on: "2027-01-01", provenance: GOOD_PROV }, { now: NOW });
+  assert.ok(problems.some((p) => p.includes("in the future")));
+});
+
+// JS rolls impossible dates over rather than rejecting them - new Date on
+// 2026-02-31 yields March 3, not NaN - so this needs a round-trip, not a
+// NaN check. The first version of this rule passed 2026-02-31.
+for (const bad of ["2026-02-31", "2026-13-01", "2026-00-10"]) {
+  test(`checkSkillProvenance rejects the impossible date ${bad}`, () => {
+    const problems = checkSkillProvenance({ verified_on: bad, provenance: GOOD_PROV }, { now: NOW });
+    assert.ok(problems.some((p) => p.includes("not a real date")), `${bad} was accepted`);
+  });
+}
+
+test("checkSkillProvenance accepts a valid leap day", () => {
+  const problems = checkSkillProvenance({ verified_on: "2024-02-29", provenance: GOOD_PROV }, { now: NOW });
+  assert.deepEqual(problems, []);
+});
+
+test("checkSkillProvenance rejects a malformed date format", () => {
+  const problems = checkSkillProvenance({ verified_on: "18/08/2026", provenance: GOOD_PROV }, { now: NOW });
+  assert.ok(problems.some((p) => p.includes("malformed")));
+});
+
+test("checkSkillProvenance rejects provenance too short to say anything", () => {
+  const problems = checkSkillProvenance({ verified_on: "2026-08-18", provenance: "internal" }, { now: NOW });
+  assert.ok(problems.some((p) => p.includes("too short")));
 });

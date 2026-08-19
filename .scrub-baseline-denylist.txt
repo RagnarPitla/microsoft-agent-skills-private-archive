@@ -1,0 +1,40 @@
+# Baseline scrub denylist. COMMITTED on purpose.
+#
+# Everything here is a *marking*, not a secret. Each term is a phrase that only
+# ever appears on material that was never meant to leave an internal system, so
+# writing it down here discloses nothing while still catching the paste that
+# brought it along.
+#
+# Customer names, project codenames and internal identifiers do NOT belong in
+# this file - naming them here would itself be the disclosure. Those live in
+# .scrub-denylist.txt, which is gitignored. See .scrub-denylist.example.txt.
+#
+# This file existing and being non-empty is enforced: scripts/scrub.mjs exits
+# non-zero without it, so the gate cannot silently degrade to a no-op in CI,
+# which is the one branch where the local list can never exist.
+#
+# One term per line, case-insensitive substring match.
+#
+# Deliberately absent: "under NDA". The phrase appears in the policy prose that
+# defines these rules, so listing it flags the rulebook rather than a leak - and
+# a gate whose first three hits are false positives is a gate people learn to
+# skip. "nda only" carries the same signal without the collision.
+
+microsoft internal
+microsoft confidential
+internal use only
+for internal use
+internal only
+do not distribute
+do not share externally
+not for external distribution
+confidential - internal
+company confidential
+nda only
+pre-announce
+pre-announcement
+unreleased roadmap
+internal roadmap
+roadmap - confidential
+draft - do not circulate
+sharepoint.com/sites/internal

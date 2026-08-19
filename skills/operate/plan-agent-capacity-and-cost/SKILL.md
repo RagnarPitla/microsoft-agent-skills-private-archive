@@ -1,6 +1,8 @@
 ---
 name: plan-agent-capacity-and-cost
 description: Work out whether an agent's message capacity, quota or spend is sized correctly, before a limit gets hit or a bill surprises someone. Use when a Copilot Studio agent is close to its message capacity or credit allocation, when Foundry model quota or token spend needs to be forecast for a launch, when a finance stakeholder asks what an agent costs and nobody can answer in real numbers, when pay-as-you-go and prepaid credits need to be reconciled, or when usage is growing and nobody has planned for what happens at ten times the current volume.
+verified_on: 2026-08-19
+provenance: "Microsoft's Copilot Studio capacity and Foundry quota and cost documentation, framed around launches sized on optimism rather than measured volume."
 ---
 
 Capacity and cost problems are almost always predictable in hindsight and
@@ -88,7 +90,7 @@ Verified as resolving on 2026-08-19.
 Review by 2026-11-17.
 
 - Manage Copilot Studio credits and capacity:
-  https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-messages-capacity
+  https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-copilot-credits-capacity
 - Microsoft Copilot Studio billing rates and management:
   https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management
 - Microsoft Foundry Models quotas and limits:

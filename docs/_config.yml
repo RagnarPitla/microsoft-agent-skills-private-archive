@@ -1,0 +1,12 @@
+# Jekyll needs a theme to render Markdown into something readable; without one
+# the published pages arrive as unstyled HTML. Nothing else here is
+# configuration the pages depend on - the Markdown in this folder is the source
+# of truth and stays readable in the repository tree without any of this.
+title: Microsoft Agent Skills
+description: Skills for building, connecting, reviewing, operating and delivering agents on Microsoft surfaces.
+theme: jekyll-theme-primer
+
+# README.md becomes the site index. Machine-readable files are excluded so the
+# published site is prose only.
+exclude:
+  - "*.json"

@@ -2,6 +2,8 @@
 name: discovery
 description: A structured interview that pins down what you are actually building before you build it.
 disable-model-invocation: true
+verified_on: 2026-08-18
+provenance: "Engagements that started building before anyone had pinned down what was being built."
 ---
 
 Invoke the `structured-interview` skill.

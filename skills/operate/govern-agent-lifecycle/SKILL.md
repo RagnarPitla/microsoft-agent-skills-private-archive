@@ -1,6 +1,8 @@
 ---
 name: govern-agent-lifecycle
 description: Decide whether an agent, flow or environment should still exist, who owns it, and whether it is governed the way production requires. Use when nobody can say who owns an agent that is quietly running in production, when a Center of Excellence inventory has gone stale or was never set up, when an agent was built in a personal or default environment and needs to move before it becomes someone's problem, when DLP policies do not match what an agent actually needs to reach, or when a departing team leaves agents behind with no named owner.
+verified_on: 2026-08-19
+provenance: "Microsoft's Power Platform governance, CoE and environment-strategy documentation, read against the recurring pattern of agents outliving the people who built them."
 ---
 
 Most agent sprawl is not malicious, it is just uncounted. Someone built something

@@ -1,6 +1,8 @@
 ---
 name: migrate-agent-to-skills
 description: Move an existing agent - a prompt-stuffed assistant, a legacy chatbot, a pile of custom instructions, a hand-rolled Python agent - onto a portable skills-based harness without carrying its rot forward. Use when a system prompt has grown past what anyone can review, when someone wants to break a monolithic agent into skills, when moving off Power Virtual Agents or a bespoke framework, when the same behaviour has to run in GitHub Copilot, Claude Code, Cursor and Codex, or when a migration has produced skill files that nothing ever reaches for.
+verified_on: 2026-08-18
+provenance: "Migrations off prompt-stuffed assistants and legacy chatbots, including the ones that shipped the same rot in a new file layout."
 ---
 
 The migration everyone tries first is to paste the system prompt into a

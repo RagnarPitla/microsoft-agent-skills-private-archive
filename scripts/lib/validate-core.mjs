@@ -62,6 +62,49 @@ export function checkSkillIdentity({ name, dirName }) {
   return problems;
 }
 
+// -------------------------------------------------------------- skill freshness
+
+/**
+ * Every SKILL.md carries `verified_on` and `provenance` so its accuracy is
+ * checkable rather than asserted. Unenforced metadata rots silently: the field
+ * stays present, the date stops meaning anything, and a reader trusts a
+ * verification that never happened.
+ *
+ * @param {object} frontMatter - parsed front matter
+ * @param {object} [ctx]
+ * @param {Date} [ctx.now] - injectable for tests
+ * @returns {string[]} problems, empty when the front matter is sound
+ */
+export function checkSkillProvenance(frontMatter = {}, { now = new Date() } = {}) {
+  const problems = [];
+
+  const verified = frontMatter.verified_on;
+  if (verified === undefined || verified === "") {
+    problems.push("missing `verified_on: YYYY-MM-DD`. A skill with no date cannot be re-verified.");
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(verified).trim())) {
+    problems.push(`malformed \`verified_on\`: expected YYYY-MM-DD, got "${verified}".`);
+  } else {
+    const raw = String(verified).trim();
+    const when = new Date(`${raw}T00:00:00Z`);
+    // JS rolls impossible dates over rather than rejecting them: 2026-02-31
+    // silently becomes 2026-03-03. Round-tripping is what catches that.
+    if (Number.isNaN(when.getTime()) || when.toISOString().slice(0, 10) !== raw) {
+      problems.push(`\`verified_on: ${verified}\` is not a real date.`);
+    } else if (when.getTime() > now.getTime() + 86400000) {
+      problems.push(`\`verified_on: ${verified}\` is in the future. A date you have not reached is not a verification.`);
+    }
+  }
+
+  const prov = frontMatter.provenance;
+  if (prov === undefined || String(prov).trim() === "") {
+    problems.push("missing `provenance`. State in one line where the knowledge came from.");
+  } else if (String(prov).trim().length < 20) {
+    problems.push(`\`provenance\` is too short to say anything: "${prov}". One line on where the knowledge came from.`);
+  }
+
+  return problems;
+}
+
 // ------------------------------------------------------------ sync obligations
 
 /**
@@ -76,8 +119,9 @@ export function checkSkillIdentity({ name, dirName }) {
  * @param {string[]|null} ctx.pluginSkillPaths - the `skills` array from plugin.json, or null if missing
  * @param {string|null} ctx.bucketReadme - contents of skills/<bucket>/README.md, or null if missing
  * @param {boolean} ctx.docsPageExists - whether docs/<bucket>/<name>.md exists
+ * @param {string|null} ctx.docsIndex - contents of docs/README.md, or null if missing
  */
-export function checkSyncObligations(skill, { rootReadme, pluginSkillPaths, bucketReadme, docsPageExists }) {
+export function checkSyncObligations(skill, { rootReadme, pluginSkillPaths, bucketReadme, docsPageExists, docsIndex }) {
   const problems = [];
   const skillLink = `skills/${skill.bucket}/${skill.dirName}/SKILL.md`;
   const docsRel = `docs/${skill.bucket}/${skill.name}.md`;
@@ -101,6 +145,12 @@ export function checkSyncObligations(skill, { rootReadme, pluginSkillPaths, buck
     } else if (!bucketReadme.includes(skillLink) && !bucketReadme.includes(`./${skill.dirName}/SKILL.md`)) {
       problems.push(`not listed in ${bucketReadmeRel}.`);
     }
+    // docs/README.md is the published site's index page (see .github/workflows/
+    // pages.yml), so a skill missing from it is invisible to every reader who
+    // arrives at the site rather than the repository tree.
+    if (docsIndex != null && !docsIndex.includes(`${skill.bucket}/${skill.name}.md`)) {
+      problems.push(`promoted but not listed in docs/README.md, the published docs index.`);
+    }
   } else {
     if (rootReadme != null && rootReadme.includes(skillLink)) {
       problems.push(`in non-promoted bucket "${skill.bucket}" but linked from README.md.`);
@@ -110,6 +160,9 @@ export function checkSyncObligations(skill, { rootReadme, pluginSkillPaths, buck
     }
     if (docsPageExists) {
       problems.push(`in non-promoted bucket "${skill.bucket}" but has a docs page at ${docsRel}.`);
+    }
+    if (docsIndex != null && docsIndex.includes(`${skill.bucket}/${skill.name}.md`)) {
+      problems.push(`in non-promoted bucket "${skill.bucket}" but listed in docs/README.md.`);
     }
   }
 

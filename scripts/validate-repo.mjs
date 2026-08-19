@@ -22,6 +22,7 @@ import { ROOT, loadSkills, PROMOTED, UNPROMOTED, ALL_BUCKETS } from "./lib/skill
 import {
   checkDescriptionIsTrigger,
   checkSkillIdentity,
+  checkSkillProvenance,
   checkSyncObligations,
   checkDocsPageSections,
   checkBucketReadmeGroups,
@@ -59,6 +60,9 @@ for (const s of skills) {
     }
   }
   for (const p of checkSkillIdentity({ name: s.name, dirName: s.dirName })) {
+    err(`${s.skillMdRel}: ${p}`);
+  }
+  for (const p of checkSkillProvenance(s.frontMatter)) {
     err(`${s.skillMdRel}: ${p}`);
   }
 
@@ -114,16 +118,21 @@ if (pluginRaw === null) {
   }
 }
 
+// docs/README.md is what GitHub Pages publishes as the site index, so it is a
+// public surface, not an internal convenience file.
+const docsIndex = read("docs/README.md");
+if (docsIndex == null) err("Missing docs/README.md - it is the index GitHub Pages publishes.");
+
 for (const s of skills) {
   const docsRel = `docs/${s.bucket}/${s.name}.md`;
-  const bucketReadmeRel = `skills/${s.bucket}/README.md`;
-  const bucketReadme = read(bucketReadmeRel);
+  const bucketReadme = read(`skills/${s.bucket}/README.md`);
 
   const problems = checkSyncObligations(s, {
     rootReadme,
     pluginSkillPaths: pluginSkills,
     bucketReadme,
     docsPageExists: existsSync(path.join(ROOT, docsRel)),
+    docsIndex,
   });
   problems.forEach((p) => err(`${s.name}: ${p}`));
 }

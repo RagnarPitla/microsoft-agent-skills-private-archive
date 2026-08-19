@@ -41,6 +41,32 @@ test("STRUCTURAL flags a credential-shaped assignment", () => {
   assert.ok(findings.some((f) => f.rule === "secret-kv"));
 });
 
+// Regression: the rule originally matched only client_secret/api_key/password/
+// connection_string/sas_token. A real Azure connection string contains none of
+// those words - the secret sits in AccountKey= or SharedAccessKey= - so pasted
+// Storage, Service Bus and Cosmos strings passed the gate with exit 0. That is
+// the most likely secret to reach a Microsoft-ecosystem repo.
+for (const [label, text] of [
+  ["Azure Storage", "DefaultEndpointsProtocol=https;AccountName=stg01;AccountKey=Zm9vYmFyYmF6cXV4MTIzNDU2Nzg5MGFiY2Rl;EndpointSuffix=core.windows.net"],
+  ["Service Bus", "Endpoint=sb://bus.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=aB3dEfGhIjKlMnOpQrStUvWxYz0123456789"],
+  ["Cosmos DB", "AccountEndpoint=https://c.documents.azure.com:443/;AccountKey=q1W2e3R4t5Y6u7I8o9P0aSdFgHjKlZxCvBnM;"],
+]) {
+  test(`STRUCTURAL flags the secret inside a pasted ${label} connection string`, () => {
+    const findings = scanFileText("doc.md", text, STRUCTURAL);
+    assert.ok(findings.some((f) => f.rule === "secret-kv"), `${label} connection string was not flagged`);
+  });
+}
+
+test("a connection-string key set to a placeholder is still allowed", () => {
+  assert.equal(scanFileText("doc.md", "AccountKey=<your-account-key>", STRUCTURAL).length, 0);
+  assert.equal(scanFileText("doc.md", "AccountKey=contoso", STRUCTURAL).length, 0);
+});
+
+test("prose about account keys is not flagged", () => {
+  const findings = scanFileText("doc.md", "Set the account key in Key Vault rather than in source.", STRUCTURAL);
+  assert.equal(findings.length, 0);
+});
+
 test("STRUCTURAL flags a bearer token", () => {
   // Built at runtime from repeated characters, deliberately not a literal
   // secret-shaped string in source: a fake token exercising the regex shape.

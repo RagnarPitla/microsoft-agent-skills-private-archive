@@ -11,7 +11,7 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/build-harnesses.mjs",
-    "check": "node scripts/scrub.mjs && node scripts/build-harnesses.mjs --check && node scripts/validate-repo.mjs && node scripts/check-freshness.mjs",
+    "check": "node scripts/scrub.mjs && node scripts/build-harnesses.mjs --check && node scripts/validate-repo.mjs && node scripts/check-freshness.mjs && node scripts/sync-plugin-version.mjs --check",
     "validate": "node scripts/validate-repo.mjs",
     "refresh:stars": "node scripts/refresh-stars.mjs",
     "check:stars": "node scripts/refresh-stars.mjs --check",
@@ -19,6 +19,7 @@
     "quality-report": "node scripts/quality-report.mjs",
     "changeset": "changeset",
     "version": "changeset version && node scripts/sync-plugin-version.mjs",
+    "sync-plugin-version": "node scripts/sync-plugin-version.mjs",
     "check-plugin-version": "node scripts/sync-plugin-version.mjs --check",
     "scrub": "node scripts/scrub.mjs",
     "scrub:all": "node scripts/scrub.mjs --all",

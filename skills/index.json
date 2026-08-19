@@ -10,7 +10,9 @@
       "invocation": "user",
       "promoted": true,
       "path": "skills/deliver/ask-ragnar/SKILL.md",
-      "docs": "docs/deliver/ask-ragnar.md"
+      "docs": "docs/deliver/ask-ragnar.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Watching people install a skill collection and then ask which one to use, which is the question the collection itself should answer."
     },
     {
       "name": "choose-agent-platform",
@@ -19,7 +21,9 @@
       "invocation": "user",
       "promoted": true,
       "path": "skills/deliver/choose-agent-platform/SKILL.md",
-      "docs": "docs/deliver/choose-agent-platform.md"
+      "docs": "docs/deliver/choose-agent-platform.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Platform decisions argued from feature lists, and the six-month regrets that followed when the constraint was never written down."
     },
     {
       "name": "copilot-studio-auth-patterns",
@@ -28,7 +32,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/connect/copilot-studio-auth-patterns/SKILL.md",
-      "docs": "docs/connect/copilot-studio-auth-patterns.md"
+      "docs": "docs/connect/copilot-studio-auth-patterns.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Authentication choices made early in a build that only revealed what they had foreclosed at channel publish or first downstream call."
     },
     {
       "name": "copilot-studio-knowledge-grounding",
@@ -37,7 +43,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/build/copilot-studio-knowledge-grounding/SKILL.md",
-      "docs": "docs/build/copilot-studio-knowledge-grounding.md"
+      "docs": "docs/build/copilot-studio-knowledge-grounding.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Repeated go-live escalations where an agent was blamed for hallucinating and the knowledge sources turned out to be the cause."
     },
     {
       "name": "copilot-studio-production-patterns",
@@ -46,7 +54,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/build/copilot-studio-production-patterns/SKILL.md",
-      "docs": "docs/build/copilot-studio-production-patterns.md"
+      "docs": "docs/build/copilot-studio-production-patterns.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Agents that passed a demo and then failed against real tenant latency, real volumes and real users."
     },
     {
       "name": "discovery",
@@ -55,7 +65,9 @@
       "invocation": "user",
       "promoted": true,
       "path": "skills/deliver/discovery/SKILL.md",
-      "docs": "docs/deliver/discovery.md"
+      "docs": "docs/deliver/discovery.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Engagements that started building before anyone had pinned down what was being built."
     },
     {
       "name": "evaluate-agent-quality",
@@ -64,7 +76,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/review/evaluate-agent-quality/SKILL.md",
-      "docs": "docs/review/evaluate-agent-quality.md"
+      "docs": "docs/review/evaluate-agent-quality.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Agents with no answer to whether they were any good, or still good, beyond ad hoc chats - and the eval sets built to replace that."
     },
     {
       "name": "explain-concept",
@@ -73,7 +87,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/learn/explain-concept/SKILL.md",
-      "docs": "docs/learn/explain-concept.md"
+      "docs": "docs/learn/explain-concept.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Explanations that answered the question asked rather than the misunderstanding underneath it, and had to be given twice."
     },
     {
       "name": "govern-agent-lifecycle",
@@ -82,7 +98,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/operate/govern-agent-lifecycle/SKILL.md",
-      "docs": "docs/operate/govern-agent-lifecycle.md"
+      "docs": "docs/operate/govern-agent-lifecycle.md",
+      "verified_on": "2026-08-19",
+      "provenance": "Microsoft's Power Platform governance, CoE and environment-strategy documentation, read against the recurring pattern of agents outliving the people who built them."
     },
     {
       "name": "ground-agents-in-work-context",
@@ -91,7 +109,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/connect/ground-agents-in-work-context/SKILL.md",
-      "docs": "docs/connect/ground-agents-in-work-context.md"
+      "docs": "docs/connect/ground-agents-in-work-context.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Grounding conversations that opened with a named product and had to be walked back to what context was actually missing."
     },
     {
       "name": "migrate-agent-to-skills",
@@ -100,7 +120,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/build/migrate-agent-to-skills/SKILL.md",
-      "docs": "docs/build/migrate-agent-to-skills.md"
+      "docs": "docs/build/migrate-agent-to-skills.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Migrations off prompt-stuffed assistants and legacy chatbots, including the ones that shipped the same rot in a new file layout."
     },
     {
       "name": "monitor-agent-telemetry",
@@ -109,7 +131,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/operate/monitor-agent-telemetry/SKILL.md",
-      "docs": "docs/operate/monitor-agent-telemetry.md"
+      "docs": "docs/operate/monitor-agent-telemetry.md",
+      "verified_on": "2026-08-19",
+      "provenance": "Microsoft's Copilot Studio analytics and Foundry observability documentation, framed around agents that were live for months before anyone could say whether they worked."
     },
     {
       "name": "plan-agent-capacity-and-cost",
@@ -118,7 +142,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/operate/plan-agent-capacity-and-cost/SKILL.md",
-      "docs": "docs/operate/plan-agent-capacity-and-cost.md"
+      "docs": "docs/operate/plan-agent-capacity-and-cost.md",
+      "verified_on": "2026-08-19",
+      "provenance": "Microsoft's Copilot Studio capacity and Foundry quota and cost documentation, framed around launches sized on optimism rather than measured volume."
     },
     {
       "name": "power-platform-alm-connection-refs",
@@ -127,7 +153,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/operate/power-platform-alm-connection-refs/SKILL.md",
-      "docs": "docs/operate/power-platform-alm-connection-refs.md"
+      "docs": "docs/operate/power-platform-alm-connection-refs.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Solution imports that failed on connection references, environment variables and flow ownership, across many environment promotions."
     },
     {
       "name": "respond-to-agent-incidents",
@@ -136,7 +164,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/operate/respond-to-agent-incidents/SKILL.md",
-      "docs": "docs/operate/respond-to-agent-incidents.md"
+      "docs": "docs/operate/respond-to-agent-incidents.md",
+      "verified_on": "2026-08-19",
+      "provenance": "Microsoft's Power Platform service health, admin notification and ALM documentation, framed around outages where nobody could tell a platform incident from their own change."
     },
     {
       "name": "review-copilot-studio-agent",
@@ -145,7 +175,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/review/review-copilot-studio-agent/SKILL.md",
-      "docs": "docs/review/review-copilot-studio-agent.md"
+      "docs": "docs/review/review-copilot-studio-agent.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Reading agent YAML before release, and the defects that were consistently found there rather than in testing."
     },
     {
       "name": "structured-interview",
@@ -154,7 +186,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/deliver/structured-interview/SKILL.md",
-      "docs": "docs/deliver/structured-interview.md"
+      "docs": "docs/deliver/structured-interview.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Interviews that ended politely with open branches nobody had named, and the discipline that stopped that happening."
     },
     {
       "name": "what-should-i-build",
@@ -163,7 +197,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/deliver/what-should-i-build/SKILL.md",
-      "docs": "docs/deliver/what-should-i-build.md"
+      "docs": "docs/deliver/what-should-i-build.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Requests for an agent that turned out to need governance of existing agents, or nothing built at all."
     },
     {
       "name": "write-a-skill",
@@ -172,7 +208,9 @@
       "invocation": "model",
       "promoted": true,
       "path": "skills/build/write-a-skill/SKILL.md",
-      "docs": "docs/build/write-a-skill.md"
+      "docs": "docs/build/write-a-skill.md",
+      "verified_on": "2026-08-18",
+      "provenance": "Reviewing skills that were installed, correct, and never once reached for, plus the description rewrites that fixed them."
     }
   ]
 }
