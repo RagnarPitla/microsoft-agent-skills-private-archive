@@ -27,6 +27,31 @@ writing those terms into a committed file would itself be the disclosure. The
 committed `.scrub-baseline-denylist.txt` holds only internal-only *markings*,
 which are safe to publish, and exists so the gate still checks something in CI.
 
+Copying the example file is not enough. One left with every line still commented
+out contributes no terms, and the gate now says so instead of reporting a clean
+pass - which is what it used to do, and the reason this paragraph exists.
+
+## Maintainer setup, once
+
+Two things live outside the repository and cannot be set by a pull request. Until
+they are done, the relevant workflow fails on purpose rather than skipping
+quietly.
+
+1. **`SCRUB_DENYLIST` repository secret.** Settings > Secrets and variables >
+   Actions > New repository secret, one term per line - the same customer names
+   and codenames as your local `.scrub-denylist.txt`. Trusted runs (a push to
+   `main`, the weekly schedule) require it, because a trusted run that silently
+   skipped the customer/codename layer would look identical to one that enforced
+   it. A match is reported as `[redacted denylist match]`; the term is never
+   written to a log. Fork and Dependabot pull requests cannot read it - those
+   read from a different secret store - so they run the committed baseline
+   instead, and the full denylist is enforced again when the change reaches
+   `main`.
+
+2. **GitHub Pages.** Settings > Pages > Source: "GitHub Actions", which the
+   `pages` workflow needs before it can publish `docs/`. On a private repository
+   this requires a paid plan; on a public one it is free.
+
 ## The one structural decision
 
 Buckets are named for **what the user is doing**, never for the Microsoft product
