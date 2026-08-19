@@ -56,6 +56,12 @@ for (const s of skills) {
     }
   } else if (s.allowImplicit === "false") {
     err(`${s.relDir}: agents/openai.yaml disables implicit invocation, but SKILL.md does not set disable-model-invocation: true.`);
+  } else if (s.allowImplicit !== "true") {
+    // Silence is not a declaration. A missing policy block leaves the decision
+    // to whatever each harness defaults to, and makes a diff unreadable - the
+    // reviewer cannot tell a deliberate model-invoked skill from an unfinished
+    // one. See .agents/invocation.md.
+    err(`${s.relDir}: model-invoked skills must state policy.allow_implicit_invocation: true in agents/openai.yaml.`);
   }
 
   // Composition rule: nothing may invoke a user-invoked skill.
@@ -267,6 +273,24 @@ for (const s of skills) {
   }
 }
 
+// The READMEs and the contributor guides are read more than anything else here
+// -- the root README is the repo's front door and the first thing a visitor
+// judges. A rotted link there is the most expensive kind, so they get checked
+// too, rather than being trusted because they are prose.
+harvest(rootReadme ?? "", "README.md");
+for (const bucket of ALL_BUCKETS) {
+  const rel = `skills/${bucket}/README.md`;
+  harvest(read(rel) ?? "", rel);
+}
+for (const rel of ["AGENTS.md", "CONTRIBUTING.md"]) {
+  harvest(read(rel) ?? "", rel);
+}
+// Glob rather than list: a new guide added to .agents/ should be link-checked
+// without anyone remembering to add it here.
+for (const f of existsSync(path.join(ROOT, ".agents")) ? readdirSync(path.join(ROOT, ".agents")) : []) {
+  if (f.endsWith(".md")) harvest(read(`.agents/${f}`) ?? "", `.agents/${f}`);
+}
+
 // ------------------------------------------------------------- bucket coverage
 for (const bucket of ALL_BUCKETS) {
   const dir = path.join(ROOT, "skills", bucket);
@@ -312,8 +336,23 @@ for (const bucket of ALL_BUCKETS) {
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
 
+// Codes that mean "you are a robot", not "this page is gone". LinkedIn answers
+// 999 to everything automated; microsoft.com and blogs.microsoft.com answer 403
+// while serving fine in a browser. Reporting these as dead links is how a link
+// checker gets ignored, and an ignored checker is worse than none - so they are
+// reported separately and never fail the run.
+const BOT_BLOCKED = new Set([401, 403, 405, 406, 999]);
+
+// This repository's own canonical URL. While the repo is private, GitHub answers
+// 404 to the anonymous request this checker makes - which is indistinguishable
+// from a typo unless we say so. It resolves itself the moment the repo goes
+// public, so it is reported as unverified rather than failing every run until
+// then. Any *other* github.com 404 is still a hard failure.
+const SELF = "https://github.com/RagnarPitla/microsoft-agent-skills";
+
 async function verifyLinks() {
   const bad = [];
+  const blocked = [];
   const queue = [...urls.keys()];
 
   const probe = async (u) => {
@@ -334,6 +373,11 @@ async function verifyLinks() {
         });
         if (get.ok) return null;
 
+        if (BOT_BLOCKED.has(get.status)) return { blocked: `HTTP ${get.status}` };
+        if (get.status === 404 && (u === SELF || u.startsWith(`${SELF}/`))) {
+          return { blocked: "HTTP 404 - this repo is still private; resolves on publish" };
+        }
+
         last = `HTTP ${get.status}`;
         // A rate-limited or flaky host is not a broken link. Back off and retry.
         // 502 in particular shows up on healthy Microsoft community pages often
@@ -350,17 +394,30 @@ async function verifyLinks() {
   const worker = async () => {
     for (let u = queue.pop(); u !== undefined; u = queue.pop()) {
       const fail = await probe(u);
-      if (fail) bad.push(`${u} -> ${fail}\n      cited in: ${[...urls.get(u)].join(", ")}`);
+      if (fail && typeof fail === "object") {
+        blocked.push(`${u} -> ${fail.blocked}`);
+      } else if (fail) {
+        bad.push(`${u} -> ${fail}\n      cited in: ${[...urls.get(u)].join(", ")}`);
+      }
     }
   };
   await Promise.all(Array.from({ length: 6 }, worker));
-  return bad;
+  return { bad, blocked };
 }
 
 if (checkLinks && urls.size) {
-  const bad = await verifyLinks();
+  const { bad, blocked } = await verifyLinks();
   bad.forEach((b) => err(`Dead link: ${b}`));
   console.log(`Link-checked ${urls.size} URL(s) across registries, skills and docs.`);
+  if (blocked.length) {
+    console.log(
+      `\n${blocked.length} URL(s) refused an automated request and could not be verified ` +
+        `from here. These are almost always live in a browser - check by hand before ` +
+        `treating any of them as broken:\n`,
+    );
+    blocked.forEach((b) => console.log(`  ${b}`));
+    console.log("");
+  }
 }
 
 // ---------------------------------------------------------------------- report

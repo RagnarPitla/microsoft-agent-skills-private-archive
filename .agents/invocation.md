@@ -28,7 +28,7 @@ policy:
   allow_implicit_invocation: false
 ```
 
-Model-invoked skills omit `disable-model-invocation` entirely, and omit the `policy` block:
+Model-invoked skills omit `disable-model-invocation` entirely, and state the permission explicitly:
 
 ```yaml
 ---
@@ -36,6 +36,19 @@ name: structured-interview
 description: Interview the user about a plan, decision or design until every branch is resolved. Use when a request is ambiguous, when scope is unclear, or before writing a spec.
 ---
 ```
+
+```yaml
+interface:
+  display_name: Structured interview
+  short_description: Interview the user about a plan, decision or design until every branch is resolved.
+policy:
+  allow_implicit_invocation: true
+```
+
+Write the `policy` block on both kinds rather than relying on the default. The two files are
+read by different tools, and a reviewer diffing them should be able to see the invocation
+decision in each without knowing what a missing block means. `npm run validate` enforces that
+the two files agree.
 
 ## Writing the description
 

@@ -31,13 +31,17 @@ Keep user-invoked skills thin. Reusable behaviour belongs in a model-invoked pri
 
 This repo is **harness-agnostic by construction**. Most of our users hold a GitHub Copilot licence, not a Claude subscription, so GitHub Copilot is the primary target and Claude Code, Codex and Cursor are peers, not afterthoughts.
 
-`SKILL.md` is the single source of truth. Never hand-edit a file under `.github/prompts/`, `.github/chatmodes/`, `.github/instructions/`, `agents/openai.yaml` or `.cursor/rules/` — they are generated. Run `npm run build` to regenerate every harness artifact from source, and `npm run check` to fail the build when they are stale. CI enforces this.
+`SKILL.md` is the single source of truth. Never hand-edit a file under `.github/prompts/`, `.github/chatmodes/`, `.github/instructions/`, `agents/openai.yaml`, `.cursor/rules/` or `skills/index.json` — they are generated. Run `npm run build` to regenerate every harness artifact from source, and `npm run check` to fail the build when they are stale. CI enforces this.
+
+`skills/index.json` is the escape hatch for harnesses we do not emit for. It lists every skill with its trigger description, invocation model and paths, so a tool we have never heard of can discover the collection by reading one JSON file. Nothing in this repo consumes it; that is the point.
 
 Because a skill body is rendered into harnesses that do not share Claude's tooling, write skill bodies in plain Markdown with no harness-specific assumptions. Refer to capabilities generically ("search the repo", "run the tests"), not by a specific tool name.
 
 ## The registry
 
 `registry/` holds the machine-readable catalogues that make this repo a one-stop shop: `microsoft-ecosystem.yaml` (official Microsoft and community repos we link to rather than duplicate) and `connectors.yaml` (how to connect an agent to a given system). Being an honest index matters as much as the skills: when Microsoft already solves something well, route to them and say so. A registry entry that 404s costs more trust than a missing skill, so `npm run validate -- --links` checks them - along with every URL cited in a skill body or docs page, since a skill that sends a reader to a 404 is worse than one that stays silent.
+
+Star counts and archive flags are the one thing here that goes stale without anybody editing a file, so they are not hand-maintained: `npm run refresh:stars` pulls them live from the GitHub API and stamps `verified_on`. `npm run check:stars` is the read-only form CI runs weekly. It tolerates ordinary star drift — a red build every morning teaches people to ignore red builds — and fails only on the things that make the index wrong: a repo renamed, archived, deleted, or drifted far enough that citing the old number would misrepresent it.
 
 ## Docs
 

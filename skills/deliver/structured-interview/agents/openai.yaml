@@ -1,3 +1,5 @@
 interface:
   display_name: Structured interview
   short_description: Interview the user until every open branch of a plan or design is resolved.
+policy:
+  allow_implicit_invocation: true

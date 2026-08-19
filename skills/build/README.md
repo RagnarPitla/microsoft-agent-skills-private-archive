@@ -10,3 +10,4 @@ Reachable by you, or reached for automatically when the task fits.
 
 - [copilot-studio-knowledge-grounding](./copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
+- [write-a-skill](./write-a-skill/SKILL.md) - write or repair an agent skill so it fires when it should and stays quiet when it should not.

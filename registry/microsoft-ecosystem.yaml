@@ -27,7 +27,7 @@ repositories:
     provenance: official-microsoft
     description: Course-style introduction to building AI agents, with runnable lessons.
     covers: [learn]
-    stars: 72562
+    stars: 72579
     verdict: route
     why: The best onboarding path that exists. Send newcomers here rather than writing an intro skill.
 
@@ -36,7 +36,7 @@ repositories:
     provenance: official-microsoft
     description: Multi-agent conversation framework for Python and .NET.
     covers: [build]
-    stars: 60500
+    stars: 60502
     verdict: route
     why: Dominant multi-agent framework with its own deep documentation.
 
@@ -45,7 +45,7 @@ repositories:
     provenance: official-microsoft
     description: Enterprise agent SDK for .NET, Python and Java, with planners and connectors.
     covers: [build, connect]
-    stars: 28462
+    stars: 28463
     verdict: route
 
   - name: microsoft/agent-framework
@@ -53,7 +53,7 @@ repositories:
     provenance: official-microsoft
     description: Orchestration framework consolidating patterns from Semantic Kernel and AutoGen.
     covers: [build]
-    stars: 12876
+    stars: 12883
     verdict: route
     why: Moving quickly. Confirm the current guidance before writing anything durable against it.
 
@@ -62,7 +62,7 @@ repositories:
     provenance: official-microsoft
     description: MCP server exposing browser automation to an agent.
     covers: [connect]
-    stars: 36251
+    stars: 36259
     verdict: route
 
   - name: microsoft/azure-devops-mcp
@@ -86,7 +86,7 @@ repositories:
     provenance: official-microsoft
     description: Microsoft's own skills-as-code collection.
     covers: [build, operate]
-    stars: 2918
+    stars: 2919
     verdict: route
     why: Our nearest neighbour. We are the Dynamics 365 and Copilot Studio vertical it does not cover.
 
@@ -121,7 +121,7 @@ repositories:
     provenance: official-microsoft
     description: Research on optimising skill definitions for agent performance.
     covers: [learn, operate]
-    stars: 16128
+    stars: 16132
     verdict: route
     why: Its best_skill.md pattern is directly relevant to how skills here are written.
 
@@ -141,7 +141,7 @@ repositories:
     provenance: community
     description: The reference implementation of agent skills, from the people who defined the format.
     covers: [build, learn]
-    stars: 170293
+    stars: 170306
     verdict: route
     why: Read this first for what a skill is. It sets the format; nothing here should contradict it.
 
@@ -150,7 +150,7 @@ repositories:
     provenance: community
     description: A skills framework and software development methodology, unusually opinionated about process.
     covers: [build, deliver]
-    stars: 273693
+    stars: 273721
     verdict: route
     why: The strongest argument that skills encode methodology rather than reference material. Borrow the stance, not the content.
 
@@ -159,7 +159,7 @@ repositories:
     provenance: community
     description: Engineering skills with a strict bucket taxonomy, invocation model and validated sync obligations.
     covers: [build, review, operate]
-    stars: 221521
+    stars: 221593
     verdict: route
     why: The structural model this repo is built on - buckets, user versus model invocation, and a validator that enforces the contract.
 
@@ -168,7 +168,7 @@ repositories:
     provenance: microsoft-adjacent
     description: Community-contributed instructions, agents, skills and configurations for GitHub Copilot.
     covers: [build]
-    stars: 37988
+    stars: 37990
     verdict: wrap
     why: Large and genuinely useful, but a catalogue rather than a curriculum. Closest thing to a competitor for Microsoft-flavoured content; check here before building.
 
@@ -177,7 +177,7 @@ repositories:
     provenance: community
     description: Curated index of tooling, workflows and resources across the agentic coding ecosystem.
     covers: [learn]
-    stars: 52579
+    stars: 52584
     verdict: route
     why: Use as a discovery surface before building anything - it is the fastest way to find out something already exists.
 
@@ -186,7 +186,7 @@ repositories:
     provenance: community
     description: The largest community index of MCP servers.
     covers: [connect]
-    stars: 92539
+    stars: 92543
     verdict: route
     why: Check here before writing an MCP server. Also the clearest evidence of the Dataverse and Dynamics gap, which nothing in it fills.
 
@@ -204,7 +204,7 @@ repositories:
     provenance: community
     description: Over a hundred specialised subagent definitions covering a wide range of roles.
     covers: [build]
-    stars: 24445
+    stars: 24447
     verdict: rebuild
     why: Illustrates the persona trap. Most entries define a role rather than a discipline, which is the failure mode this repo exists to avoid.
 

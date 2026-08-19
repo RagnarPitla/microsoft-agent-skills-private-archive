@@ -80,3 +80,11 @@ skills:
       short_description: "Interview the user until every open branch of a plan or design is resolved."
     policy:
       allow_implicit_invocation: true
+  - name: write-a-skill
+    bucket: build
+    path: skills/build/write-a-skill/SKILL.md
+    interface:
+      display_name: "Write A Skill"
+      short_description: "Write or repair an agent skill so it fires when it should and stays quiet when it should not."
+    policy:
+      allow_implicit_invocation: true

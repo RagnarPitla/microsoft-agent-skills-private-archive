@@ -12,6 +12,7 @@
  *   .github/instructions/<name>.instructions.md model-invoked, Copilot instructions
  *   .cursor/rules/<name>.mdc                    every skill, Cursor rules
  *   agents/openai.yaml                          aggregate Codex manifest
+ *   skills/index.json                           harness-neutral manifest, any tool
  *
  * Usage:
  *   node scripts/build-harnesses.mjs            write the artefacts
@@ -119,6 +120,36 @@ for (const skill of skills) {
 }
 artefacts.set("agents/openai.yaml", manifestLines.join("\n") + "\n");
 
+// Harness-neutral manifest. The artefacts above each target a specific tool, and
+// there will always be one more tool. This is the escape hatch: any harness,
+// script or site can read one JSON file and discover every skill, what triggers
+// it, and whether it may fire on its own. Nothing in the repo consumes it - it
+// exists so that something outside the repo can.
+artefacts.set(
+  "skills/index.json",
+  JSON.stringify(
+    {
+      $comment: GENERATED_BANNER,
+      generator: "scripts/build-harnesses.mjs",
+      count: skills.filter((s) => s.bucket !== "deprecated").length,
+      skills: skills
+        .filter((s) => s.bucket !== "deprecated")
+        .map((s) => ({
+          name: s.name,
+          bucket: s.bucket,
+          // The trigger, not a summary. This is the field a harness matches on.
+          description: s.description,
+          invocation: s.userInvoked ? "user" : "model",
+          promoted: s.promoted,
+          path: `skills/${s.bucket}/${s.dirName}/SKILL.md`,
+          docs: s.promoted ? `docs/${s.bucket}/${s.dirName}.md` : null,
+        })),
+    },
+    null,
+    2,
+  ) + "\n",
+);
+
 /** Every directory we own end to end, so stale files are removed, not left behind. */
 const OWNED_DIRS = [
   ".github/prompts",
@@ -137,6 +168,7 @@ function listOwnedFiles() {
     }
   }
   if (existsSync(path.join(ROOT, "agents/openai.yaml"))) found.push("agents/openai.yaml");
+  if (existsSync(path.join(ROOT, "skills/index.json"))) found.push("skills/index.json");
   return found;
 }
 

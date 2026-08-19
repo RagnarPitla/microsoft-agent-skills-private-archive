@@ -80,6 +80,7 @@ Your agent reaches for these on its own when the task fits.
 - [power-platform-alm-connection-refs](./skills/operate/power-platform-alm-connection-refs/SKILL.md) - fix and prevent solution imports that break on connection references, environment variables and flow ownership.
 - [review-copilot-studio-agent](./skills/review/review-copilot-studio-agent/SKILL.md) - review a Copilot Studio agent's YAML for defects that matter before it ships.
 - [structured-interview](./skills/deliver/structured-interview/SKILL.md) - interview the user about a plan, design or decision until every open branch is resolved.
+- [write-a-skill](./skills/build/write-a-skill/SKILL.md) - write or repair an agent skill so it fires when it should and stays quiet when it should not.
 
 ## Buckets
 

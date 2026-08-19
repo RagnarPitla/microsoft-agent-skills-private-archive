@@ -1,7 +1,7 @@
 {
   "name": "microsoft-agent-skills",
   "version": "0.1.0",
-  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 and Azure",
+  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ, Scout and Azure",
   "author": {
     "name": "Ragnar Pitla",
     "url": "https://github.com/RagnarPitla"
@@ -11,6 +11,7 @@
   "skills": [
     "skills/build/copilot-studio-knowledge-grounding/SKILL.md",
     "skills/build/copilot-studio-production-patterns/SKILL.md",
+    "skills/build/write-a-skill/SKILL.md",
     "skills/connect/copilot-studio-auth-patterns/SKILL.md",
     "skills/deliver/ask-ragnar/SKILL.md",
     "skills/deliver/choose-agent-platform/SKILL.md",

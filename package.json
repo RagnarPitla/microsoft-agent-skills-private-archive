@@ -2,7 +2,7 @@
   "name": "microsoft-agent-skills",
   "version": "0.1.0",
   "private": true,
-  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 and Azure",
+  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ, Scout and Azure",
   "repository": {
     "type": "git",
     "url": "https://github.com/RagnarPitla/microsoft-agent-skills"
@@ -12,6 +12,8 @@
     "build": "node scripts/build-harnesses.mjs",
     "check": "node scripts/scrub.mjs && node scripts/build-harnesses.mjs --check && node scripts/validate-repo.mjs",
     "validate": "node scripts/validate-repo.mjs",
+    "refresh:stars": "node scripts/refresh-stars.mjs",
+    "check:stars": "node scripts/refresh-stars.mjs --check",
     "changeset": "changeset",
     "version": "changeset version && node scripts/sync-plugin-version.mjs",
     "check-plugin-version": "node scripts/sync-plugin-version.mjs --check",

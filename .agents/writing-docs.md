@@ -35,6 +35,14 @@ The observable signal that the skill did its job. This is the section people ski
 - No screenshots. They rot, and every screenshot is a confidentiality review.
 - Link to `learn.microsoft.com` rather than restating Microsoft's documentation, because their docs update and our copy does not.
 
-## The published URL
+## Where a docs page is read
 
-Docs pages publish to `https://aihero.dev/skills-<skill-name>` regardless of bucket. The bucket only organises the repository, so moving a skill between buckets does not break its published link.
+There is no docs site. A docs page is read on GitHub, under `docs/<bucket>/<skill-name>.md`
+in this repository.
+
+That path contains the bucket, so **moving a skill between buckets breaks every link to its
+docs page**. Move a skill only when the bucket is genuinely wrong, and when you do, grep the
+repo for the old path before you push.
+
+Write each page so it survives being read cold, on a phone, by someone who arrived from a
+LinkedIn link and has never seen the repository.

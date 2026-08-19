@@ -26,7 +26,17 @@ jobs:
         id: links
         run: node scripts/validate-repo.mjs --links 2>&1 | tee link-report.txt
 
-      - name: Open an issue if links have rotted
+      # Same schedule, same reasoning: star counts and archive flags go stale
+      # without anyone touching a file, so they are maintenance rather than a
+      # contributor's problem. Runs even when the link step failed, because the
+      # two rot independently and one should not mask the other.
+      - name: Check the registry is still accurate
+        if: always()
+        run: node scripts/refresh-stars.mjs --check 2>&1 | tee -a link-report.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Open an issue if anything rotted
         if: failure()
         uses: actions/github-script@v7
         with:
@@ -38,7 +48,7 @@ jobs:
             } catch {
               report = "No report captured; see the workflow log.";
             }
-            const title = "Link rot detected in registry, skills or docs";
+            const title = "Registry maintenance: link rot or stale repository facts";
             const existing = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -46,7 +56,7 @@ jobs:
               labels: "link-rot",
             });
             const body = [
-              "The weekly link check failed. Each entry names the file that cites it.",
+              "The weekly maintenance check failed - a cited URL rotted, or a registry repository was renamed, archived or drifted. Each entry names the file that cites it.",
               "",
               "```",
               report.trim().slice(0, 55000),

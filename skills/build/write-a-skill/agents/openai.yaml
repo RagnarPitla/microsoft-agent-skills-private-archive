@@ -1,0 +1,5 @@
+interface:
+  display_name: Write A Skill
+  short_description: Write or repair an agent skill so it fires when it should and stays quiet when it should not.
+policy:
+  allow_implicit_invocation: true

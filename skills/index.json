@@ -1,0 +1,106 @@
+{
+  "$comment": "Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.",
+  "generator": "scripts/build-harnesses.mjs",
+  "count": 11,
+  "skills": [
+    {
+      "name": "ask-ragnar",
+      "bucket": "deliver",
+      "description": "Work out which skill in this repo fits the situation in front of you, and say so plainly.",
+      "invocation": "user",
+      "promoted": true,
+      "path": "skills/deliver/ask-ragnar/SKILL.md",
+      "docs": "docs/deliver/ask-ragnar.md"
+    },
+    {
+      "name": "choose-agent-platform",
+      "bucket": "deliver",
+      "description": "Work out which Microsoft platform an agent should be built on, and write down why.",
+      "invocation": "user",
+      "promoted": true,
+      "path": "skills/deliver/choose-agent-platform/SKILL.md",
+      "docs": "docs/deliver/choose-agent-platform.md"
+    },
+    {
+      "name": "copilot-studio-auth-patterns",
+      "bucket": "connect",
+      "description": "Choose and debug authentication for a Copilot Studio agent. Use when deciding how users sign in, when an agent cannot call a downstream API as the signed-in user, when a token or User variable is empty or shows as Unknown, when an agent cannot be published to the intended channel, or when you need to control who in the organisation can talk to an agent.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/connect/copilot-studio-auth-patterns/SKILL.md",
+      "docs": "docs/connect/copilot-studio-auth-patterns.md"
+    },
+    {
+      "name": "copilot-studio-knowledge-grounding",
+      "bucket": "build",
+      "description": "Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently. Use when an agent fabricates details not in its knowledge sources, when citations link to irrelevant or non-existent pages, when the same question gets different answers in different sessions, or when curating knowledge sources before go-live.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/build/copilot-studio-knowledge-grounding/SKILL.md",
+      "docs": "docs/build/copilot-studio-knowledge-grounding.md"
+    },
+    {
+      "name": "copilot-studio-production-patterns",
+      "bucket": "build",
+      "description": "The patterns that separate a Copilot Studio agent that demos well from one that survives production. Use when an agent is being designed for or promoted to production, when an agent works in test but fails with real users, when calls to slow backend systems time out, when context is lost across a multi-agent handoff, or when preparing a production readiness review.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/build/copilot-studio-production-patterns/SKILL.md",
+      "docs": "docs/build/copilot-studio-production-patterns.md"
+    },
+    {
+      "name": "discovery",
+      "bucket": "deliver",
+      "description": "A structured interview that pins down what you are actually building before you build it.",
+      "invocation": "user",
+      "promoted": true,
+      "path": "skills/deliver/discovery/SKILL.md",
+      "docs": "docs/deliver/discovery.md"
+    },
+    {
+      "name": "explain-concept",
+      "bucket": "learn",
+      "description": "Explain a Microsoft ecosystem concept to someone who is confused by it, after working out what they actually misunderstand. Use when someone asks what something is or why it behaves the way it does across Copilot Studio, Power Platform, Dataverse, Dynamics 365, Microsoft Foundry or Entra - particularly when they have already read the documentation and are still stuck.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/learn/explain-concept/SKILL.md",
+      "docs": "docs/learn/explain-concept.md"
+    },
+    {
+      "name": "power-platform-alm-connection-refs",
+      "bucket": "operate",
+      "description": "Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership. Use when a solution import fails or needs manual reconnection in the target environment, when flows turn themselves off after deployment, when a departing employee breaks production, or when setting up a deployment pipeline that should not need hand-holding.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/operate/power-platform-alm-connection-refs/SKILL.md",
+      "docs": "docs/operate/power-platform-alm-connection-refs.md"
+    },
+    {
+      "name": "review-copilot-studio-agent",
+      "bucket": "review",
+      "description": "Review a Copilot Studio agent's YAML for defects that matter before it ships. Use when agent.mcs.yml or topic YAML files are open or in a diff, when reviewing a pull request that changes an agent, or when someone asks whether an agent is ready to promote.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/review/review-copilot-studio-agent/SKILL.md",
+      "docs": "docs/review/review-copilot-studio-agent.md"
+    },
+    {
+      "name": "structured-interview",
+      "bucket": "deliver",
+      "description": "Interview the user about a plan, design or decision until every open branch is resolved. Use when a request is ambiguous, when scope is unclear, before writing a spec or estimate, when the user asks to be challenged or stress-tested, or when you are about to build something and are not certain what \"done\" means.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/deliver/structured-interview/SKILL.md",
+      "docs": "docs/deliver/structured-interview.md"
+    },
+    {
+      "name": "write-a-skill",
+      "bucket": "build",
+      "description": "Write or repair an agent skill so it fires when it should and stays quiet when it should not. Use when drafting a new SKILL.md, when a skill is installed but never reached for, when a description reads like a table of contents, when choosing between user-invoked and model-invoked, when a skill has quietly grown two jobs, or when reviewing someone else's skill before it ships.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/build/write-a-skill/SKILL.md",
+      "docs": "docs/build/write-a-skill.md"
+    }
+  ]
+}

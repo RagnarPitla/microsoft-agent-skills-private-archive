@@ -75,6 +75,12 @@ Model-invoked, so you can start using it directly.
 
 Route here rather than to a product skill when nothing is actually broken. "Why does it work this way" is this one; "why is it broken" is one of the four above. And if someone is asking to be told which option to pick rather than what an option means, that is `choose-agent-platform` - explaining will not settle a decision.
 
+**`write-a-skill`** - when the artefact in question is a skill rather than an agent: they are drafting a `SKILL.md`, they installed one and the agent never reaches for it, the description reads like a table of contents, they cannot decide between user-invoked and model-invoked, or they are reviewing someone else's skill before it ships.
+
+Model-invoked, so you can start using it directly.
+
+The give-away is that the thing being built is instructions for an agent rather than an agent. "My agent ignores my skill" sounds like an agent problem and is almost always a description problem, so ask what the description says before routing anywhere else.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.
