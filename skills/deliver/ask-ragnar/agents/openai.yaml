@@ -1,0 +1,5 @@
+interface:
+  display_name: Ask Ragnar
+  short_description: Work out which skill in this repo fits the situation in front of you.
+policy:
+  allow_implicit_invocation: false

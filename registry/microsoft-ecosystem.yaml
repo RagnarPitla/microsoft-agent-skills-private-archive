@@ -1,0 +1,159 @@
+# Official Microsoft and community repositories worth linking to.
+#
+# This repo aims to be an honest index of the Microsoft agent ecosystem, not a
+# land grab. Where Microsoft already solves something well we route to them and
+# say so. A registry entry that 404s costs more trust than a missing skill, so
+# every url here is link-checked by `npm run validate -- --links`.
+#
+# Fields
+#   name        repository, as owner/repo
+#   url         canonical https url, must resolve
+#   provenance  official-microsoft | microsoft-adjacent | community
+#   description what it actually gives you, not its marketing blurb
+#   covers      which of our verb buckets its content maps to
+#   verdict     route  - it is good, link and do not duplicate
+#               wrap   - it is good but needs a skill to make it usable
+#               rebuild- stale, abandoned or too thin to rely on
+#   verified    date the url, stars and archive state were last confirmed
+#
+# Star counts are a point-in-time signal, not a ranking. Re-verify before citing.
+
+verified_on: 2026-08-18
+
+repositories:
+  - name: microsoft/ai-agents-for-beginners
+    url: https://github.com/microsoft/ai-agents-for-beginners
+    provenance: official-microsoft
+    description: Course-style introduction to building AI agents, with runnable lessons.
+    covers: [learn]
+    stars: 72562
+    verdict: route
+    why: The best onboarding path that exists. Send newcomers here rather than writing an intro skill.
+
+  - name: microsoft/autogen
+    url: https://github.com/microsoft/autogen
+    provenance: official-microsoft
+    description: Multi-agent conversation framework for Python and .NET.
+    covers: [build]
+    stars: 60500
+    verdict: route
+    why: Dominant multi-agent framework with its own deep documentation.
+
+  - name: microsoft/semantic-kernel
+    url: https://github.com/microsoft/semantic-kernel
+    provenance: official-microsoft
+    description: Enterprise agent SDK for .NET, Python and Java, with planners and connectors.
+    covers: [build, connect]
+    stars: 28462
+    verdict: route
+
+  - name: microsoft/agent-framework
+    url: https://github.com/microsoft/agent-framework
+    provenance: official-microsoft
+    description: Orchestration framework consolidating patterns from Semantic Kernel and AutoGen.
+    covers: [build]
+    stars: 12876
+    verdict: route
+    why: Moving quickly. Confirm the current guidance before writing anything durable against it.
+
+  - name: microsoft/playwright-mcp
+    url: https://github.com/microsoft/playwright-mcp
+    provenance: official-microsoft
+    description: MCP server exposing browser automation to an agent.
+    covers: [connect]
+    stars: 36251
+    verdict: route
+
+  - name: microsoft/azure-devops-mcp
+    url: https://github.com/microsoft/azure-devops-mcp
+    provenance: official-microsoft
+    description: Official MCP server for Azure DevOps work items, repos and pipelines.
+    covers: [connect, operate]
+    stars: 1961
+    verdict: route
+
+  - name: microsoft/agent-academy
+    url: https://github.com/microsoft/agent-academy
+    provenance: official-microsoft
+    description: Structured learning path for building agents, including Copilot Studio.
+    covers: [learn]
+    stars: 3224
+    verdict: route
+
+  - name: microsoft/skills
+    url: https://github.com/microsoft/skills
+    provenance: official-microsoft
+    description: Microsoft's own skills-as-code collection.
+    covers: [build, operate]
+    stars: 2918
+    verdict: route
+    why: Our nearest neighbour. We are the Dynamics 365 and Copilot Studio vertical it does not cover.
+
+  - name: microsoft/azure-skills
+    url: https://github.com/microsoft/azure-skills
+    provenance: official-microsoft
+    description: Skills for Azure infrastructure work. Successor to the archived Azure/azure-mcp.
+    covers: [operate, connect]
+    stars: 1390
+    verdict: route
+    why: Bridge into this for Azure infrastructure. Do not duplicate its coverage.
+
+  - name: microsoft/power-platform-skills
+    url: https://github.com/microsoft/power-platform-skills
+    provenance: official-microsoft
+    description: Skills for Power Platform build and deploy workflows.
+    covers: [build, operate]
+    stars: 731
+    verdict: route
+
+  - name: microsoft/skills-for-copilot-studio
+    url: https://github.com/microsoft/skills-for-copilot-studio
+    provenance: official-microsoft
+    description: Skills for authoring Copilot Studio agents, focused on YAML.
+    covers: [build]
+    stars: 412
+    verdict: route
+    why: Closest sibling. We add testing, evaluation, ALM and Dynamics 365 on top rather than restating it.
+
+  - name: microsoft/SkillOpt
+    url: https://github.com/microsoft/SkillOpt
+    provenance: official-microsoft
+    description: Research on optimising skill definitions for agent performance.
+    covers: [learn, operate]
+    stars: 16128
+    verdict: route
+    why: Its best_skill.md pattern is directly relevant to how skills here are written.
+
+  - name: microsoft/agent-lightning
+    url: https://github.com/microsoft/agent-lightning
+    provenance: official-microsoft
+    description: Trainer for optimising agents through reinforcement learning.
+    covers: [operate]
+    stars: 17496
+    verdict: route
+
+# Archived or stale. Recorded deliberately: knowing what NOT to link is part of
+# being an honest index. Never route a reader to anything in this list.
+do_not_link:
+  - name: Azure/azure-mcp
+    url: https://github.com/Azure/azure-mcp
+    reason: Archived 2026-02. Superseded by microsoft/azure-skills.
+    last_push: 2026-02-06
+
+  - name: microsoft/coe-starter-kit
+    url: https://github.com/microsoft/coe-starter-kit
+    reason: Archived 2026-05. Still widely recommended in older blog posts, which makes it actively misleading.
+    last_push: 2026-05-15
+
+  - name: OfficeDev/Microsoft-365-Copilot-Samples
+    url: https://github.com/OfficeDev/Microsoft-365-Copilot-Samples
+    reason: Archived 2026-01 with no announced successor. The resulting gap in declarative agent samples is a build opportunity.
+    last_push: 2026-01-02
+
+# Where nobody has built anything good yet. These feed our own roadmap.
+gaps:
+  - Dataverse and Dynamics 365 MCP server. Nothing official exists.
+  - Enterprise ALM for Copilot Studio agents across environments.
+  - Declarative agent samples for Microsoft 365 Copilot, orphaned since the samples repo was archived.
+  - Cross-product agent composition, where Copilot Studio, Semantic Kernel and Dynamics 365 appear in one architecture.
+  - Dynamics 365 finance and operations AI integration patterns.

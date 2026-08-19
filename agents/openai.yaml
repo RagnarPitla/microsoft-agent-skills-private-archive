@@ -1,0 +1,26 @@
+# Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.
+skills:
+  - name: ask-ragnar
+    bucket: deliver
+    path: skills/deliver/ask-ragnar/SKILL.md
+    interface:
+      display_name: "Ask Ragnar"
+      short_description: "Work out which skill in this repo fits the situation in front of you."
+    policy:
+      allow_implicit_invocation: false
+  - name: discovery
+    bucket: deliver
+    path: skills/deliver/discovery/SKILL.md
+    interface:
+      display_name: "Discovery"
+      short_description: "A structured interview that pins down what you are actually building before you build it."
+    policy:
+      allow_implicit_invocation: false
+  - name: structured-interview
+    bucket: deliver
+    path: skills/deliver/structured-interview/SKILL.md
+    interface:
+      display_name: "Structured interview"
+      short_description: "Interview the user until every open branch of a plan or design is resolved."
+    policy:
+      allow_implicit_invocation: true

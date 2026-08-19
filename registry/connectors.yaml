@@ -1,0 +1,73 @@
+# How to connect an agent to a given Microsoft system.
+#
+# One entry per system an agent might need to reach. The point is to answer, in
+# one place, the question that eats the most time on a real build: what is the
+# supported way in, what does the agent authenticate as, and what will bite me.
+#
+# Fields
+#   system      the thing being connected to
+#   surfaces    which Microsoft agent surfaces can reach it today
+#   mechanism   the supported integration path
+#   identity    what the agent acts as
+#   docs        authoritative documentation, must resolve
+#   watch_out   the failure mode people actually hit
+#
+# This catalogue is seeded, not complete. Add an entry when you have connected
+# the system yourself, not when you have read that it is possible.
+
+verified_on: 2026-08-18
+
+connectors:
+  - system: Dataverse
+    surfaces: [copilot-studio, power-platform, foundry, custom]
+    mechanism: Dataverse Web API, OData v4 over HTTPS
+    identity: Entra app registration with an application user in the environment, or the signed-in user
+    docs: https://learn.microsoft.com/power-apps/developer/data-platform/webapi/overview
+    watch_out: >
+      An application user still needs a security role. Granting API permission
+      without assigning a role produces a 403 that reads like an auth failure.
+
+  - system: Microsoft Graph
+    surfaces: [m365-copilot, copilot-studio, foundry, custom]
+    mechanism: Microsoft Graph REST API
+    identity: Delegated permissions act as the user; application permissions act as the app and usually need admin consent
+    docs: https://learn.microsoft.com/graph/overview
+    watch_out: >
+      Choosing application permissions to avoid a consent prompt hands the agent
+      tenant-wide reach. Prefer delegated permissions unless the agent genuinely
+      must act without a user.
+
+  - system: Dynamics 365 finance and operations
+    surfaces: [copilot-studio, power-platform, custom]
+    mechanism: OData data entities, or business events for push
+    identity: Entra app registration mapped to an F&O user
+    docs: https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/data-entities/data-entities
+    watch_out: >
+      Data entities are not a general query surface. Wide OData queries against
+      them time out under production data volumes; filter on indexed fields.
+
+  - system: Power Platform environments and solutions
+    surfaces: [power-platform, copilot-studio]
+    mechanism: Power Platform CLI, referred to as pac
+    identity: Interactive login, or a service principal for pipelines
+    docs: https://learn.microsoft.com/power-platform/developer/cli/introduction
+    watch_out: >
+      Connection references and environment variables do not carry their values
+      across environments. An import that succeeds can still leave every flow
+      switched off until they are rebound.
+
+  - system: Azure DevOps
+    surfaces: [github-copilot, claude-code, codex, cursor]
+    mechanism: Official MCP server
+    identity: Entra token for the signed-in user
+    docs: https://github.com/microsoft/azure-devops-mcp
+    watch_out: Scope the token to the project. A tenant-wide token exposes every repo the user can read.
+
+  - system: Browser automation
+    surfaces: [github-copilot, claude-code, codex, cursor]
+    mechanism: Official Playwright MCP server
+    identity: Runs as the local user in a local browser context
+    docs: https://github.com/microsoft/playwright-mcp
+    watch_out: >
+      A logged-in browser profile gives the agent every session that profile
+      holds. Use a dedicated profile for agent runs.
