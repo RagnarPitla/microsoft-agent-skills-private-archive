@@ -21,7 +21,11 @@
     "./skills/deliver/structured-interview",
     "./skills/deliver/what-should-i-build",
     "./skills/learn/explain-concept",
+    "./skills/operate/govern-agent-lifecycle",
+    "./skills/operate/monitor-agent-telemetry",
+    "./skills/operate/plan-agent-capacity-and-cost",
     "./skills/operate/power-platform-alm-connection-refs",
+    "./skills/operate/respond-to-agent-incidents",
     "./skills/review/evaluate-agent-quality",
     "./skills/review/review-copilot-studio-agent"
   ]

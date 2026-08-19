@@ -60,3 +60,5 @@ This is a public repository written by a Microsoft Principal PM who works on rea
 ## Accuracy
 
 Our audience will spot a wrong CLI flag, an invented connector or a retired exam code instantly, and that costs more credibility than a missing skill. Verify Microsoft technical detail against `learn.microsoft.com` before writing it down. Where something could not be verified, say so in the skill rather than guessing. Prefer linking to Microsoft's documentation over restating it, because their docs update and our copy does not.
+
+Genuinely perishable claims (a UI path, a preview feature's status, a limit that Microsoft tunes) carry a `Verified as resolving on YYYY-MM-DD.` line in the skill's `## Sources` section, exactly as link verification already does — see [.agents/freshness.md](./.agents/freshness.md) for the convention, the optional `Review by` date, and the default review window. `npm run check:freshness` fails on anything past its review date; the weekly `freshness` workflow runs it on a schedule and opens an issue when something has gone stale.

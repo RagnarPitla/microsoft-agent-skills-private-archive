@@ -68,6 +68,30 @@ Model-invoked, so you can start using it directly.
 
 Watch for this one hiding behind a Copilot Studio question. "My agent works in test but not production" is sometimes a grounding or production-patterns problem and sometimes a deployment problem. Ask whether the agent *behaves* differently or was never correctly deployed - those go to different skills.
 
+**`govern-agent-lifecycle`** - when the question is one level up from a single deployment: nobody can say who owns an agent that is quietly running, a Center of Excellence inventory has gone stale or never existed, an agent needs a deliberate move out of the default environment, or a DLP conflict needs deciding rather than routing around.
+
+Model-invoked, so you can start using it directly.
+
+Against `power-platform-alm-connection-refs`: that one fixes a single broken deployment. This one asks the estate-level question - across everything that is live, who owns it, where does it live, is it governed like the rest of production.
+
+**`monitor-agent-telemetry`** - when an agent shipped with no dashboard, alert or usage number behind it, when nobody can say how many sessions escalated to a human recently, or when Application Insights or Foundry tracing needs to be wired up.
+
+Model-invoked, so you can start using it directly.
+
+The distinguishing question against `evaluate-agent-quality`: is this about whether the agent is *healthy and used* (this one), or whether its *answers are still correct* (that one)? Production agents usually need both, and a healthy-looking dashboard says nothing about answer quality.
+
+**`respond-to-agent-incidents`** - when an agent is failing *right now* and users are affected: it is down, answering badly, or nobody yet knows whether the outage is the agent, the platform, or a dependency. Also the right call for rolling back safely and running the postmortem afterward.
+
+Model-invoked, so you can start using it directly - this is the one to reach for immediately when something is actively on fire, ahead of any of the calmer review or evaluation skills.
+
+Against `review-copilot-studio-agent` and `evaluate-agent-quality`: both of those are calm, structured looks at an agent that is not actively burning. This one is for the first minutes of an incident, when triage order matters more than depth.
+
+**`plan-agent-capacity-and-cost`** - when a Copilot Studio agent is near its message capacity or credit allocation, Foundry quota or token spend needs forecasting before a launch, or a finance stakeholder wants a real cost number and nobody has one.
+
+Model-invoked, so you can start using it directly.
+
+Against `monitor-agent-telemetry`: that one is a health signal, this one is a budget. A capacity or spend question routes here even when it arrived dressed as a monitoring question.
+
 **`copilot-studio-auth-patterns`** - when the blocker is identity: deciding how users sign in, an agent that cannot get a token to call an API on the user's behalf, a `User.` variable that is empty or has gone Unknown, an agent that cannot reach the channel the customer expected, or a requirement that only certain people may talk to it.
 
 Model-invoked, so you can start using it directly.

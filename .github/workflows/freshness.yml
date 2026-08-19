@@ -1,0 +1,76 @@
+name: freshness
+
+# Verified as resolving on and Review by dates in ## Sources sections and the
+# registries' verified_on stamps are the human half of accuracy: a link can
+# still resolve while the claim beside it goes stale. See .agents/freshness.md
+# for the convention and the default review window. This runs on the same
+# weekly cadence as link-rot and opens an issue rather than waiting for a
+# reader to notice.
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Check every dated claim is within its review window
+        run: node scripts/check-freshness.mjs 2>&1 | tee freshness-report.txt
+
+      - name: Open an issue if anything is overdue for review
+        if: failure()
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const fs = require("fs");
+            let report = "";
+            try {
+              report = fs.readFileSync("freshness-report.txt", "utf8");
+            } catch {
+              report = "No report captured; see the workflow log.";
+            }
+            const title = "Freshness: claims are past their review date";
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "freshness",
+            });
+            const body = [
+              "The weekly freshness check failed - a skill, docs page or registry has a `Verified as resolving on` (or `verified_on`) date past its review window. Each entry names the file.",
+              "",
+              "```",
+              report.trim().slice(0, 55000),
+              "```",
+              "",
+              "Re-open the linked sources, confirm the claim still holds, and bump the date (see .agents/freshness.md).",
+              "Do not bump the date without re-reading the page - that defeats the point of the check.",
+            ].join("\n");
+
+            if (existing.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["freshness"],
+              });
+            }

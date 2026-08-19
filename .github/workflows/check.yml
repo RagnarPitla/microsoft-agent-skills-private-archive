@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # A trusted, comprehensive run once a week, independent of any pull request -
+  # the same "main/schedule/release-like" trust tier the scrub gate below
+  # relies on to decide whether it may require the customer/codename denylist.
+  schedule:
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
@@ -13,23 +18,79 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      # The scrub gate, harness staleness check and repo validation all run
-      # without dependencies on purpose, so this needs no install step. If that
-      # ever stops being true, the pre-commit hook has already broken on a
-      # fresh clone and the fix belongs there, not here.
-      - uses: actions/setup-node@v4
+      # The scrub gate, harness staleness check, repo validation and the test
+      # suite all run without dependencies on purpose, so this needs no
+      # install step. If that ever stops being true, the pre-commit hook has
+      # already broken on a fresh clone and the fix belongs there, not here.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
 
-      - name: Validate repository
-        run: npm run check
+      - name: Run unit tests
+        run: npm test
 
-      # Deliberately separate from `check`. Link rot is not the contributor's
-      # fault and should never block their pull request - it is caught on a
-      # schedule instead, where it becomes maintenance rather than a blocker.
+      - name: Harness artefacts up to date
+        run: node scripts/build-harnesses.mjs --check
+
+      - name: Validate repository
+        run: node scripts/validate-repo.mjs
+
+      # Pure date arithmetic over committed files, no network calls - unlike
+      # link-rot.yml this is fast and deterministic enough to block a PR
+      # outright rather than being scheduled/informational only.
+      - name: Check dated claims are within their review window
+        run: node scripts/check-freshness.mjs
+
+      # Trusted contexts - a push to main, the weekly schedule, or a
+      # same-repository (non-fork) pull request - can see the SCRUB_DENYLIST
+      # secret, so the customer/codename denylist is mandatory here. A trusted
+      # run that silently skipped the denylist would be worse than no check at
+      # all, because it would look identical to one that enforced it.
+      - name: Scrub gate (trusted - denylist required)
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        run: node scripts/scrub.mjs --all --require-denylist
+        env:
+          SCRUB_DENYLIST: ${{ secrets.SCRUB_DENYLIST }}
+
+      # A pull request from a fork never has access to repository secrets, so
+      # SCRUB_DENYLIST is not available here regardless of what this step asks
+      # for. Running --require-denylist anyway would just fail every fork PR
+      # for a reason contributors cannot fix, so this path is explicitly
+      # structural-only and says so in the log rather than pretending
+      # otherwise. The trusted run above still enforces the full denylist once
+      # the change lands on main.
+      - name: Scrub gate (fork PR - structural checks only)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::notice::Fork pull request: SCRUB_DENYLIST is not available to fork PRs, so only structural patterns are checked here. The customer/codename denylist is enforced again on the trusted merge to main."
+          node scripts/scrub.mjs --all
+
+      # Deliberately separate from the checks above. Link rot is not the
+      # contributor's fault and should never block their pull request - it is
+      # caught on a schedule instead, where it becomes maintenance rather than
+      # a blocker.
       - name: Check links (informational)
         if: github.event_name == 'pull_request'
         continue-on-error: true
         run: node scripts/validate-repo.mjs --links
+
+      # Re-runs the test/build/validate/freshness gates above as an aggregated
+      # Markdown artifact so a reviewer gets one file instead of five log
+      # sections. `if: always()` and `continue-on-error: true` mean a gate
+      # failing earlier in this job still produces and publishes a report
+      # describing exactly what failed, rather than the artifact silently
+      # disappearing along with the job.
+      - name: Generate quality report
+        if: always()
+        continue-on-error: true
+        run: npm run quality-report
+
+      - name: Upload quality report artifact
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-report
+          path: quality-report.md
+          if-no-files-found: warn

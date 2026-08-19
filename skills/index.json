@@ -1,7 +1,7 @@
 {
   "$comment": "Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.",
   "generator": "scripts/build-harnesses.mjs",
-  "count": 15,
+  "count": 19,
   "skills": [
     {
       "name": "ask-ragnar",
@@ -76,6 +76,15 @@
       "docs": "docs/learn/explain-concept.md"
     },
     {
+      "name": "govern-agent-lifecycle",
+      "bucket": "operate",
+      "description": "Decide whether an agent, flow or environment should still exist, who owns it, and whether it is governed the way production requires. Use when nobody can say who owns an agent that is quietly running in production, when a Center of Excellence inventory has gone stale or was never set up, when an agent was built in a personal or default environment and needs to move before it becomes someone's problem, when DLP policies do not match what an agent actually needs to reach, or when a departing team leaves agents behind with no named owner.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/operate/govern-agent-lifecycle/SKILL.md",
+      "docs": "docs/operate/govern-agent-lifecycle.md"
+    },
+    {
       "name": "ground-agents-in-work-context",
       "bucket": "connect",
       "description": "Choose the right grounding layer for an agent across the Microsoft IQ stack - Work IQ, Fabric IQ, Foundry IQ, Web IQ. Use when an agent can see someone's email, calendar and Teams messages but not the approval rules or business entities it needs, when deciding between workplace signals and an ontology over business data, when someone maps a conceptual \"Business IQ\" or \"Work IQ\" onto Microsoft's products and gets the opposite of what they expected, when an agent needs GL accounts, vendors or authorisation thresholds rather than documents, or when an unattended background agent is being designed on top of Work IQ.",
@@ -94,6 +103,24 @@
       "docs": "docs/build/migrate-agent-to-skills.md"
     },
     {
+      "name": "monitor-agent-telemetry",
+      "bucket": "operate",
+      "description": "Set up the signals that tell you an agent is healthy, being used and starting to misbehave before a user has to report it. Use when an agent has shipped with no dashboard, alert or usage number behind it, when you cannot say how many sessions escalated to a human last week, when latency or error rates need to be watched continuously rather than sampled by hand, when Application Insights or Foundry tracing needs to be wired up for an agent, or when a stakeholder asks for a usage report and the only source is memory.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/operate/monitor-agent-telemetry/SKILL.md",
+      "docs": "docs/operate/monitor-agent-telemetry.md"
+    },
+    {
+      "name": "plan-agent-capacity-and-cost",
+      "bucket": "operate",
+      "description": "Work out whether an agent's message capacity, quota or spend is sized correctly, before a limit gets hit or a bill surprises someone. Use when a Copilot Studio agent is close to its message capacity or credit allocation, when Foundry model quota or token spend needs to be forecast for a launch, when a finance stakeholder asks what an agent costs and nobody can answer in real numbers, when pay-as-you-go and prepaid credits need to be reconciled, or when usage is growing and nobody has planned for what happens at ten times the current volume.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/operate/plan-agent-capacity-and-cost/SKILL.md",
+      "docs": "docs/operate/plan-agent-capacity-and-cost.md"
+    },
+    {
       "name": "power-platform-alm-connection-refs",
       "bucket": "operate",
       "description": "Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership. Use when a solution import fails or needs manual reconnection in the target environment, when flows turn themselves off after deployment, when a departing employee breaks production, or when setting up a deployment pipeline that should not need hand-holding.",
@@ -101,6 +128,15 @@
       "promoted": true,
       "path": "skills/operate/power-platform-alm-connection-refs/SKILL.md",
       "docs": "docs/operate/power-platform-alm-connection-refs.md"
+    },
+    {
+      "name": "respond-to-agent-incidents",
+      "bucket": "operate",
+      "description": "Triage and recover when a live agent is failing right now and users are affected, rather than reviewing its configuration after the fact. Use when an agent has gone down or is answering badly in production and someone is asking what to do in the next few minutes, when it is unclear whether the outage is the agent, the underlying platform or a dependency, when a fix needs to be rolled back safely, when an incident needs a plain-language update sent to stakeholders, or when a postmortem needs to turn into a prevention item rather than a shrug.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/operate/respond-to-agent-incidents/SKILL.md",
+      "docs": "docs/operate/respond-to-agent-incidents.md"
     },
     {
       "name": "review-copilot-studio-agent",

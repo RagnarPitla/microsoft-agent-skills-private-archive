@@ -2,3 +2,9 @@ node_modules
 
 # Local confidentiality denylist. Never commit: the terms are themselves the disclosure.
 .scrub-denylist.txt
+
+# Generated locally / in CI by scripts/*-report scripts and check-*.mjs gates.
+# Uploaded as workflow artifacts where relevant, never committed.
+quality-report.md
+link-report.txt
+freshness-report.txt

@@ -85,9 +85,13 @@ Your agent reaches for these on its own when the task fits.
 - [copilot-studio-production-patterns](./skills/build/copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
 - [evaluate-agent-quality](./skills/review/evaluate-agent-quality/SKILL.md) - establish whether an agent works, and whether it still works, using a recorded eval set rather than ad hoc chats.
 - [explain-concept](./skills/learn/explain-concept/SKILL.md) - explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands.
+- [govern-agent-lifecycle](./skills/operate/govern-agent-lifecycle/SKILL.md) - decide whether an agent should still exist, who owns it, and whether it is governed the way production requires.
 - [ground-agents-in-work-context](./skills/connect/ground-agents-in-work-context/SKILL.md) - choose the right grounding layer across the Microsoft IQ stack, and avoid the naming collision that sends people to the wrong one.
 - [migrate-agent-to-skills](./skills/build/migrate-agent-to-skills/SKILL.md) - move a prompt-stuffed or legacy agent onto a portable skills-based harness without carrying its rot forward.
+- [monitor-agent-telemetry](./skills/operate/monitor-agent-telemetry/SKILL.md) - set up the signals that tell you an agent is healthy and being used before a user has to report otherwise.
+- [plan-agent-capacity-and-cost](./skills/operate/plan-agent-capacity-and-cost/SKILL.md) - work out whether an agent's message capacity, quota or spend is sized correctly before a limit or a bill surprises someone.
 - [power-platform-alm-connection-refs](./skills/operate/power-platform-alm-connection-refs/SKILL.md) - fix and prevent solution imports that break on connection references, environment variables and flow ownership.
+- [respond-to-agent-incidents](./skills/operate/respond-to-agent-incidents/SKILL.md) - triage and recover when a live agent is failing right now and users are affected.
 - [review-copilot-studio-agent](./skills/review/review-copilot-studio-agent/SKILL.md) - review a Copilot Studio agent's YAML for defects that matter before it ships.
 - [structured-interview](./skills/deliver/structured-interview/SKILL.md) - interview the user about a plan, design or decision until every open branch is resolved.
 - [what-should-i-build](./skills/deliver/what-should-i-build/SKILL.md) - work out whether this needs an agent at all, and if so whether to consume one, govern the ones you have, or build.
@@ -115,12 +119,13 @@ Both are link-checked, as is every URL cited inside a skill or docs page. A link
 
 ## Contributing
 
-Read [AGENTS.md](./AGENTS.md) first. It describes the bucket taxonomy, the invocation model and the sync obligations that keep the repo honest.
+Read [AGENTS.md](./AGENTS.md) first. It describes the bucket taxonomy, the invocation model and the sync obligations that keep the repo honest. [CONTRIBUTING.md](./CONTRIBUTING.md) walks through the day-to-day workflow (setup, testing, releasing via changesets) and the pull request checklist. [SECURITY.md](./SECURITY.md) covers how to report a vulnerability, and the [Code of Conduct](./CODE_OF_CONDUCT.md) sets expectations for participation.
 
 ```
 npm run build     # regenerate every harness artefact from SKILL.md
 npm run check     # scrub gate, staleness check and repo validation
 npm run validate  # repo validation on its own
+npm test          # unit tests for the scripts that enforce all of the above
 
 npm run refresh:stars  # re-pull registry star counts and archive flags from GitHub
 ```

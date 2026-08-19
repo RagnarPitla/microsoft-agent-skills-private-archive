@@ -64,6 +64,14 @@ skills:
       short_description: "Explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands."
     policy:
       allow_implicit_invocation: true
+  - name: govern-agent-lifecycle
+    bucket: operate
+    path: skills/operate/govern-agent-lifecycle/SKILL.md
+    interface:
+      display_name: "Govern agent lifecycle"
+      short_description: "Decide whether an agent should still exist, who owns it, and whether it is governed the way production requires."
+    policy:
+      allow_implicit_invocation: true
   - name: ground-agents-in-work-context
     bucket: connect
     path: skills/connect/ground-agents-in-work-context/SKILL.md
@@ -80,12 +88,36 @@ skills:
       short_description: "Move an existing agent off a monolithic system prompt onto portable, versioned skill files without carrying its rot forward."
     policy:
       allow_implicit_invocation: true
+  - name: monitor-agent-telemetry
+    bucket: operate
+    path: skills/operate/monitor-agent-telemetry/SKILL.md
+    interface:
+      display_name: "Monitor agent telemetry"
+      short_description: "Set up the signals that tell you an agent is healthy and being used before a user has to report otherwise."
+    policy:
+      allow_implicit_invocation: true
+  - name: plan-agent-capacity-and-cost
+    bucket: operate
+    path: skills/operate/plan-agent-capacity-and-cost/SKILL.md
+    interface:
+      display_name: "Plan agent capacity and cost"
+      short_description: "Work out whether an agent's message capacity, quota or spend is sized correctly before a limit or a bill surprises someone."
+    policy:
+      allow_implicit_invocation: true
   - name: power-platform-alm-connection-refs
     bucket: operate
     path: skills/operate/power-platform-alm-connection-refs/SKILL.md
     interface:
       display_name: "Power Platform ALM Connection References"
       short_description: "Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership."
+    policy:
+      allow_implicit_invocation: true
+  - name: respond-to-agent-incidents
+    bucket: operate
+    path: skills/operate/respond-to-agent-incidents/SKILL.md
+    interface:
+      display_name: "Respond to agent incidents"
+      short_description: "Triage and recover when a live agent is failing right now and users are affected."
     policy:
       allow_implicit_invocation: true
   - name: review-copilot-studio-agent

@@ -104,10 +104,16 @@ export function readSkillOpenAiYaml(skillDir) {
   return out;
 }
 
-/** Discover every skill in the repo. */
-export function loadSkills() {
+/**
+ * Discover every skill in the repo.
+ *
+ * Accepts an optional `root` so tests can point this at a fixture directory
+ * shaped like a repo (a `skills/<bucket>/<name>/SKILL.md` tree) instead of the
+ * real one. Production callers never pass it and get the real repo root.
+ */
+export function loadSkills(root = ROOT) {
   const skills = [];
-  const skillsRoot = path.join(ROOT, "skills");
+  const skillsRoot = path.join(root, "skills");
   if (!existsSync(skillsRoot)) return skills;
 
   for (const bucket of readdirSync(skillsRoot, { withFileTypes: true })) {
@@ -137,8 +143,8 @@ export function loadSkills() {
         hasOpenAiYaml: Boolean(openai),
         body: body.trim(),
         dir,
-        relDir: path.relative(ROOT, dir),
-        skillMdRel: path.relative(ROOT, skillMd),
+        relDir: path.relative(root, dir),
+        skillMdRel: path.relative(root, skillMd),
         frontMatter: data,
       });
     }

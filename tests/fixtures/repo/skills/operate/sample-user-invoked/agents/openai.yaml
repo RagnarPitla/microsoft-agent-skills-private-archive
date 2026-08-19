@@ -1,0 +1,5 @@
+interface:
+  display_name: Sample User Invoked
+  short_description: Fixture skill for tests, not a real skill.
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,103 @@
+---
+name: plan-agent-capacity-and-cost
+description: Work out whether an agent's message capacity, quota or spend is sized correctly, before a limit gets hit or a bill surprises someone. Use when a Copilot Studio agent is close to its message capacity or credit allocation, when Foundry model quota or token spend needs to be forecast for a launch, when a finance stakeholder asks what an agent costs and nobody can answer in real numbers, when pay-as-you-go and prepaid credits need to be reconciled, or when usage is growing and nobody has planned for what happens at ten times the current volume.
+---
+
+Capacity and cost problems are almost always predictable in hindsight and
+invisible in advance, because nobody was watching the number until it became
+a problem. This skill is about watching it on purpose: sizing capacity before
+launch, and knowing what a given level of usage actually costs before finance
+asks.
+
+This is a budgeting and forecasting concern, not a health signal - if the
+question is "is the agent behaving normally", that is `monitor-agent-telemetry`.
+If the question is "can we afford what it is about to do, or what happens
+when a limit is hit", that is here.
+
+## Copilot Studio: credits, messages and capacity
+
+Copilot Studio usage is metered in Copilot Credits, consumed differently by
+message type and feature (a classic answer, a generative answer, an agent
+action, tool or voice usage each consume a different amount). Credits come
+from either a prepaid capacity pool shared across the tenant, or
+pay-as-you-go billed to an Azure subscription once prepaid capacity is
+exhausted.
+
+Practical questions worth asking before capacity becomes an incident:
+
+- Is consumption tracked per environment and per agent in the Power Platform
+  admin center, so a runaway agent is visible before the whole tenant's pool
+  is affected?
+- Is the chatbot only activated on user interaction (a click), rather than on
+  page load? Loading a chat widget can itself generate billable messages at
+  a scale nobody intended.
+- Is there a plan for what happens automatically when prepaid credits run
+  out - silent failure, a hard stop, or an agreed switch to pay-as-you-go?
+  That should be a decision made in advance, not discovered mid-incident.
+
+## Foundry: quota and token spend
+
+Foundry model quota is managed at the subscription level (pooled across
+regions for a given model and version, either globally or by data zone), so
+forecasting needs to account for everything sharing that pool, not just one
+agent's expected traffic. Ask early, before a launch:
+
+- What is the expected token volume per conversation, and does the
+  requested quota actually cover peak concurrent usage, not just average?
+- Would provisioned throughput (a reserved capacity unit, billed for what is
+  reserved rather than per token) be cheaper than pay-per-token at this
+  agent's expected sustained volume? This is usually a real trade-off, not a
+  default choice either way.
+- Is there a budget and an alert configured before launch, not added
+  reactively after the first surprising invoice?
+
+## Forecasting growth, not just today
+
+The number that matters is not current usage, it is current usage at the
+volume expected after the next rollout, integration or marketing push. Ask
+directly: if usage grew ten times, does the current capacity plan survive
+that, or does someone need to act before it happens rather than during a
+degraded experience?
+
+## Reconciling the bill with what it was for
+
+When a stakeholder asks "what does this agent cost", the honest answer
+usually needs both the platform's own usage view (Power Platform admin
+center for Copilot Studio, the Foundry or Azure portal for Foundry) and cost
+management tooling, because credits, provisioned throughput and pay-as-you-go
+usage are not all visible in the same place. Reconcile before answering
+rather than quoting whichever number was easiest to find.
+
+## Do not
+
+- Recommend buying more capacity as the first response to hitting a limit,
+  without first checking whether the consumption itself is expected (versus
+  a widget firing on page load, a retry loop, or a runaway automation).
+- Treat provisioned throughput as automatically cheaper. It is a trade of
+  guaranteed capacity for guaranteed spend, and it only wins at genuinely
+  sustained volume - check the actual usage pattern before recommending it.
+- Answer a cost question from a single dashboard without checking whether it
+  covers pay-as-you-go, prepaid and provisioned spend together. A partial
+  number stated confidently is worse than saying it needs reconciling.
+- Set a budget alert as an afterthought after a launch. It belongs in the
+  same conversation as the capacity plan, before traffic arrives.
+
+## Sources
+
+Verified as resolving on 2026-08-19.
+Review by 2026-11-17.
+
+- Manage Copilot Studio credits and capacity:
+  https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-messages-capacity
+- Microsoft Copilot Studio billing rates and management:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management
+- Microsoft Foundry Models quotas and limits:
+  https://learn.microsoft.com/en-us/azure/foundry/foundry-models/quotas-limits
+- Plan and manage costs for Microsoft Foundry:
+  https://learn.microsoft.com/en-us/azure/foundry/concepts/manage-costs
+
+Credit rates, quota scoping and pricing pages change more often than most
+Microsoft Learn content, hence the shorter review window above rather than
+the default. If a link 404s, the page was probably renamed - say you could
+not verify it rather than guessing a replacement URL, and treat any rate
+quoted here as illustrative rather than current until you have re-checked it.

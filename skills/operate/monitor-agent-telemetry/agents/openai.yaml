@@ -1,0 +1,5 @@
+interface:
+  display_name: Monitor agent telemetry
+  short_description: Set up the signals that tell you an agent is healthy and being used before a user has to report otherwise.
+policy:
+  allow_implicit_invocation: true

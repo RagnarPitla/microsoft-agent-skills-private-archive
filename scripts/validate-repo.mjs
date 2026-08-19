@@ -10,11 +10,24 @@
  * Usage:
  *   node scripts/validate-repo.mjs           structural checks
  *   node scripts/validate-repo.mjs --links   also HEAD every registry URL (slow, needs network)
+ *
+ * Most individual rules are pure functions in scripts/lib/validate-core.mjs,
+ * unit tested there against fixtures. This file discovers the real skills and
+ * files, calls those rules, and prints the report.
  */
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { ROOT, loadSkills, PROMOTED, UNPROMOTED, ALL_BUCKETS } from "./lib/skills.mjs";
+import {
+  checkDescriptionIsTrigger,
+  checkSkillIdentity,
+  checkSyncObligations,
+  checkDocsPageSections,
+  checkBucketReadmeGroups,
+  checkConnectorSchema,
+  checkRegistrySchema,
+} from "./lib/validate-core.mjs";
 
 const checkLinks = process.argv.includes("--links");
 const errors = [];
@@ -35,54 +48,18 @@ const ROUTER = "ask-ragnar";
 
 // ---------------------------------------------------------------- skill shape
 
-// The description is the whole ballgame for a model-invoked skill. It is the
-// only text the model sees when deciding whether to load the body, so a
-// description that summarises contents instead of naming the situation means
-// the skill never fires - the most common way a good skill is wasted, and the
-// failure write-a-skill exists to prevent. Enforced rather than merely
-// documented, because it is the one rule where being wrong is silent.
-//
-// User-invoked skills are held to a different standard on purpose. Nothing
-// matches them against a task: a human picks them from a list, so their
-// description is a menu label and being short is correct.
-function checkDescriptionIsTrigger(s) {
-  const d = s.description.trim();
-  const where = s.skillMdRel;
-
-  // VS Code truncates past this, so anything beyond it is invisible.
-  if (d.length > 1024) {
-    err(`${where}: description is ${d.length} characters; the limit is 1024 and the overflow is dropped.`);
-  }
-
-  const SUMMARY_OPENERS = /^(this skill|the skill|a skill|skill (for|that)|helps you|helps the|covers |provides |contains |documentation (for|on)|guidance (for|on)|everything you need)/i;
-  if (SUMMARY_OPENERS.test(d)) {
-    err(`${where}: description opens like a summary ("${d.slice(0, 40)}..."). Say when to reach for it, not what it contains.`);
-  }
-
-  if (s.userInvoked) return;
-
-  if (!/\buse when\b/i.test(d)) {
-    err(`${where}: model-invoked description has no "Use when" clause, so nothing tells the model which situation matches. See skills/build/write-a-skill/SKILL.md.`);
-  }
-  // Every trigger description in this repo that names real situations runs to
-  // several hundred characters. One that fits in a tweet is a summary wearing
-  // a "Use when" hat.
-  if (d.length < 150) {
-    err(`${where}: model-invoked description is only ${d.length} characters. Name the concrete situations a reader would recognise, not the topic.`);
-  }
-}
-
 for (const s of skills) {
   if (!ALL_BUCKETS.includes(s.bucket)) {
     err(`${s.skillMdRel}: unknown bucket "${s.bucket}". Expected one of ${ALL_BUCKETS.join(", ")}.`);
   }
   if (!s.description) err(`${s.skillMdRel}: front matter is missing a description.`);
-  else checkDescriptionIsTrigger(s);
-  if (s.name !== s.dirName) {
-    err(`${s.skillMdRel}: front matter name "${s.name}" does not match its folder "${s.dirName}".`);
+  else {
+    for (const p of checkDescriptionIsTrigger(s.description, { userInvoked: s.userInvoked })) {
+      err(`${s.skillMdRel}: ${p}`);
+    }
   }
-  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(s.dirName)) {
-    err(`${s.relDir}: folder name must be kebab-case.`);
+  for (const p of checkSkillIdentity({ name: s.name, dirName: s.dirName })) {
+    err(`${s.skillMdRel}: ${p}`);
   }
 
   // Invocation model: the two declarations must agree, or a harness will
@@ -139,37 +116,16 @@ if (pluginRaw === null) {
 
 for (const s of skills) {
   const docsRel = `docs/${s.bucket}/${s.name}.md`;
-  const skillLink = `skills/${s.bucket}/${s.dirName}/SKILL.md`;
   const bucketReadmeRel = `skills/${s.bucket}/README.md`;
   const bucketReadme = read(bucketReadmeRel);
 
-  if (s.promoted) {
-    if (rootReadme && !rootReadme.includes(skillLink)) {
-      err(`${s.name}: promoted but not linked from README.md (expected a link to ${skillLink}).`);
-    }
-    if (pluginSkills && !pluginSkills.some((p) => p === skillLink || p === `./${skillLink}` || p.includes(`/${s.dirName}`))) {
-      err(`${s.name}: promoted but missing from .claude-plugin/plugin.json skills array.`);
-    }
-    if (!existsSync(path.join(ROOT, docsRel))) {
-      err(`${s.name}: promoted but has no docs page at ${docsRel}.`);
-    }
-    if (bucketReadme === null) {
-      err(`Missing ${bucketReadmeRel} for promoted bucket "${s.bucket}".`);
-    } else if (!bucketReadme.includes(skillLink) && !bucketReadme.includes(`./${s.dirName}/SKILL.md`)) {
-      err(`${s.name}: not listed in ${bucketReadmeRel}.`);
-    }
-  } else {
-    // Non-promoted skills must not leak into public surface area.
-    if (rootReadme && rootReadme.includes(skillLink)) {
-      err(`${s.name}: in non-promoted bucket "${s.bucket}" but linked from README.md.`);
-    }
-    if (pluginSkills && pluginSkills.some((p) => p.includes(`/${s.dirName}`))) {
-      err(`${s.name}: in non-promoted bucket "${s.bucket}" but listed in .claude-plugin/plugin.json.`);
-    }
-    if (existsSync(path.join(ROOT, docsRel))) {
-      err(`${s.name}: in non-promoted bucket "${s.bucket}" but has a docs page at ${docsRel}.`);
-    }
-  }
+  const problems = checkSyncObligations(s, {
+    rootReadme,
+    pluginSkillPaths: pluginSkills,
+    bucketReadme,
+    docsPageExists: existsSync(path.join(ROOT, docsRel)),
+  });
+  problems.forEach((p) => err(`${s.name}: ${p}`));
 }
 
 // docs pages with no surviving skill
@@ -200,7 +156,7 @@ if (existsSync(docsRoot)) {
 // README promises that "a registry entry that 404s costs more trust than a
 // missing skill", so the repo has to hold itself to that internally too.
 {
-  const rootDocs = ["README.md", "CLAUDE.md"];
+  const rootDocs = ["README.md", "CLAUDE.md", "CONTRIBUTING.md"];
   for (const f of readdirSync(path.join(ROOT, ".agents"))) {
     if (f.endsWith(".md")) rootDocs.push(`.agents/${f}`);
   }
@@ -238,10 +194,8 @@ if (existsSync(docsRoot)) {
 for (const s of skills.filter((x) => x.promoted)) {
   const docs = read(`docs/${s.bucket}/${s.name}.md`);
   if (!docs) continue;
-  for (const section of ["What it does", "When to reach for it", "Common questions", "It's working if"]) {
-    if (!docs.includes(section)) {
-      err(`docs/${s.bucket}/${s.name}.md is missing the "${section}" section (.agents/writing-docs.md).`);
-    }
+  for (const p of checkDocsPageSections(docs)) {
+    err(`docs/${s.bucket}/${s.name}.md ${p}`);
   }
 }
 
@@ -293,6 +247,7 @@ if (!router) {
 
 // ------------------------------------------------------------------- registries
 const REGISTRIES = ["registry/microsoft-ecosystem.yaml", "registry/connectors.yaml"];
+const ALL_BUCKETS_SET = new Set(ALL_BUCKETS);
 
 // url -> the files that cite it, so a dead link names its own fix site.
 const urls = new Map();
@@ -311,138 +266,10 @@ for (const rel of REGISTRIES) {
     continue;
   }
   harvest(text, rel);
-  if (rel.endsWith("connectors.yaml")) checkConnectorSchema(text, rel);
-  else checkRegistrySchema(text, rel);
-}
-
-// Connector entries are keyed by `system`, not `name`, so they need their own
-// schema. They previously fell through checkRegistrySchema's `- name:` matcher
-// and were never validated at all: an entry could omit mechanism, identity and
-// docs, and name a surface that does not exist, and the build stayed green. A
-// validator that passes bad input is worse than no validator, because the README
-// tells readers this registry is machine-checked and they believe it.
-function checkConnectorSchema(text, rel) {
-  // Two families, deliberately in one enum. Microsoft agent surfaces where a
-  // connector is configured, and coding harnesses that reach the same system
-  // over MCP. A connector row is useful in both worlds and the distinction is
-  // not worth a second field.
-  const SURFACES = new Set([
-    "copilot-studio", "power-platform", "foundry", "m365-copilot",
-    "microsoft-search", "custom",
-    "github-copilot", "claude-code", "codex", "cursor",
-  ]);
-  const REQUIRED = ["surfaces", "mechanism", "identity", "docs", "watch_out"];
-
-  const lines = text.split("\n");
-  if (!lines.some((l) => /^verified_on:\s*\d{4}-\d{2}-\d{2}\s*$/.test(l))) {
-    err(`${rel}: missing or malformed \`verified_on: YYYY-MM-DD\`. A registry with no date cannot be re-verified.`);
-  }
-
-  const entries = [];
-  lines.forEach((line, i) => {
-    const head = line.match(/^ {2}- system:\s*(.*)$/);
-    if (head) {
-      entries.push({ start: i, fields: new Map([["system", head[1].trim()]]) });
-      return;
-    }
-    if (!entries.length) return;
-    const m = line.match(/^ {4}([a-z_]+):\s*(.*)$/);
-    if (m) entries[entries.length - 1].fields.set(m[1], m[2].trim());
-  });
-
-  if (!entries.length) {
-    err(`${rel}: no connector entries found. Entries must start with "  - system:".`);
-    return;
-  }
-
-  const seen = new Map();
-  for (const e of entries) {
-    const system = e.fields.get("system");
-    const where = `${rel}:${e.start + 1} (${system || "unnamed"})`;
-
-    if (!system) err(`${where}: \`system\` is empty.`);
-    else if (seen.has(system)) err(`${where}: duplicate system, already defined at line ${seen.get(system)}.`);
-    else seen.set(system, e.start + 1);
-
-    for (const k of REQUIRED) {
-      if (!e.fields.has(k) || e.fields.get(k) === "") {
-        err(`${where}: missing required field \`${k}\`.`);
-      }
-    }
-
-    const surfaces = e.fields.get("surfaces");
-    if (surfaces) {
-      const vals = surfaces.replace(/[[\]]/g, "").split(",").map((s) => s.trim()).filter(Boolean);
-      if (!vals.length) err(`${where}: \`surfaces\` is empty. Say where this connector can be reached from.`);
-      for (const v of vals) {
-        if (!SURFACES.has(v)) {
-          err(`${where}: surface "${v}" is not known. Expected one of ${[...SURFACES].join(", ")}.`);
-        }
-      }
-    }
-
-    const docs = e.fields.get("docs");
-    if (docs && !/^https:\/\/\S+$/.test(docs)) {
-      err(`${where}: \`docs\` must be a single https URL, got "${docs}".`);
-    }
-  }
-}
-
-// The registry is only useful if its entries are trustworthy, and link-checking
-// proves nothing about the fields around the url. A `covers: [learm]` typo would
-// silently drop an entry out of every bucket query, so the shape is checked too.
-// Deliberately line-based rather than a real YAML parse: the pre-commit hook has
-// to run on a fresh clone with no npm install.
-function checkRegistrySchema(text, rel) {
-  const BUCKETS = new Set([...PROMOTED, ...UNPROMOTED]);
-  const VERDICTS = new Set(["route", "wrap", "rebuild"]);
-  const PROVENANCE = new Set(["official-microsoft", "microsoft-adjacent", "community"]);
-
-  const lines = text.split("\n");
-  if (!lines.some((l) => /^verified_on:\s*\d{4}-\d{2}-\d{2}\s*$/.test(l))) {
-    err(`${rel}: missing or malformed \`verified_on: YYYY-MM-DD\`. A registry with no date cannot be re-verified.`);
-  }
-
-  // Entries in do_not_link answer a different question and carry different keys.
-  const doNotLinkAt = lines.findIndex((l) => /^do_not_link:/.test(l));
-  const entries = [];
-  lines.forEach((line, i) => {
-    if (/^ {2}- name:/.test(line)) entries.push({ start: i, fields: new Map() });
-    else if (entries.length) {
-      const m = line.match(/^ {4}([a-z_]+):\s*(.*)$/);
-      if (m) entries[entries.length - 1].fields.set(m[1], m[2].trim());
-    }
-    if (/^ {2}- name:/.test(line)) {
-      entries[entries.length - 1].fields.set("name", line.split(":").slice(1).join(":").trim());
-    }
-  });
-
-  for (const e of entries) {
-    const linked = doNotLinkAt !== -1 && e.start > doNotLinkAt;
-    const where = `${rel}:${e.start + 1} (${e.fields.get("name") || "unnamed"})`;
-    const need = linked ? ["url", "reason"] : ["url", "provenance", "description", "covers", "verdict"];
-    for (const k of need) {
-      if (!e.fields.has(k)) err(`${where}: missing required field \`${k}\`.`);
-    }
-    if (linked) continue;
-
-    const verdict = e.fields.get("verdict");
-    if (verdict && !VERDICTS.has(verdict)) {
-      err(`${where}: verdict "${verdict}" is not one of ${[...VERDICTS].join(", ")}.`);
-    }
-    const prov = e.fields.get("provenance");
-    if (prov && !PROVENANCE.has(prov)) {
-      err(`${where}: provenance "${prov}" is not one of ${[...PROVENANCE].join(", ")}.`);
-    }
-    const covers = e.fields.get("covers");
-    if (covers) {
-      const vals = covers.replace(/[[\]]/g, "").split(",").map((s) => s.trim()).filter(Boolean);
-      if (!vals.length) err(`${where}: \`covers\` is empty. Say which bucket it maps to.`);
-      for (const v of vals) {
-        if (!BUCKETS.has(v)) err(`${where}: covers "${v}" is not a bucket. Expected one of ${[...BUCKETS].join(", ")}.`);
-      }
-    }
-  }
+  const problems = rel.endsWith("connectors.yaml")
+    ? checkConnectorSchema(text)
+    : checkRegistrySchema(text, ALL_BUCKETS_SET);
+  problems.forEach((p) => err(`${rel}: ${p}`));
 }
 
 // Skills and docs cite documentation directly. Those links rot exactly like
@@ -481,29 +308,14 @@ for (const bucket of ALL_BUCKETS) {
   const hasSkills = skills.some((s) => s.bucket === bucket);
   const readme = read(`skills/${bucket}/README.md`);
   if (hasSkills && readme === null) err(`Missing skills/${bucket}/README.md.`);
-  if (PROMOTED.includes(bucket) && readme) {
+  if (readme) {
     const bucketSkills = skills.filter((s) => s.bucket === bucket);
-    const needed = [
-      ["User-invoked", bucketSkills.some((s) => s.userInvoked)],
-      ["Model-invoked", bucketSkills.some((s) => !s.userInvoked)],
-    ];
-    for (const [heading, required] of needed) {
-      if (required && !readme.includes(heading)) {
-        err(
-          `skills/${bucket}/README.md is missing a "${heading}" section, but the bucket contains ${heading.toLowerCase()} skill(s).`,
-        );
-      }
-      if (!required && readme.includes(heading)) {
-        err(
-          `skills/${bucket}/README.md has a "${heading}" section but no ${heading.toLowerCase()} skills. Drop the empty heading.`,
-        );
-      }
-    }
-  }
-  if (UNPROMOTED.includes(bucket) && readme) {
-    if (readme.includes("User-invoked") || readme.includes("Model-invoked")) {
-      err(`skills/${bucket}/README.md is a non-promoted bucket and should use a flat list, not invocation groupings.`);
-    }
+    const problems = checkBucketReadmeGroups(readme, {
+      promoted: PROMOTED.includes(bucket),
+      hasUserInvoked: bucketSkills.some((s) => s.userInvoked),
+      hasModelInvoked: bucketSkills.some((s) => !s.userInvoked),
+    });
+    problems.forEach((p) => err(`skills/${bucket}/README.md ${p}`));
   }
 }
 

@@ -1,0 +1,55 @@
+name: Bug report
+description: Something in a skill, script, workflow or registry entry is wrong.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. If this is a security issue or a leaked secret, please use the
+        [security advisory form](https://github.com/RagnarPitla/microsoft-agent-skills/security/advisories/new)
+        instead of this template.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is the bug?
+      options:
+        - A skill's content (wrong or outdated guidance)
+        - A skill's trigger (never fires / fires when it shouldn't)
+        - A generated harness artefact (.github/skills, .cursor/rules, agents/openai.yaml)
+        - A build/validate/scrub script
+        - A GitHub Actions workflow
+        - The registry (microsoft-ecosystem.yaml or connectors.yaml)
+        - Documentation (README, docs/, AGENTS.md, .agents/)
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: File or skill name
+      description: The path or skill name affected, e.g. skills/build/write-a-skill/SKILL.md
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Command run, harness used, or the prompt that triggered (or failed to trigger) the skill.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: I checked this is not covered by an existing open issue.
+          required: true
+        - label: This report contains no customer names, tenant data or Microsoft-internal information.
+          required: true

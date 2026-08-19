@@ -1,0 +1,5 @@
+interface:
+  display_name: Govern agent lifecycle
+  short_description: Decide whether an agent should still exist, who owns it, and whether it is governed the way production requires.
+policy:
+  allow_implicit_invocation: true

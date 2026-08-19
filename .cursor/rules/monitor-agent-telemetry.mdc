@@ -1,0 +1,104 @@
+---
+description: "Set up the signals that tell you an agent is healthy, being used and starting to misbehave before a user has to report it. Use when an agent has shipped with no dashboard, alert or usage number behind it, when you cannot say how many sessions escalated to a human last week, when latency or error rates need to be watched continuously rather than sampled by hand, when Application Insights or Foundry tracing needs to be wired up for an agent, or when a stakeholder asks for a usage report and the only source is memory."
+alwaysApply: false
+---
+
+<!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->
+<!-- Source: skills/operate/monitor-agent-telemetry/SKILL.md -->
+An agent that shipped without telemetry is not actually finished, it just
+looks finished. The first sign of trouble will be a user complaint instead of
+an alert, which means you always find out last and after the fact. This skill
+is about closing that gap: continuous, ongoing visibility into whether an
+agent is healthy and being used, not a one-time measurement of whether its
+answers are correct.
+
+That distinction matters for routing. **This skill is about the operational
+signal** - sessions, latency, error rate, escalation rate, cost per
+conversation. `evaluate-agent-quality` is about **answer correctness over
+time**, using a recorded eval set. A dashboard telling you sessions are up and
+errors are flat says nothing about whether the answers are still right; an
+eval run telling you accuracy held steady says nothing about whether anyone
+is actually using the thing or whether it just got slow. Production agents
+need both, and they answer different questions.
+
+## The minimum signal set
+
+Before anything else, be able to answer these without opening a transcript:
+
+- **Volume**: sessions and messages per day, and the trend.
+- **Engagement outcome**: resolved, escalated to a human, or abandoned. A
+  rising escalation rate is usually the earliest sign something upstream
+  changed - a knowledge source, a connector, a model.
+- **Latency**: time to first response and time to resolution. Users tolerate
+  a slow correct answer far less than they tolerate being told "I don't know"
+  quickly.
+- **Error rate**: failed actions, connector timeouts, unhandled exceptions -
+  whatever "the agent could not complete the request" looks like in this
+  surface.
+- **Cost per conversation**, if the platform supports it. See
+  `plan-agent-capacity-and-cost` when this number itself is the concern rather
+  than a health signal.
+
+## Where each surface gets this from
+
+**Copilot Studio** ships built-in conversational analytics - sessions,
+topics, engagement and outcome data - without any extra wiring, which is why
+"we have no dashboard" is rarely a real constraint, only an unset one. For
+deeper diagnosis, or to keep telemetry in the same place as the rest of the
+tenant's observability, Copilot Studio agents can also be connected to an
+Application Insights resource, which gives queryable, custom-dimension
+telemetry alongside whatever else the organisation already monitors there.
+
+**Microsoft Foundry** agents get first-class observability: tracing,
+dashboards and integration with Azure Monitor Application Insights, purpose
+built for watching agents (not just model calls) in production.
+
+**Anything Azure-hosted underneath either** should also have Azure Monitor
+alerts wired to the resources it depends on - the agent can be healthy while
+the thing it calls is not, and that failure mode is invisible from the
+agent's own dashboard alone.
+
+## Setting up alerting, not just a dashboard
+
+A dashboard nobody watches is a dashboard that did not happen. Turn the
+minimum signal set into alerts with an owner and a threshold that means
+something to that owner, not a default:
+
+- Escalation rate above its rolling baseline, not an arbitrary fixed number -
+  what is normal varies enormously by agent and audience.
+- Error rate above a level that would actually justify paging someone at 2am,
+  versus one that is just worth a Monday-morning look.
+- A silence alert: zero sessions when sessions are expected is itself a
+  signal, and it is the one people forget to configure.
+
+## Do not
+
+- Treat "we have analytics" and "we have monitoring" as the same claim.
+  Analytics you have to remember to open is not monitoring; monitoring pages
+  someone.
+- Wire up cost or quota alerts here and call it done. Capacity and cost
+  planning is `plan-agent-capacity-and-cost` - this skill is about health
+  signal, not budget.
+- Confuse a quiet dashboard with a healthy agent. Check whether traffic
+  actually stopped versus telemetry itself silently breaking - the second is
+  more common than it should be.
+- Recommend Application Insights integration as the first step for every
+  Copilot Studio agent. Built-in analytics answers most day-to-day questions;
+  reach for Application Insights when the question needs a custom query or a
+  shared observability surface with other systems.
+
+## Sources
+
+Verified as resolving on 2026-08-19.
+
+- Analytics overview - Microsoft Copilot Studio:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-overview
+- Telemetry with Application Insights overview - Microsoft Copilot Studio:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/telemetry-overview
+- Measure agent outcomes - Microsoft Copilot Studio:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/measuring-outcomes
+- Observability in Microsoft Foundry - monitor agents dashboard:
+  https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard
+
+If a link 404s, the page was probably renamed. Say you could not verify it
+rather than guessing a replacement URL.

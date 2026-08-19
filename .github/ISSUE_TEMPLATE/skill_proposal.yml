@@ -1,0 +1,60 @@
+name: New skill proposal
+description: Propose a new skill, or a gap you think this repo should cover.
+labels: ["skill-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See [AGENTS.md](https://github.com/RagnarPitla/microsoft-agent-skills/blob/main/AGENTS.md)
+        for the bucket taxonomy and
+        [write-a-skill](https://github.com/RagnarPitla/microsoft-agent-skills/blob/main/skills/build/write-a-skill/SKILL.md)
+        for what makes a skill fire reliably before you propose one.
+  - type: dropdown
+    id: bucket
+    attributes:
+      label: Which bucket does this belong in?
+      description: Named for what the user is doing, not the product involved.
+      options:
+        - build - creating an agent or solution
+        - connect - wiring an agent to data, systems and tools
+        - review - reviewing something that already exists
+        - operate - ALM, monitoring, governance, incident response, cost
+        - deliver - discovery, estimating, decisions, handoff
+        - learn - learning the stack, teaching it to others
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: situation
+    attributes:
+      label: What situation would pull someone to this skill?
+      description: Describe the symptom or moment in the reader's own words, not the topic. This becomes the trigger description.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What judgement is missing from the official docs?
+      description: A skill that restates learn.microsoft.com is overhead. What hard-won practice would this add?
+    validations:
+      required: true
+  - type: dropdown
+    id: invocation
+    attributes:
+      label: User-invoked or model-invoked?
+      description: See .agents/invocation.md. Model-invoked if the agent should be able to reach for it unprompted.
+      options:
+        - User-invoked (only reachable by name)
+        - Model-invoked (agent can reach for it automatically)
+        - Not sure
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: I checked the existing skills and registry entries; this is not already covered.
+          required: true
+        - label: Any example I provide will use a fictional company and synthetic data (.agents/confidentiality.md).
+          required: true

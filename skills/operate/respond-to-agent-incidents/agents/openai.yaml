@@ -1,0 +1,5 @@
+interface:
+  display_name: Respond to agent incidents
+  short_description: Triage and recover when a live agent is failing right now and users are affected.
+policy:
+  allow_implicit_invocation: true

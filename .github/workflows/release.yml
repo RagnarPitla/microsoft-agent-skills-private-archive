@@ -1,0 +1,42 @@
+name: release
+
+# This repository does not publish to any npm registry: package.json is
+# "private": true, and the "version" in it exists so Changesets has something
+# to bump, not to signal a shippable artefact. This workflow's only job is to
+# keep .changeset/*.md entries applied: it opens (and keeps updated) a
+# "Version Packages" pull request that runs `npm run version` - which also
+# syncs .claude-plugin/plugin.json - whenever unreleased changesets exist on
+# main. Nothing here calls `npm publish`.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create/update the Version Packages PR
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+        with:
+          version-script: npm run version
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

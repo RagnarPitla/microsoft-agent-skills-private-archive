@@ -1,0 +1,28 @@
+# Keeps the pinned GitHub Actions SHAs and the npm devDependencies current.
+#
+# GitHub Actions are pinned to full commit SHAs (see .github/workflows/*.yml)
+# rather than floating tags, so Dependabot's version-comment update is what
+# actually moves them forward - it edits the SHA and refreshes the trailing
+# `# vX.Y.Z` comment in the same pull request, rather than leaving pinning to
+# rot into a stale, unpatched commit that nobody revisits.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(actions)"
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - "dependencies"
+      - "npm"

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question / start a discussion
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/discussions
+    about: Not sure if something is a bug, a gap, or a "how do I..."? Start here.
+  - name: Report a security issue
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/security/advisories/new
+    about: Do not open a public issue for a security vulnerability or a leaked secret. See SECURITY.md.

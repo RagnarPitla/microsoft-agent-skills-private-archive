@@ -7,63 +7,44 @@
  * This gate exists so a copy-paste or a wandering `git add` cannot leak them.
  *
  * Usage:
- *   node scripts/scrub.mjs              # scan tracked + staged files
- *   node scripts/scrub.mjs --all        # scan the whole working tree
- *   node scripts/scrub.mjs --history    # also scan full git history (slow)
+ *   node scripts/scrub.mjs                 # scan tracked + staged files
+ *   node scripts/scrub.mjs --all           # scan the whole working tree
+ *   node scripts/scrub.mjs --history       # also scan full git history (slow) [not yet implemented]
+ *   node scripts/scrub.mjs --require-denylist   # fail if no denylist source was supplied
  *
- * The concrete forbidden terms live in .scrub-denylist.txt, which is gitignored.
- * Writing them into a committed file would itself be the disclosure.
- * Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in locally.
+ * The concrete forbidden terms live in .scrub-denylist.txt, which is gitignored,
+ * OR in the SCRUB_DENYLIST environment variable (same one-term-per-line format),
+ * which is how trusted CI supplies the customer/codename denylist as a secret
+ * without ever writing it to a file on disk. Writing them into a committed file
+ * would itself be the disclosure - copy .scrub-denylist.example.txt to
+ * .scrub-denylist.txt and fill it in locally, or set SCRUB_DENYLIST in CI.
  */
 
 import { execSync } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import { ROOT } from "./lib/skills.mjs";
+import { STRUCTURAL, parseDenylist, scanFileText } from "./lib/scrub-core.mjs";
 
-const root = execSync("git rev-parse --show-toplevel").toString().trim();
+const root = ROOT ?? execSync("git rev-parse --show-toplevel").toString().trim();
 const args = new Set(process.argv.slice(2));
-
-// Structural patterns. These are safe to commit because they describe a *shape*,
-// not a secret. Each is something that is a disclosure regardless of its value.
-const STRUCTURAL = [
-  { id: "tenant-crm", re: /[a-z0-9-]+\.crm\d*\.dynamics\.com/gi, why: "Dataverse environment URL" },
-  { id: "tenant-ops", re: /[a-z0-9-]+\.operations\.dynamics\.com/gi, why: "F&O environment URL" },
-  { id: "tenant-sp", re: /[a-z0-9-]+\.sharepoint\.com/gi, why: "SharePoint tenant URL" },
-  { id: "tenant-oms", re: /[a-z0-9-]+\.onmicrosoft\.com/gi, why: "Entra tenant domain" },
-  { id: "guid", re: /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, why: "GUID: tenant, subscription, app or environment ID" },
-  { id: "msft-email", re: /[a-z0-9._%+-]+@microsoft\.com/gi, why: "Microsoft corporate email address" },
-  { id: "secret-kv", re: /\b(client_?secret|api_?key|password|connection_?string|sas_?token)\b\s*[:=]\s*["']?[^\s"'<>{}]{8,}/gi, why: "credential-shaped assignment" },
-  { id: "bearer", re: /\bBearer\s+[A-Za-z0-9._-]{20,}/g, why: "bearer token" },
-  { id: "pem", re: /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/g, why: "private key" },
-  { id: "ms-internal", re: /Microsoft Internal|Microsoft Confidential/gi, why: "explicit Microsoft internal marking" },
-];
-
-// Placeholders that look like hits but are deliberate documentation.
-// These are tested against the MATCHED TEXT, never the whole line. Testing the
-// line was a silent bypass: `client_secret=<real value>` on a line that also
-// said "contoso", or any markdown line containing `<br>`, skipped every rule on
-// that line. The gate reported clean while shipping a live credential.
-const ALLOW = [
-  /00000000-0000-0000-0000-000000000000/i,
-  /contoso/i,
-  /fabrikam/i,
-  /yourorg|your-org|example\.com|<[^>]+>|\{\{[^}]+\}\}|xxxxxxxx/i,
-];
-
-const isPlaceholder = (matched) => ALLOW.some((a) => a.test(matched));
+const requireDenylist = args.has("--require-denylist") || process.env.SCRUB_REQUIRE_DENYLIST === "true";
 
 function loadDenylist() {
+  const sources = [];
+
   const p = path.join(root, ".scrub-denylist.txt");
-  if (!existsSync(p)) return [];
-  return readFileSync(p, "utf8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l && !l.startsWith("#"))
-    .map((term) => ({
-      id: "denylist",
-      re: new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
-      why: "local denylist term (customer, codename or internal identifier)",
-    }));
+  if (existsSync(p)) sources.push(readFileSync(p, "utf8"));
+
+  // Trusted CI supplies this as a secret. It is never written to disk - read
+  // straight from the environment and discarded when the process exits.
+  if (process.env.SCRUB_DENYLIST) sources.push(process.env.SCRUB_DENYLIST);
+
+  return {
+    rules: sources.flatMap(parseDenylist),
+    hasFile: existsSync(p),
+    hasEnv: Boolean(process.env.SCRUB_DENYLIST),
+  };
 }
 
 function filesToScan() {
@@ -80,13 +61,18 @@ function filesToScan() {
 const BINARY = /\.(png|jpe?g|gif|webp|pdf|zip|mp4|mov|woff2?|ico|docx?|xlsx?|pptx?)$/i;
 
 function scan() {
-  const rules = [...STRUCTURAL, ...loadDenylist()];
+  const { rules: denylistRules, hasFile, hasEnv } = loadDenylist();
+  const rules = [...STRUCTURAL, ...denylistRules];
   const findings = [];
   const images = [];
 
   for (const rel of filesToScan()) {
     if (rel.startsWith(".scrub-denylist")) continue;
-    if (rel === "scripts/scrub.mjs") continue;
+    // These deliberately contain pattern-shaped fixture strings (GUIDs, a fake
+    // PEM header, "Microsoft Confidential", etc.) to prove the scanner catches
+    // them. None of it is real: it exists to test scanFileText/STRUCTURAL, the
+    // same way scrub.mjs and scrub-core.mjs already exclude their own source.
+    if (rel === "scripts/scrub.mjs" || rel === "scripts/lib/scrub-core.mjs" || rel === "tests/scrub-core.test.mjs") continue;
     const abs = path.join(root, rel);
     if (!existsSync(abs)) continue;
     if (BINARY.test(rel)) {
@@ -96,28 +82,24 @@ function scan() {
     let text;
     try { text = readFileSync(abs, "utf8"); } catch { continue; }
 
-    text.split("\n").forEach((line, i) => {
-      for (const rule of rules) {
-        rule.re.lastIndex = 0;
-        // Every match on the line, not just the first: one real secret sitting
-        // next to one placeholder must still fail.
-        for (const m of line.matchAll(rule.re)) {
-          if (isPlaceholder(m[0])) continue;
-          const shown = rule.id === "denylist" ? "[redacted denylist match]" : m[0].slice(0, 60);
-          findings.push({ file: rel, line: i + 1, rule: rule.id, why: rule.why, match: shown });
-        }
-      }
-    });
+    findings.push(...scanFileText(rel, text, rules));
   }
-  return { findings, images };
+  return { findings, images, hasFile, hasEnv, denylistCount: denylistRules.length };
 }
 
-const { findings, images } = scan();
+const { findings, images, hasFile, hasEnv, denylistCount } = scan();
+const denylistSupplied = hasFile || hasEnv;
 
-if (!existsSync(path.join(root, ".scrub-denylist.txt"))) {
-  console.warn("WARNING: no .scrub-denylist.txt found. Structural checks ran, but");
+if (!denylistSupplied) {
+  if (requireDenylist) {
+    console.error("Scrub gate FAILED: --require-denylist was set, but no denylist was supplied.");
+    console.error("Neither .scrub-denylist.txt nor the SCRUB_DENYLIST environment variable was present.");
+    console.error("This run is treated as trusted (main/schedule/release), where the denylist is mandatory.");
+    process.exit(1);
+  }
+  console.warn("WARNING: no denylist found (.scrub-denylist.txt or SCRUB_DENYLIST). Structural checks ran, but");
   console.warn("customer names and internal codenames were NOT checked.");
-  console.warn("Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in.\n");
+  console.warn("Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in, or set SCRUB_DENYLIST.\n");
 }
 
 if (images.length) {
@@ -128,7 +110,10 @@ if (images.length) {
 }
 
 if (findings.length === 0) {
-  console.log("Scrub gate passed. Remember: automated checks cannot catch a paraphrased");
+  const mode = denylistSupplied
+    ? `structural checks plus ${denylistCount} denylist term(s)`
+    : "structural checks only - no denylist supplied";
+  console.log(`Scrub gate passed (${mode}). Remember: automated checks cannot catch a paraphrased`);
   console.log("customer story. Re-read .agents/confidentiality.md before publishing.");
   process.exit(0);
 }

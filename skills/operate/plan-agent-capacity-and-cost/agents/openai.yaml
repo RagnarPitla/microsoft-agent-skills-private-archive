@@ -1,0 +1,5 @@
+interface:
+  display_name: Plan agent capacity and cost
+  short_description: Work out whether an agent's message capacity, quota or spend is sized correctly before a limit or a bill surprises someone.
+policy:
+  allow_implicit_invocation: true
