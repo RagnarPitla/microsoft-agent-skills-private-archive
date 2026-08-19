@@ -27,7 +27,7 @@ repositories:
     provenance: official-microsoft
     description: Course-style introduction to building AI agents, with runnable lessons.
     covers: [learn]
-    stars: 72581
+    stars: 72582
     verdict: route
     why: The best onboarding path that exists. Send newcomers here rather than writing an intro skill.
 
@@ -36,7 +36,7 @@ repositories:
     provenance: official-microsoft
     description: Multi-agent conversation framework for Python and .NET.
     covers: [build]
-    stars: 60502
+    stars: 60503
     verdict: route
     why: Dominant multi-agent framework with its own deep documentation.
 
@@ -53,7 +53,7 @@ repositories:
     provenance: official-microsoft
     description: Orchestration framework consolidating patterns from Semantic Kernel and AutoGen.
     covers: [build]
-    stars: 12884
+    stars: 12886
     verdict: route
     why: Moving quickly. Confirm the current guidance before writing anything durable against it.
 
@@ -62,7 +62,7 @@ repositories:
     provenance: official-microsoft
     description: MCP server exposing browser automation to an agent.
     covers: [connect]
-    stars: 36259
+    stars: 36258
     verdict: route
 
   - name: microsoft/azure-devops-mcp
@@ -121,7 +121,7 @@ repositories:
     provenance: official-microsoft
     description: Research on optimising skill definitions for agent performance.
     covers: [learn, operate]
-    stars: 16133
+    stars: 16134
     verdict: route
     why: Its best_skill.md pattern is directly relevant to how skills here are written.
 
@@ -186,7 +186,7 @@ repositories:
     provenance: community
     description: The reference implementation of agent skills, from the people who defined the format.
     covers: [build, learn]
-    stars: 170309
+    stars: 170311
     verdict: route
     why: Read this first for what a skill is. It sets the format; nothing here should contradict it.
 
@@ -195,7 +195,7 @@ repositories:
     provenance: community
     description: A skills framework and software development methodology, unusually opinionated about process.
     covers: [build, deliver]
-    stars: 273729
+    stars: 273735
     verdict: route
     why: The strongest argument that skills encode methodology rather than reference material. Borrow the stance, not the content.
 
@@ -204,7 +204,7 @@ repositories:
     provenance: community
     description: Engineering skills with a strict bucket taxonomy, invocation model and validated sync obligations.
     covers: [build, review, operate]
-    stars: 221637
+    stars: 221682
     verdict: route
     why: The structural model this repo is built on - buckets, user versus model invocation, and a validator that enforces the contract.
 
@@ -231,7 +231,7 @@ repositories:
     provenance: community
     description: The largest community index of MCP servers.
     covers: [connect]
-    stars: 92543
+    stars: 92544
     verdict: route
     why: Check here before writing an MCP server. Also the clearest evidence of the Dataverse and Dynamics gap, which nothing in it fills.
 
