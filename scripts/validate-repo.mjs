@@ -336,7 +336,9 @@ async function verifyLinks() {
 
         last = `HTTP ${get.status}`;
         // A rate-limited or flaky host is not a broken link. Back off and retry.
-        if (![429, 503, 504].includes(get.status)) return last;
+        // 502 in particular shows up on healthy Microsoft community pages often
+        // enough that failing on it would train people to ignore this check.
+        if (![429, 500, 502, 503, 504].includes(get.status)) return last;
       } catch (e) {
         last = e.message;
       }

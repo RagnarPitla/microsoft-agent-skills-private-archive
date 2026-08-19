@@ -48,6 +48,14 @@ skills:
       short_description: "A structured interview that pins down what you are actually building before you build it."
     policy:
       allow_implicit_invocation: false
+  - name: explain-concept
+    bucket: learn
+    path: skills/learn/explain-concept/SKILL.md
+    interface:
+      display_name: "Explain Concept"
+      short_description: "Explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands."
+    policy:
+      allow_implicit_invocation: true
   - name: power-platform-alm-connection-refs
     bucket: operate
     path: skills/operate/power-platform-alm-connection-refs/SKILL.md

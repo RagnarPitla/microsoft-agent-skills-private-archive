@@ -69,6 +69,12 @@ Model-invoked, and often already applicable, since agent YAML is usually in cont
 
 The clean split across the Copilot Studio skills is *what kind of wrong*. Configuration wrong is this one. Content wrong is `copilot-studio-knowledge-grounding`. Behaviour wrong under load is `copilot-studio-production-patterns`. Sign-in, tokens and channel reach are `copilot-studio-auth-patterns`. Never deployed properly is `power-platform-alm-connection-refs`.
 
+**`explain-concept`** - when they are not stuck on a system at all, they are stuck on an idea. They have read the documentation and it did not land, they are describing how the product worked somewhere else, or they cannot find something that was renamed.
+
+Model-invoked, so you can start using it directly.
+
+Route here rather than to a product skill when nothing is actually broken. "Why does it work this way" is this one; "why is it broken" is one of the four above. And if someone is asking to be told which option to pick rather than what an option means, that is `choose-agent-platform` - explaining will not settle a decision.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.
