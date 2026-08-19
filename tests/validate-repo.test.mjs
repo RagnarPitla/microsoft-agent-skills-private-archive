@@ -129,7 +129,8 @@ test("a short description on a user-invoked skill is allowed", (t) => {
   const dir = scratchRepo(t, (s) => {
     s.setFrontMatter("skills/deliver/discovery/SKILL.md", "description", "A structured interview before you build.");
   });
-  assert.equal(validate(dir).code, 0, validate(dir).output);
+  const result = validate(dir);
+  assert.equal(result.code, 0, result.output);
 });
 
 // ---------------------------------------------------------------- invocation
