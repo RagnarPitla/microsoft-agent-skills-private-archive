@@ -40,6 +40,12 @@ Tell them to run `choose-agent-platform`. It is a decision they should enter del
 
 This one often runs *before* `discovery` rather than after. If they do not yet know what the agent is for, send them to `discovery` first, because platform choice made against a vague problem is a guess. If the problem is clear and only the platform is open, go straight here.
 
+**`copilot-studio-production-patterns`** - when a Copilot Studio agent already exists and the problem is that it does not survive real use: timeouts against slow backends, context lost across a multi-agent handoff, an interrogation-style conversation users abandon, or grounding that cites confidently and wrongly. Also the right call for a pre-go-live readiness review.
+
+This one is model-invoked, so it can be reached for automatically when a conversation turns into a production problem. You do not have to send them anywhere - if that is what they are describing, you can start using it.
+
+The distinguishing question is whether the agent exists yet. Designing one is a `build` problem in the ordinary sense; this skill is for one that exists and misbehaves under real conditions.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.

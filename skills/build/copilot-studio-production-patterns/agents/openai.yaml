@@ -1,0 +1,5 @@
+interface:
+  display_name: Copilot Studio Production Patterns
+  short_description: The patterns that separate a Copilot Studio agent that demos well from one that survives production.
+policy:
+  allow_implicit_invocation: true

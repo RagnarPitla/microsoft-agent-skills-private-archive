@@ -196,10 +196,21 @@ for (const bucket of ALL_BUCKETS) {
   const readme = read(`skills/${bucket}/README.md`);
   if (hasSkills && readme === null) err(`Missing skills/${bucket}/README.md.`);
   if (PROMOTED.includes(bucket) && readme) {
-    for (const heading of ["User-invoked", "Model-invoked"]) {
-      if (!readme.includes(heading)) {
-        err(`skills/${bucket}/README.md must group entries into "User-invoked" and "Model-invoked".`);
-        break;
+    const bucketSkills = skills.filter((s) => s.bucket === bucket);
+    const needed = [
+      ["User-invoked", bucketSkills.some((s) => s.userInvoked)],
+      ["Model-invoked", bucketSkills.some((s) => !s.userInvoked)],
+    ];
+    for (const [heading, required] of needed) {
+      if (required && !readme.includes(heading)) {
+        err(
+          `skills/${bucket}/README.md is missing a "${heading}" section, but the bucket contains ${heading.toLowerCase()} skill(s).`,
+        );
+      }
+      if (!required && readme.includes(heading)) {
+        err(
+          `skills/${bucket}/README.md has a "${heading}" section but no ${heading.toLowerCase()} skills. Drop the empty heading.`,
+        );
       }
     }
   }
