@@ -3,7 +3,8 @@
 # This repo aims to be an honest index of the Microsoft agent ecosystem, not a
 # land grab. Where Microsoft already solves something well we route to them and
 # say so. A registry entry that 404s costs more trust than a missing skill, so
-# every url here is link-checked by `npm run validate -- --links`.
+# every url here is link-checked by `npm run validate -- --links`, and the
+# fields around it are schema-checked on every `npm run validate`.
 #
 # Fields
 #   name        repository, as owner/repo
@@ -131,6 +132,81 @@ repositories:
     covers: [operate]
     stars: 17496
     verdict: route
+
+# Prior art in the skills space itself. None of it is Microsoft-specific, which
+# is precisely why it is listed: it establishes the form, and this repo should
+# borrow the form rather than reinvent it. Read these before writing a skill.
+  - name: anthropics/skills
+    url: https://github.com/anthropics/skills
+    provenance: community
+    description: The reference implementation of agent skills, from the people who defined the format.
+    covers: [build, learn]
+    stars: 170293
+    verdict: route
+    why: Read this first for what a skill is. It sets the format; nothing here should contradict it.
+
+  - name: obra/superpowers
+    url: https://github.com/obra/superpowers
+    provenance: community
+    description: A skills framework and software development methodology, unusually opinionated about process.
+    covers: [build, deliver]
+    stars: 273693
+    verdict: route
+    why: The strongest argument that skills encode methodology rather than reference material. Borrow the stance, not the content.
+
+  - name: mattpocock/skills
+    url: https://github.com/mattpocock/skills
+    provenance: community
+    description: Engineering skills with a strict bucket taxonomy, invocation model and validated sync obligations.
+    covers: [build, review, operate]
+    stars: 221521
+    verdict: route
+    why: The structural model this repo is built on - buckets, user versus model invocation, and a validator that enforces the contract.
+
+  - name: github/awesome-copilot
+    url: https://github.com/github/awesome-copilot
+    provenance: microsoft-adjacent
+    description: Community-contributed instructions, agents, skills and configurations for GitHub Copilot.
+    covers: [build]
+    stars: 37988
+    verdict: wrap
+    why: Large and genuinely useful, but a catalogue rather than a curriculum. Closest thing to a competitor for Microsoft-flavoured content; check here before building.
+
+  - name: hesreallyhim/awesome-claude-code
+    url: https://github.com/hesreallyhim/awesome-claude-code
+    provenance: community
+    description: Curated index of tooling, workflows and resources across the agentic coding ecosystem.
+    covers: [learn]
+    stars: 52579
+    verdict: route
+    why: Use as a discovery surface before building anything - it is the fastest way to find out something already exists.
+
+  - name: punkpeye/awesome-mcp-servers
+    url: https://github.com/punkpeye/awesome-mcp-servers
+    provenance: community
+    description: The largest community index of MCP servers.
+    covers: [connect]
+    stars: 92539
+    verdict: route
+    why: Check here before writing an MCP server. Also the clearest evidence of the Dataverse and Dynamics gap, which nothing in it fills.
+
+  - name: PatrickJS/awesome-cursorrules
+    url: https://github.com/PatrickJS/awesome-cursorrules
+    provenance: community
+    description: Collection of Cursor rules files across languages and frameworks.
+    covers: [build]
+    stars: 40607
+    verdict: route
+    why: Relevant only because this repo emits Cursor rules. Useful as a format reference, not as content.
+
+  - name: VoltAgent/awesome-claude-code-subagents
+    url: https://github.com/VoltAgent/awesome-claude-code-subagents
+    provenance: community
+    description: Over a hundred specialised subagent definitions covering a wide range of roles.
+    covers: [build]
+    stars: 24445
+    verdict: rebuild
+    why: Illustrates the persona trap. Most entries define a role rather than a discipline, which is the failure mode this repo exists to avoid.
 
 # Archived or stale. Recorded deliberately: knowing what NOT to link is part of
 # being an honest index. Never route a reader to anything in this list.

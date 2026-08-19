@@ -196,6 +196,64 @@ for (const rel of REGISTRIES) {
     continue;
   }
   harvest(text, rel);
+  checkRegistrySchema(text, rel);
+}
+
+// The registry is only useful if its entries are trustworthy, and link-checking
+// proves nothing about the fields around the url. A `covers: [learm]` typo would
+// silently drop an entry out of every bucket query, so the shape is checked too.
+// Deliberately line-based rather than a real YAML parse: the pre-commit hook has
+// to run on a fresh clone with no npm install.
+function checkRegistrySchema(text, rel) {
+  const BUCKETS = new Set([...PROMOTED, ...UNPROMOTED]);
+  const VERDICTS = new Set(["route", "wrap", "rebuild"]);
+  const PROVENANCE = new Set(["official-microsoft", "microsoft-adjacent", "community"]);
+
+  const lines = text.split("\n");
+  if (!lines.some((l) => /^verified_on:\s*\d{4}-\d{2}-\d{2}\s*$/.test(l))) {
+    err(`${rel}: missing or malformed \`verified_on: YYYY-MM-DD\`. A registry with no date cannot be re-verified.`);
+  }
+
+  // Entries in do_not_link answer a different question and carry different keys.
+  const doNotLinkAt = lines.findIndex((l) => /^do_not_link:/.test(l));
+  const entries = [];
+  lines.forEach((line, i) => {
+    if (/^ {2}- name:/.test(line)) entries.push({ start: i, fields: new Map() });
+    else if (entries.length) {
+      const m = line.match(/^ {4}([a-z_]+):\s*(.*)$/);
+      if (m) entries[entries.length - 1].fields.set(m[1], m[2].trim());
+    }
+    if (/^ {2}- name:/.test(line)) {
+      entries[entries.length - 1].fields.set("name", line.split(":").slice(1).join(":").trim());
+    }
+  });
+
+  for (const e of entries) {
+    const linked = doNotLinkAt !== -1 && e.start > doNotLinkAt;
+    const where = `${rel}:${e.start + 1} (${e.fields.get("name") || "unnamed"})`;
+    const need = linked ? ["url", "reason"] : ["url", "provenance", "description", "covers", "verdict"];
+    for (const k of need) {
+      if (!e.fields.has(k)) err(`${where}: missing required field \`${k}\`.`);
+    }
+    if (linked) continue;
+
+    const verdict = e.fields.get("verdict");
+    if (verdict && !VERDICTS.has(verdict)) {
+      err(`${where}: verdict "${verdict}" is not one of ${[...VERDICTS].join(", ")}.`);
+    }
+    const prov = e.fields.get("provenance");
+    if (prov && !PROVENANCE.has(prov)) {
+      err(`${where}: provenance "${prov}" is not one of ${[...PROVENANCE].join(", ")}.`);
+    }
+    const covers = e.fields.get("covers");
+    if (covers) {
+      const vals = covers.replace(/[[\]]/g, "").split(",").map((s) => s.trim()).filter(Boolean);
+      if (!vals.length) err(`${where}: \`covers\` is empty. Say which bucket it maps to.`);
+      for (const v of vals) {
+        if (!BUCKETS.has(v)) err(`${where}: covers "${v}" is not a bucket. Expected one of ${[...BUCKETS].join(", ")}.`);
+      }
+    }
+  }
 }
 
 // Skills and docs cite documentation directly. Those links rot exactly like
