@@ -39,12 +39,18 @@ const STRUCTURAL = [
 ];
 
 // Placeholders that look like hits but are deliberate documentation.
+// These are tested against the MATCHED TEXT, never the whole line. Testing the
+// line was a silent bypass: `client_secret=<real value>` on a line that also
+// said "contoso", or any markdown line containing `<br>`, skipped every rule on
+// that line. The gate reported clean while shipping a live credential.
 const ALLOW = [
   /00000000-0000-0000-0000-000000000000/i,
   /contoso/i,
   /fabrikam/i,
   /yourorg|your-org|example\.com|<[^>]+>|\{\{[^}]+\}\}|xxxxxxxx/i,
 ];
+
+const isPlaceholder = (matched) => ALLOW.some((a) => a.test(matched));
 
 function loadDenylist() {
   const p = path.join(root, ".scrub-denylist.txt");
@@ -91,11 +97,12 @@ function scan() {
     try { text = readFileSync(abs, "utf8"); } catch { continue; }
 
     text.split("\n").forEach((line, i) => {
-      if (ALLOW.some((a) => a.test(line))) return;
       for (const rule of rules) {
         rule.re.lastIndex = 0;
-        const m = rule.re.exec(line);
-        if (m) {
+        // Every match on the line, not just the first: one real secret sitting
+        // next to one placeholder must still fail.
+        for (const m of line.matchAll(rule.re)) {
+          if (isPlaceholder(m[0])) continue;
           const shown = rule.id === "denylist" ? "[redacted denylist match]" : m[0].slice(0, 60);
           findings.push({ file: rel, line: i + 1, rule: rule.id, why: rule.why, match: shown });
         }
@@ -132,5 +139,6 @@ for (const f of findings) {
   console.error(`      ${f.match}`);
 }
 console.error("\nNothing is published until these are resolved.");
-console.error("If a finding is a deliberate placeholder, use contoso/fabrikam or an <angle-bracket> token.");
+console.error("If a finding is a deliberate placeholder, the placeholder must be the flagged value");
+console.error("itself -- contoso/fabrikam/<angle-bracket>. A placeholder elsewhere on the line does not count.");
 process.exit(1);

@@ -231,7 +231,81 @@ for (const rel of REGISTRIES) {
     continue;
   }
   harvest(text, rel);
-  checkRegistrySchema(text, rel);
+  if (rel.endsWith("connectors.yaml")) checkConnectorSchema(text, rel);
+  else checkRegistrySchema(text, rel);
+}
+
+// Connector entries are keyed by `system`, not `name`, so they need their own
+// schema. They previously fell through checkRegistrySchema's `- name:` matcher
+// and were never validated at all: an entry could omit mechanism, identity and
+// docs, and name a surface that does not exist, and the build stayed green. A
+// validator that passes bad input is worse than no validator, because the README
+// tells readers this registry is machine-checked and they believe it.
+function checkConnectorSchema(text, rel) {
+  // Two families, deliberately in one enum. Microsoft agent surfaces where a
+  // connector is configured, and coding harnesses that reach the same system
+  // over MCP. A connector row is useful in both worlds and the distinction is
+  // not worth a second field.
+  const SURFACES = new Set([
+    "copilot-studio", "power-platform", "foundry", "m365-copilot",
+    "microsoft-search", "custom",
+    "github-copilot", "claude-code", "codex", "cursor",
+  ]);
+  const REQUIRED = ["surfaces", "mechanism", "identity", "docs", "watch_out"];
+
+  const lines = text.split("\n");
+  if (!lines.some((l) => /^verified_on:\s*\d{4}-\d{2}-\d{2}\s*$/.test(l))) {
+    err(`${rel}: missing or malformed \`verified_on: YYYY-MM-DD\`. A registry with no date cannot be re-verified.`);
+  }
+
+  const entries = [];
+  lines.forEach((line, i) => {
+    const head = line.match(/^ {2}- system:\s*(.*)$/);
+    if (head) {
+      entries.push({ start: i, fields: new Map([["system", head[1].trim()]]) });
+      return;
+    }
+    if (!entries.length) return;
+    const m = line.match(/^ {4}([a-z_]+):\s*(.*)$/);
+    if (m) entries[entries.length - 1].fields.set(m[1], m[2].trim());
+  });
+
+  if (!entries.length) {
+    err(`${rel}: no connector entries found. Entries must start with "  - system:".`);
+    return;
+  }
+
+  const seen = new Map();
+  for (const e of entries) {
+    const system = e.fields.get("system");
+    const where = `${rel}:${e.start + 1} (${system || "unnamed"})`;
+
+    if (!system) err(`${where}: \`system\` is empty.`);
+    else if (seen.has(system)) err(`${where}: duplicate system, already defined at line ${seen.get(system)}.`);
+    else seen.set(system, e.start + 1);
+
+    for (const k of REQUIRED) {
+      if (!e.fields.has(k) || e.fields.get(k) === "") {
+        err(`${where}: missing required field \`${k}\`.`);
+      }
+    }
+
+    const surfaces = e.fields.get("surfaces");
+    if (surfaces) {
+      const vals = surfaces.replace(/[[\]]/g, "").split(",").map((s) => s.trim()).filter(Boolean);
+      if (!vals.length) err(`${where}: \`surfaces\` is empty. Say where this connector can be reached from.`);
+      for (const v of vals) {
+        if (!SURFACES.has(v)) {
+          err(`${where}: surface "${v}" is not known. Expected one of ${[...SURFACES].join(", ")}.`);
+        }
+      }
+    }
+
+    const docs = e.fields.get("docs");
+    if (docs && !/^https:\/\/\S+$/.test(docs)) {
+      err(`${where}: \`docs\` must be a single https URL, got "${docs}".`);
+    }
+  }
 }
 
 // The registry is only useful if its entries are trustworthy, and link-checking
