@@ -51,6 +51,12 @@ Also model-invoked, so you can simply start using it when that is what they are 
 
 The two production skills split cleanly. If the agent fails or behaves badly - timeouts, lost context, abandoned conversations - that is `copilot-studio-production-patterns`. If it responds fine but the *content* is wrong, that is this one.
 
+**`power-platform-alm-connection-refs`** - when the problem is deployment rather than behaviour: a solution import that leaves flows switched off, a pipeline that needs someone to reconnect things by hand every time, or something that ran for months and broke when a colleague left. Also the right call before promoting to production.
+
+Model-invoked, so you can start using it directly.
+
+Watch for this one hiding behind a Copilot Studio question. "My agent works in test but not production" is sometimes a grounding or production-patterns problem and sometimes a deployment problem. Ask whether the agent *behaves* differently or was never correctly deployed - those go to different skills.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.

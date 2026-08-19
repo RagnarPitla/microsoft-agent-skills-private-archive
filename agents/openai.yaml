@@ -40,6 +40,14 @@ skills:
       short_description: "A structured interview that pins down what you are actually building before you build it."
     policy:
       allow_implicit_invocation: false
+  - name: power-platform-alm-connection-refs
+    bucket: operate
+    path: skills/operate/power-platform-alm-connection-refs/SKILL.md
+    interface:
+      display_name: "Power Platform ALM Connection References"
+      short_description: "Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership."
+    policy:
+      allow_implicit_invocation: true
   - name: structured-interview
     bucket: deliver
     path: skills/deliver/structured-interview/SKILL.md

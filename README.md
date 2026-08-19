@@ -75,6 +75,7 @@ Your agent reaches for these on its own when the task fits.
 
 - [copilot-studio-knowledge-grounding](./skills/build/copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./skills/build/copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
+- [power-platform-alm-connection-refs](./skills/operate/power-platform-alm-connection-refs/SKILL.md) - fix and prevent solution imports that break on connection references, environment variables and flow ownership.
 - [structured-interview](./skills/deliver/structured-interview/SKILL.md) - interview the user about a plan, design or decision until every open branch is resolved.
 
 ## Buckets
