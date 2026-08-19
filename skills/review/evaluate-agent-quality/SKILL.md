@@ -1,6 +1,8 @@
 ---
 name: evaluate-agent-quality
 description: Establish whether an agent actually works, and whether it still works, using a recorded eval set rather than ad hoc chats. Use when an agent is about to ship and the only testing was somebody typing a few questions into the test pane, when an agent that used to answer correctly now does not and nobody can say when it broke, when a knowledge source or model version changed and you need to know what it affected, when a stakeholder asks how accurate it is and there is no number to give them, when you cannot decide what "correct" even means for a generative answer, or when the agent works for the builder and fails for a user with different permissions. For a one-off read of a single agent's configuration, review-copilot-studio-agent is the better fit; this one is about measurement over time.
+verified_on: 2026-08-18
+provenance: "Agents with no answer to whether they were any good, or still good, beyond ad hoc chats - and the eval sets built to replace that."
 ---
 
 Most agents ship on the strength of a demo. One person, usually the person who

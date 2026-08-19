@@ -1,6 +1,8 @@
 ---
 name: review-copilot-studio-agent
 description: Review a Copilot Studio agent's YAML for defects that matter before it ships. Use when agent.mcs.yml or topic YAML files are open or in a diff, when reviewing a pull request that changes an agent, or when someone asks whether an agent is ready to promote.
+verified_on: 2026-08-18
+provenance: "Reading agent YAML before release, and the defects that were consistently found there rather than in testing."
 ---
 
 Review a Copilot Studio agent the way a senior reviewer would: find the things

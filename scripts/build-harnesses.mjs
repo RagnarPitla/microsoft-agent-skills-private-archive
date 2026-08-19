@@ -164,6 +164,11 @@ artefacts.set(
           description: s.description,
           invocation: s.userInvoked ? "user" : "model",
           promoted: s.promoted,
+          // Carried through so a consumer outside this repo can tell a claim
+          // checked last week from one checked at authoring time, and can see
+          // what the practice came out of, without opening the file.
+          verified_on: s.frontMatter.verified_on ?? null,
+          provenance: s.frontMatter.provenance ?? null,
           path: `skills/${s.bucket}/${s.dirName}/SKILL.md`,
           docs: s.promoted ? `docs/${s.bucket}/${s.dirName}.md` : null,
         })),

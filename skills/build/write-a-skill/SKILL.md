@@ -1,6 +1,8 @@
 ---
 name: write-a-skill
 description: Write or repair an agent skill so it fires when it should and stays quiet when it should not. Use when drafting a new SKILL.md, when a skill is installed but never reached for, when a description reads like a table of contents, when choosing between user-invoked and model-invoked, when a skill has quietly grown two jobs, or when reviewing someone else's skill before it ships.
+verified_on: 2026-08-18
+provenance: "Reviewing skills that were installed, correct, and never once reached for, plus the description rewrites that fixed them."
 ---
 
 Most skills that fail do not fail in the body. They fail at the door. The

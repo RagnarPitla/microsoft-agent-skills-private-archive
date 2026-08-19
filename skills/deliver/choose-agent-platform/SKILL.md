@@ -2,6 +2,8 @@
 name: choose-agent-platform
 description: Work out which Microsoft platform an agent should be built on, and write down why.
 disable-model-invocation: true
+verified_on: 2026-08-18
+provenance: "Platform decisions argued from feature lists, and the six-month regrets that followed when the constraint was never written down."
 ---
 
 Every Microsoft agent engagement opens with this question, and most answers are

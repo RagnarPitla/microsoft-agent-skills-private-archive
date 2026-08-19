@@ -2,6 +2,8 @@
 name: ask-ragnar
 description: Work out which skill in this repo fits the situation in front of you, and say so plainly.
 disable-model-invocation: true
+verified_on: 2026-08-18
+provenance: "Watching people install a skill collection and then ask which one to use, which is the question the collection itself should answer."
 ---
 
 The user does not know what they need yet. Your job is to work that out with them and name the one skill that fits, or to tell them honestly that none of them does.

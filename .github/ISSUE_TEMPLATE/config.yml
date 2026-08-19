@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Which skill fits my situation?
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/blob/main/skills/deliver/ask-ragnar/SKILL.md
+    about: Install the collection and run ask-ragnar. It routes to the skill that fits, or tells you none does.
+  - name: Report a confidentiality slip or a security issue
+    url: https://github.com/RagnarPitla/microsoft-agent-skills/security/policy
+    about: Report privately, never as a public issue. A named customer or a live credential belongs here.

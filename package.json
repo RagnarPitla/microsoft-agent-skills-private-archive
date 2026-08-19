@@ -10,20 +10,16 @@
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build-harnesses.mjs",
-    "check": "node scripts/scrub.mjs && node scripts/build-harnesses.mjs --check && node scripts/validate-repo.mjs",
+    "check": "node scripts/scrub.mjs && node scripts/build-harnesses.mjs --check && node scripts/validate-repo.mjs && node scripts/sync-plugin-version.mjs --check",
+    "test": "node --test tests/*.test.mjs",
     "validate": "node scripts/validate-repo.mjs",
     "refresh:stars": "node scripts/refresh-stars.mjs",
     "check:stars": "node scripts/refresh-stars.mjs --check",
-    "changeset": "changeset",
-    "version": "changeset version && node scripts/sync-plugin-version.mjs",
+    "sync-plugin-version": "node scripts/sync-plugin-version.mjs",
     "check-plugin-version": "node scripts/sync-plugin-version.mjs --check",
     "scrub": "node scripts/scrub.mjs",
     "scrub:all": "node scripts/scrub.mjs --all",
     "prepare": "node scripts/install-hooks.mjs"
-  },
-  "devDependencies": {
-    "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.30.0"
   },
   "packageManager": "npm@10.9.4"
 }

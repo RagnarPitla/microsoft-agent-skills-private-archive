@@ -72,12 +72,69 @@ function checkDescriptionIsTrigger(s) {
   }
 }
 
+// A skill's claims perish. Product behaviour changes, previews GA or die, CLI
+// verbs are retired - and a reader cannot tell a claim checked last week from
+// one checked at authoring time unless the file says. The registries already
+// carry verified_on; skills make far more perishable claims and carried none.
+//
+// provenance is the repo's actual differentiator against generated skill
+// collections. The README claims these come out of real implementation work;
+// this is where each skill has to substantiate that, in general terms, without
+// naming anything it must not name.
+const STALE_AFTER_DAYS = 365;
+const TODAY = new Date();
+
+function checkFreshness(s) {
+  const where = s.skillMdRel;
+  const date = (s.frontMatter.verified_on || "").trim();
+
+  if (!date) {
+    err(`${where}: front matter is missing \`verified_on: YYYY-MM-DD\`. A perishable claim with no date cannot be re-checked.`);
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    err(`${where}: \`verified_on\` must be YYYY-MM-DD, got "${date}".`);
+  } else {
+    const when = new Date(`${date}T00:00:00Z`);
+    if (Number.isNaN(when.getTime())) {
+      err(`${where}: \`verified_on: ${date}\` is not a real date.`);
+    } else if (when > TODAY) {
+      err(`${where}: \`verified_on: ${date}\` is in the future. Date it when you actually checked.`);
+    } else {
+      const days = Math.floor((TODAY - when) / 86400000);
+      // A warning, never an error. Staleness is a maintenance queue, not a
+      // contributor's fault, and failing their unrelated pull request over it
+      // is how a check gets routed around.
+      if (days > STALE_AFTER_DAYS) {
+        warn(`${where}: last verified ${days} days ago (${date}). Re-check its claims against current documentation.`);
+      }
+    }
+  }
+
+  const provenance = (s.frontMatter.provenance || "").trim();
+  if (!provenance) {
+    err(`${where}: front matter is missing \`provenance\`. Say where the practice came from, in general terms - no customer, no tenant, no internal tool.`);
+  } else if (provenance.length < 20) {
+    err(`${where}: \`provenance\` is only ${provenance.length} characters. "experience" is not provenance; name the kind of work it came out of.`);
+  }
+}
+
+// Length is a warning on purpose. The long skills here are long because the
+// catalogue *is* the value, and pushing that tail into references/ moves it
+// behind a load the model may never perform. Worth noticing, never worth
+// failing someone's pull request over.
+const SOFT_LINE_LIMIT = 350;
+
 for (const s of skills) {
   if (!ALL_BUCKETS.includes(s.bucket)) {
     err(`${s.skillMdRel}: unknown bucket "${s.bucket}". Expected one of ${ALL_BUCKETS.join(", ")}.`);
   }
   if (!s.description) err(`${s.skillMdRel}: front matter is missing a description.`);
   else checkDescriptionIsTrigger(s);
+  checkFreshness(s);
+
+  const lineCount = s.body.split("\n").length;
+  if (lineCount > SOFT_LINE_LIMIT) {
+    warn(`${s.skillMdRel}: ${lineCount} lines of body. Past roughly ${SOFT_LINE_LIMIT} the skill is paying context on every load - check the tail is still diagnostic and not reference material.`);
+  }
   if (s.name !== s.dirName) {
     err(`${s.skillMdRel}: front matter name "${s.name}" does not match its folder "${s.dirName}".`);
   }
@@ -121,6 +178,29 @@ for (const s of skills) {
   else seen.set(s.name, s.relDir);
 }
 
+// Cross-references, reported and never enforced. A one-way reference is often
+// correct - a specialist skill naming the general one it sits under does not
+// oblige the general one to name every specialist. This is a nudge to check the
+// pair reads sensibly from both ends, and a gate here would produce exactly the
+// kind of noise that teaches people to ignore gates.
+{
+  const names = new Map(skills.map((s) => [s.name, s]));
+  for (const s of skills) {
+    for (const [, cited] of s.body.matchAll(/`([a-z0-9]+(?:-[a-z0-9]+)+)`/g)) {
+      if (cited === s.name) continue;
+      const other = names.get(cited);
+      if (!other || other.name === ROUTER || s.name === ROUTER) continue;
+      // A thin user-invoked wrapper naming the primitive it delegates to is the
+      // documented pattern, not a gap - discovery over structured-interview is
+      // the reference example. Nothing is stranded there, so it is not raised.
+      if (s.userInvoked || other.userInvoked) continue;
+      if (!other.body.includes(s.name)) {
+        warn(`${s.skillMdRel} points at "${cited}", which never points back. Confirm the reader arriving from the other direction is not stranded.`);
+      }
+    }
+  }
+}
+
 // ------------------------------------------------------------ sync obligations
 const rootReadme = read("README.md");
 if (rootReadme === null) err("Missing README.md.");
@@ -137,11 +217,21 @@ if (pluginRaw === null) {
   }
 }
 
+const docsIndexRel = "docs/README.md";
+const docsIndex = read(docsIndexRel);
+if (docsIndex === null) {
+  err(`Missing ${docsIndexRel}. docs/ without an index is a pile of orphan pages.`);
+}
+
 for (const s of skills) {
   const docsRel = `docs/${s.bucket}/${s.name}.md`;
   const skillLink = `skills/${s.bucket}/${s.dirName}/SKILL.md`;
   const bucketReadmeRel = `skills/${s.bucket}/README.md`;
   const bucketReadme = read(bucketReadmeRel);
+  // The docs index links relatively from docs/, so a page is listed as
+  // ./<bucket>/<name>.md. Accept the repo-root form too rather than being
+  // pedantic about which one a contributor reached for.
+  const docsIndexLinks = [`./${s.bucket}/${s.name}.md`, `${docsRel}`];
 
   if (s.promoted) {
     if (rootReadme && !rootReadme.includes(skillLink)) {
@@ -152,6 +242,12 @@ for (const s of skills) {
     }
     if (!existsSync(path.join(ROOT, docsRel))) {
       err(`${s.name}: promoted but has no docs page at ${docsRel}.`);
+    }
+    // Fifth sync obligation. The page existing is not the same as the page being
+    // reachable: docs/ is 15 files deep in a tree nobody browses, and an index
+    // that silently falls behind is worse than none because people trust it.
+    if (docsIndex && !docsIndexLinks.some((l) => docsIndex.includes(l))) {
+      err(`${s.name}: promoted but not listed in ${docsIndexRel} (expected a link to ./${s.bucket}/${s.name}.md).`);
     }
     if (bucketReadme === null) {
       err(`Missing ${bucketReadmeRel} for promoted bucket "${s.bucket}".`);
@@ -168,6 +264,9 @@ for (const s of skills) {
     }
     if (existsSync(path.join(ROOT, docsRel))) {
       err(`${s.name}: in non-promoted bucket "${s.bucket}" but has a docs page at ${docsRel}.`);
+    }
+    if (docsIndex && docsIndexLinks.some((l) => docsIndex.includes(l))) {
+      err(`${s.name}: in non-promoted bucket "${s.bucket}" but listed in ${docsIndexRel}.`);
     }
   }
 }
@@ -200,9 +299,14 @@ if (existsSync(docsRoot)) {
 // README promises that "a registry entry that 404s costs more trust than a
 // missing skill", so the repo has to hold itself to that internally too.
 {
-  const rootDocs = ["README.md", "CLAUDE.md"];
+  const rootDocs = ["README.md", "CLAUDE.md", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "CHANGELOG.md", "docs/README.md"];
   for (const f of readdirSync(path.join(ROOT, ".agents"))) {
     if (f.endsWith(".md")) rootDocs.push(`.agents/${f}`);
+  }
+  for (const bucket of ALL_BUCKETS) {
+    if (existsSync(path.join(ROOT, "skills", bucket, "README.md"))) {
+      rootDocs.push(`skills/${bucket}/README.md`);
+    }
   }
   // Source skills and the artefacts generated from them. A skill that links to
   // ./references/x.md is only correct if that file travels with it: the emitted
@@ -287,6 +391,29 @@ if (!router) {
           `README.md does not carry this install command verbatim from .agents/install-block.md:\n    ${cmd.replace(/\n/g, "\n    ")}`,
         );
       }
+    }
+  }
+}
+
+// ------------------------------------------------------------------ changelog
+// Releases here are hand-cut. The failure that follows from that is a version
+// bump nobody wrote down, which leaves someone who installed two months ago with
+// no way to know whether to re-pull - the exact question a changelog exists to
+// answer. Checked rather than trusted, like every other obligation here.
+{
+  const pkgRaw = read("package.json");
+  const changelog = read("CHANGELOG.md");
+  if (!changelog) {
+    err("Missing CHANGELOG.md. A user who installed two months ago has no way to know what changed.");
+  } else if (pkgRaw) {
+    let version = null;
+    try {
+      version = JSON.parse(pkgRaw).version;
+    } catch (e) {
+      err(`package.json is not valid JSON: ${e.message}`);
+    }
+    if (version && !new RegExp(`^##+\\s.*${version.replace(/\./g, "\\.")}`, "m").test(changelog)) {
+      err(`CHANGELOG.md has no section for the current version ${version}. Bumping the version without writing down what changed is the failure a changelog exists to prevent.`);
     }
   }
 }
@@ -465,7 +592,7 @@ for (const bucket of ALL_BUCKETS) {
   const rel = `skills/${bucket}/README.md`;
   harvest(read(rel) ?? "", rel);
 }
-for (const rel of ["AGENTS.md", "CONTRIBUTING.md"]) {
+for (const rel of ["AGENTS.md", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "CHANGELOG.md", "docs/README.md"]) {
   harvest(read(rel) ?? "", rel);
 }
 // Glob rather than list: a new guide added to .agents/ should be link-checked

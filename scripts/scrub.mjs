@@ -11,9 +11,25 @@
  *   node scripts/scrub.mjs --all        # scan the whole working tree
  *   node scripts/scrub.mjs --history    # also scan full git history (slow)
  *
- * The concrete forbidden terms live in .scrub-denylist.txt, which is gitignored.
- * Writing them into a committed file would itself be the disclosure.
- * Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in locally.
+ * Two denylists, for two different threat models:
+ *
+ *   .scrub-baseline-denylist.txt   committed. Terms that are safe to publish
+ *                                  because they are markings rather than
+ *                                  secrets: "internal use only", "pre-release"
+ *                                  and the like. This is what makes the gate
+ *                                  mean something in CI, where the local file
+ *                                  can never exist.
+ *   .scrub-denylist.txt            gitignored. Customer names, codenames and
+ *                                  internal identifiers. Writing these into a
+ *                                  committed file would itself be the
+ *                                  disclosure. Copy .scrub-denylist.example.txt
+ *                                  and fill it in locally.
+ *
+ * The gate fails closed on the committed list: if .scrub-baseline-denylist.txt
+ * is missing or empty the run exits non-zero rather than warning, because a
+ * check that passes when its input is missing is not a check. The local list is
+ * warned about instead - it can never exist in CI, and a permanent red build
+ * nobody is able to fix is how a gate gets ignored.
  */
 
 import { execSync } from "node:child_process";
@@ -52,18 +68,33 @@ const ALLOW = [
 
 const isPlaceholder = (matched) => ALLOW.some((a) => a.test(matched));
 
-function loadDenylist() {
-  const p = path.join(root, ".scrub-denylist.txt");
-  if (!existsSync(p)) return [];
+const BASELINE_DENYLIST = ".scrub-baseline-denylist.txt";
+const LOCAL_DENYLIST = ".scrub-denylist.txt";
+
+function readDenylistTerms(rel) {
+  const p = path.join(root, rel);
+  if (!existsSync(p)) return null;
   return readFileSync(p, "utf8")
     .split("\n")
     .map((l) => l.trim())
-    .filter((l) => l && !l.startsWith("#"))
-    .map((term) => ({
-      id: "denylist",
-      re: new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
-      why: "local denylist term (customer, codename or internal identifier)",
-    }));
+    .filter((l) => l && !l.startsWith("#"));
+}
+
+function loadDenylist() {
+  const rules = [];
+  for (const [rel, why] of [
+    [BASELINE_DENYLIST, "baseline denylist term (internal-only marking)"],
+    [LOCAL_DENYLIST, "local denylist term (customer, codename or internal identifier)"],
+  ]) {
+    for (const term of readDenylistTerms(rel) ?? []) {
+      rules.push({
+        id: "denylist",
+        re: new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
+        why,
+      });
+    }
+  }
+  return rules;
 }
 
 function filesToScan() {
@@ -85,8 +116,12 @@ function scan() {
   const images = [];
 
   for (const rel of filesToScan()) {
-    if (rel.startsWith(".scrub-denylist")) continue;
-    if (rel === "scripts/scrub.mjs") continue;
+    if (rel.startsWith(".scrub-")) continue;
+    // Two files hold the shapes on purpose: the gate itself, and the tests that
+    // prove the gate still catches them. Exempting the suite is narrower than it
+    // looks - it is one named file, and a real secret hidden there would be a
+    // deliberate act rather than an accident, which is not this gate's job.
+    if (rel === "scripts/scrub.mjs" || rel === "tests/scrub.test.mjs") continue;
     const abs = path.join(root, rel);
     if (!existsSync(abs)) continue;
     if (BINARY.test(rel)) {
@@ -114,10 +149,23 @@ function scan() {
 
 const { findings, images } = scan();
 
-if (!existsSync(path.join(root, ".scrub-denylist.txt"))) {
-  console.warn("WARNING: no .scrub-denylist.txt found. Structural checks ran, but");
-  console.warn("customer names and internal codenames were NOT checked.");
-  console.warn("Copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in.\n");
+// Fail closed. A denylist that is absent is not a denylist that found nothing,
+// and this is the check the README advertises most loudly. The baseline list is
+// committed precisely so this can be enforced on the branch that matters.
+const baselineTerms = readDenylistTerms(BASELINE_DENYLIST);
+const localTerms = readDenylistTerms(LOCAL_DENYLIST);
+
+if (!baselineTerms?.length) {
+  console.error(`Scrub gate FAILED: ${BASELINE_DENYLIST} is missing or empty.`);
+  console.error("It is committed on purpose so this gate still checks something in CI.");
+  console.error("Restore it rather than deleting the check it feeds.");
+  process.exit(1);
+}
+
+if (!localTerms?.length) {
+  console.warn(`No ${LOCAL_DENYLIST} terms found. Structural checks and the committed`);
+  console.warn("baseline ran, but customer names and internal codenames were NOT checked.");
+  console.warn(`Copy .scrub-denylist.example.txt to ${LOCAL_DENYLIST} and fill it in.\n`);
 }
 
 if (images.length) {

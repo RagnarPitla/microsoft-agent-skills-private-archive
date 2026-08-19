@@ -1,6 +1,8 @@
 ---
 name: copilot-studio-auth-patterns
 description: Choose and debug authentication for a Copilot Studio agent. Use when deciding how users sign in, when an agent cannot call a downstream API as the signed-in user, when a token or User variable is empty or shows as Unknown, when an agent cannot be published to the intended channel, or when you need to control who in the organisation can talk to an agent.
+verified_on: 2026-08-18
+provenance: "Authentication choices made early in a build that only revealed what they had foreclosed at channel publish or first downstream call."
 ---
 
 The authentication setting in Copilot Studio looks like three radio buttons. It

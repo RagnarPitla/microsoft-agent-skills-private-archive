@@ -1,6 +1,8 @@
 ---
 name: structured-interview
 description: Interview the user about a plan, design or decision until every open branch is resolved. Use when a request is ambiguous, when scope is unclear, before writing a spec or estimate, when the user asks to be challenged or stress-tested, or when you are about to build something and are not certain what "done" means.
+verified_on: 2026-08-18
+provenance: "Interviews that ended politely with open branches nobody had named, and the discipline that stopped that happening."
 ---
 
 Interview the user until you and they share the same picture of what is being built. Treat the work as a **decision tree**: every decision opens the decisions that hang off it.
