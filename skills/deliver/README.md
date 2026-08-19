@@ -9,6 +9,7 @@ These are the skills for the part of the work that happens before and around the
 Reachable only when you ask for them by name.
 
 - [ask-ragnar](./ask-ragnar/SKILL.md) - work out which skill in this repo fits the situation in front of you.
+- [choose-agent-platform](./choose-agent-platform/SKILL.md) - work out which Microsoft platform an agent should be built on, and write down why.
 - [discovery](./discovery/SKILL.md) - a structured interview that pins down what you are actually building before you build it.
 
 ## Model-invoked

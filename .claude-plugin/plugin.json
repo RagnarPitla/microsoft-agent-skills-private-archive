@@ -10,6 +10,7 @@
   "license": "MIT",
   "skills": [
     "skills/deliver/ask-ragnar/SKILL.md",
+    "skills/deliver/choose-agent-platform/SKILL.md",
     "skills/deliver/discovery/SKILL.md",
     "skills/deliver/structured-interview/SKILL.md"
   ]

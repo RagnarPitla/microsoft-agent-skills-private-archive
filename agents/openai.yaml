@@ -8,6 +8,14 @@ skills:
       short_description: "Work out which skill in this repo fits the situation in front of you."
     policy:
       allow_implicit_invocation: false
+  - name: choose-agent-platform
+    bucket: deliver
+    path: skills/deliver/choose-agent-platform/SKILL.md
+    interface:
+      display_name: "Choose Agent Platform"
+      short_description: "Work out which Microsoft platform an agent should be built on, and write down why."
+    policy:
+      allow_implicit_invocation: false
   - name: discovery
     bucket: deliver
     path: skills/deliver/discovery/SKILL.md

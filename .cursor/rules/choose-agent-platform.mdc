@@ -1,0 +1,159 @@
+---
+description: "Work out which Microsoft platform an agent should be built on, and write down why."
+alwaysApply: false
+---
+
+<!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->
+<!-- Source: skills/deliver/choose-agent-platform/SKILL.md -->
+Every Microsoft agent engagement opens with this question, and most answers are
+wrong for the same reason: people compare feature lists. Feature lists do not
+discriminate, because all four platforms can technically do the common case.
+What discriminates is who maintains the thing in a year, what it is allowed to
+touch, and what happens when it breaks at 2am.
+
+Your job is to ask the questions that actually separate the options, then name
+one platform and write down the reasoning so it survives the user repeating it
+to someone who was not in the room.
+
+## The four options, and what they actually are
+
+Only these four. Do not invent a fifth, and do not name a product you have not
+confirmed exists - the branding in this space changes and everything is called
+"Copilot" something.
+
+- **Agent Builder** - a feature inside Microsoft 365 Copilot. No-code, built
+  and owned by a business user, lives in the Copilot chat experience.
+- **Microsoft Copilot Studio** - the low-code SaaS platform on Power Platform.
+  Connectors, topics, flows, ALM, publishing to Teams and web.
+- **Microsoft 365 Agents SDK** - pro-code, for agents that need real code and
+  deep M365 integration, hosted wherever you choose.
+- **Microsoft Foundry** - the pro-code Azure platform. Model choice, custom
+  orchestration, evaluation, multi-agent, full governance.
+
+Note on naming: Microsoft Foundry was previously **Azure AI Foundry**. Users
+will say both, and older blog posts use the old name. Accept either from them;
+use the current name yourself.
+
+## Ask these, in this order
+
+Stop after each round and wait. Do not fill in answers you have not heard.
+
+**Round 1 - who owns this in a year?**
+The single most predictive question, and the one nobody asks. If the answer is
+"a business user in HR", a Foundry agent is already dead - not because it
+cannot be built, but because nobody will maintain it. If the answer is "the
+platform team, in source control", Agent Builder is already dead.
+
+**Round 2 - what does it need to touch, and how does it authenticate?**
+Ask for specific systems, not categories. "Our data" is not an answer;
+"Dataverse, plus a SAP endpoint that only accepts a client certificate" is.
+Watch for: non-Microsoft systems, on-premises anything, and per-user
+authorisation where the agent must act *as* the user rather than as itself.
+
+**Round 3 - who talks to it, and where?**
+Internal employees in Teams pulls toward Copilot Studio and Agent Builder.
+Anonymous external users on a public website rules out the M365-native options
+and changes the licensing conversation completely. Another system rather than a
+human means the "chat agent" framing may be wrong altogether.
+
+**Round 4 - what happens when it is wrong?**
+An agent that drafts text a human reviews has a different bar from one that
+posts a journal entry or emails a customer. If a wrong answer costs money or
+breaks compliance, you need evaluation, tracing and content safety, and that
+pushes toward Foundry regardless of how simple the logic looks.
+
+**Round 5 - what is actually fixed?**
+Deadline, budget, existing licences, and whether the team has ever shipped
+Azure infrastructure. A technically correct answer that the team cannot build
+is a wrong answer.
+
+## What the answers mean
+
+These are triggers, not a scoring matrix. One strong trigger beats five weak
+ones.
+
+**Agent Builder** when a business user owns it, it answers questions over
+content M365 Copilot can already see, and nothing external is called. It is the
+right answer far more often than consultants like, because it is the only
+option with no deployment story and no maintenance burden.
+
+**Copilot Studio** when it needs connectors, workflows or handoff to a human,
+lives in Teams or on a website, and IT or a maker team owns it. This is the
+default for the majority of enterprise cases - but say *why* it wins, not just
+that it does.
+
+**Microsoft 365 Agents SDK** when it must be code in source control with real
+tests and CI, and its centre of gravity is M365 data and surfaces.
+
+**Microsoft Foundry** when any of these is true: model choice matters, the
+orchestration is genuinely custom or multi-agent, you need evaluation and
+tracing as first-class artefacts, or governance and data residency are
+contractual. Also when cost at volume must be modelled and controlled directly.
+
+**Hybrid** is legitimate and under-used: Copilot Studio as the conversational
+surface, calling a Foundry-hosted agent for the hard reasoning. Offer it when
+the front end and the brain have genuinely different requirements. Do not offer
+it to dodge a decision.
+
+## Traps to name out loud
+
+- **"Everything is a Copilot."** Make the user say which specific product they
+  mean. A large share of confusion in this conversation is two people using one
+  word for four things.
+- **Licensing is a design input, not an afterthought.** Copilot Studio consumes
+  credits and Microsoft 365 Copilot is a per-user licence. If the user has not
+  costed it, flag it as an open question with an owner - do not estimate it
+  yourself and do not quote figures you have not verified, because this pricing
+  has changed recently and changes again.
+- **Prototype platform is not production platform.** Something demoed in Agent
+  Builder does not mean Agent Builder is the answer. Ask what the demo proved.
+- **The graduation path is real but not free.** Starting simple and moving up
+  is supported, but it is a rebuild of some fraction of the work, not an export
+  button. Say so rather than implying a clean upgrade.
+- **Authentication decides more than people expect.** Acting *as the user*
+  versus acting *as itself* is often the constraint that eliminates two of the
+  four options, and it is usually discovered late.
+
+## Deliver it like this
+
+**Recommendation** - one platform, one sentence.
+
+**Because** - the two or three answers that actually drove it. Reference what
+they told you, not generic platform properties.
+
+**We rejected** - the runner-up and the specific trigger that killed it. This
+is the part that survives the meeting.
+
+**Open questions** - anything you could not resolve, each with a named owner.
+Three named open questions beat eight confident guesses. If licensing was not
+costed, it belongs here.
+
+**Revisit if** - the condition that would change the answer. "If external
+anonymous access is added, this becomes a different decision."
+
+## Do not
+
+- Produce a feature comparison table. They exist, they are maintained by
+  Microsoft, and they do not answer this question. Link one instead.
+- Recommend a platform because it is the most capable. The most capable
+  platform is the wrong answer whenever the team cannot operate it.
+- Give a confident answer when the deciding fact is missing. Name the missing
+  fact and what it would change.
+- Quote licence prices, credit consumption rates or quota limits from memory.
+  Point at the pricing page.
+
+## Verified references
+
+Current as of 2026-08-18; each returned HTTP 200 on that date.
+
+- Choosing an extensibility approach for Microsoft 365 Copilot:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-tool-comparison
+- Copilot Studio overview:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio
+- Microsoft 365 Agents SDK:
+  https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/
+- Microsoft Foundry:
+  https://learn.microsoft.com/en-us/azure/ai-foundry/
+
+If a link 404s, the product was probably renamed. Say that you could not verify
+it rather than guessing the new name.

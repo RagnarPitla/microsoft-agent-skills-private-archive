@@ -66,6 +66,7 @@ Buckets are named for what you are doing, not for the Microsoft product involved
 You reach for these by name.
 
 - [ask-ragnar](./skills/deliver/ask-ragnar/SKILL.md) - not sure which skill you need? Start here.
+- [choose-agent-platform](./skills/deliver/choose-agent-platform/SKILL.md) - work out which Microsoft platform an agent should be built on, and write down why.
 - [discovery](./skills/deliver/discovery/SKILL.md) - a structured interview that pins down what you are actually building before you build it.
 
 ### Model-invoked
