@@ -264,6 +264,33 @@ if (!router) {
   }
 }
 
+// ------------------------------------------------------- install instructions
+// .agents/install-block.md says to copy its blocks into README.md verbatim,
+// because two differently-worded install instructions is how someone ends up
+// running the wrong one. Nothing checked it, so the commands could drift apart
+// silently - and a bad install command is the one error every reader hits.
+{
+  const block = read(".agents/install-block.md");
+  const readme = read("README.md");
+  if (!block) {
+    err(".agents/install-block.md is missing. It is the source of truth for install language.");
+  } else if (!readme) {
+    err("README.md is missing.");
+  } else {
+    const commands = [...block.matchAll(/```[a-z]*\n([\s\S]*?)```/g)].map((m) => m[1].trim());
+    if (!commands.length) {
+      err(".agents/install-block.md has no command blocks. Install instructions cannot be verified.");
+    }
+    for (const cmd of commands) {
+      if (!readme.includes(cmd)) {
+        err(
+          `README.md does not carry this install command verbatim from .agents/install-block.md:\n    ${cmd.replace(/\n/g, "\n    ")}`,
+        );
+      }
+    }
+  }
+}
+
 // ------------------------------------------------------------------- registries
 const REGISTRIES = ["registry/microsoft-ecosystem.yaml", "registry/connectors.yaml"];
 
