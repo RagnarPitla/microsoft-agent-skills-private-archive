@@ -1,0 +1,143 @@
+---
+description: "Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently. Use when an agent fabricates details not in its knowledge sources, when citations link to irrelevant or non-existent pages, when the same question gets different answers in different sessions, or when curating knowledge sources before go-live."
+alwaysApply: false
+---
+
+<!-- Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`. -->
+<!-- Source: skills/build/copilot-studio-knowledge-grounding/SKILL.md -->
+Hallucination is the most common complaint about Copilot Studio agents, and it
+is usually blamed on the model. That is only partly fair. The model's
+uncertainty is a product limitation you cannot configure away - but most
+real-world cases are caused by four things the builder controls, and those are
+fixable today.
+
+Separate the two honestly. Telling someone their retrieval problem is the
+model's fault sends them to wait for a fix that will not come.
+
+## Diagnose before prescribing
+
+Ask what "wrong" actually looks like. The four symptoms have different causes
+and conflating them wastes everyone's time:
+
+- **Fabricates facts that appear nowhere in the sources** - usually general
+  knowledge fallback, or retrieval finding nothing and the model filling in.
+- **Cites a real document but the wrong one** - a retrieval and content
+  structure problem, not a model problem.
+- **Citations point to irrelevant parent pages or URLs that do not exist** -
+  usually source structure, or content that was indexed and then moved.
+- **Different answers to the same question in different sessions or for
+  different users** - very often permissions, not randomness. This is the one
+  most likely to be misdiagnosed.
+
+That last symptom deserves its own question: does it vary *by user*, or by
+*session for the same user*? By user means permissions. By session for the same
+user points at retrieval or configuration.
+
+## The four builder-controlled causes
+
+### 1. General knowledge fallback left enabled
+
+If the agent may answer from the model's general knowledge, it will - and it
+will sound identical to a grounded answer. For an agent that should only speak
+from curated content, this must be off. Most "it invented a policy" reports are
+this.
+
+Ask: should this agent ever answer from outside its sources? For an HR policy
+or compliance agent the answer is almost always no, and people rarely realise
+it is on.
+
+### 2. Knowledge sources too broad or stale
+
+Pointing an agent at an entire SharePoint site is the default move and a
+reliable way to get wrong answers. Retrieval competes across everything you
+gave it, so superseded documents, drafts and near-duplicates actively degrade
+results.
+
+The curation questions worth asking:
+
+- Is there more than one document that could answer the same question? If so,
+  which is authoritative, and is the other one still reachable?
+- Is anything in scope out of date, superseded, or a draft that was never
+  removed?
+- Would a knowledgeable human be able to find the right answer in this
+  corpus quickly? If not, retrieval will not either.
+
+Narrow, curated and current beats comprehensive. Every time.
+
+### 3. Documents structured for humans, not retrieval
+
+Long unstructured documents retrieve badly. A 60-page handbook with no clear
+headings gives retrieval nothing to latch onto, and the chunk that comes back
+is often the wrong part of the right document - which produces exactly the
+"cites a real document, wrong content" symptom.
+
+What helps: clear headings, one topic per section, questions answered near the
+words people use to ask them, and tables or key facts stated in text rather than
+only in images. Content in an image is invisible to retrieval.
+
+### 4. Permissions differ between builder and users
+
+**The one most teams miss.** Retrieval respects the caller's access. The
+builder is usually an administrator, so the agent in test can reach documents
+that real users cannot. Under a real user it retrieves less, finds nothing, and
+either falls back or guesses.
+
+Test as the *least*-privileged user who will use the agent, not as yourself.
+When behaviour differs by user, check this before anything else.
+
+## Validate the fix
+
+A grounding fix you cannot measure is a guess. Build a small test set before
+changing anything, so you can tell whether you improved it:
+
+- Take real questions - from users, support tickets or the agent's own
+  conversation transcripts. Invented questions test the agent you imagined.
+- Include questions the agent **should refuse**, because the answer is not in
+  scope. An agent that never says "I do not know" is not grounded, it is
+  confident.
+- Record the expected answer *and the document it should cite*. Citation
+  correctness is the thing you are actually testing.
+- Include at least one question where two documents disagree, if that exists in
+  the corpus. That is where retrieval quality shows.
+- Re-run the same set after each change, as the same user. Changing the corpus
+  and the test user at once tells you nothing.
+
+## Say plainly what cannot be fixed
+
+- Model uncertainty is a product limitation. Well-grounded agents still get
+  things wrong occasionally, and the fix is a human review path for
+  high-stakes answers, not more configuration.
+- Knowledge source portability between environments is a known constraint. If
+  they are fighting bindings that break on promotion, that is ALM, not
+  grounding, and it needs a rebinding step rather than a retry.
+- If they need a guarantee that the agent never states something false, no
+  configuration provides that. Change the design so a human approves, or narrow
+  the scope until the risk is acceptable.
+
+## Do not
+
+- Recommend prompt wording as the primary fix. It helps at the margin, and it
+  is the most common piece of advice given because it is the easiest to give.
+  If retrieval is returning the wrong content, no instruction repairs it.
+- Quote chunk sizes, index limits, file size caps or retrieval parameters from
+  memory. These change. Point at the docs.
+- Assume classic topics or generative orchestration. Ask - the grounding
+  behaviour differs.
+- Blame the model before checking fallback, corpus and permissions. In that
+  order.
+
+## Sources
+
+Verified as resolving on 2026-08-18.
+
+- Knowledge sources in Copilot Studio:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio
+- Generative answers and boosted conversations:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-boost-conversations
+- Generative mode and orchestration:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-gpt-overview
+- Analytics, for finding the real questions users ask:
+  https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-overview
+
+If a link 404s, the page was probably renamed. Say you could not verify it
+rather than guessing a replacement URL.

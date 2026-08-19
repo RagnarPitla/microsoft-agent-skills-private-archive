@@ -1,0 +1,5 @@
+interface:
+  display_name: Copilot Studio Knowledge Grounding
+  short_description: Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently.
+policy:
+  allow_implicit_invocation: true

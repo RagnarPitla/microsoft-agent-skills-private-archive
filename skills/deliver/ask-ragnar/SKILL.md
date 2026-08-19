@@ -45,6 +45,12 @@ This one is model-invoked, so it can be reached for automatically when a convers
 
 The distinguishing question is whether the agent exists yet. Designing one is a `build` problem in the ordinary sense; this skill is for one that exists and misbehaves under real conditions.
 
+**`copilot-studio-knowledge-grounding`** - when the complaint is about *answer quality* rather than mechanics: the agent invents things, cites the wrong document, or gives different answers to different people. Also the right call when curating knowledge sources before go-live.
+
+Also model-invoked, so you can simply start using it when that is what they are describing.
+
+The two production skills split cleanly. If the agent fails or behaves badly - timeouts, lost context, abandoned conversations - that is `copilot-studio-production-patterns`. If it responds fine but the *content* is wrong, that is this one.
+
 ## When nothing fits
 
 Say so. The repo is early and most of the map is still empty. Naming the gap is more useful than routing them to the nearest skill that almost fits, because the near-miss wastes their time and teaches them the router cannot be trusted.

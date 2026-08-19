@@ -16,6 +16,14 @@ skills:
       short_description: "Work out which Microsoft platform an agent should be built on, and write down why."
     policy:
       allow_implicit_invocation: false
+  - name: copilot-studio-knowledge-grounding
+    bucket: build
+    path: skills/build/copilot-studio-knowledge-grounding/SKILL.md
+    interface:
+      display_name: "Copilot Studio Knowledge Grounding"
+      short_description: "Diagnose and fix a Copilot Studio agent that hallucinates, cites the wrong source, or answers inconsistently."
+    policy:
+      allow_implicit_invocation: true
   - name: copilot-studio-production-patterns
     bucket: build
     path: skills/build/copilot-studio-production-patterns/SKILL.md

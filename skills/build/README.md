@@ -8,4 +8,5 @@ These are the skills for the part of the work where the thing gets made, and whe
 
 Reachable by you, or reached for automatically when the task fits.
 
+- [copilot-studio-knowledge-grounding](./copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
