@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./docs/assets/readme-hero.png" alt="Microsoft Agent Skills - hard-won practice for building agents across the Microsoft ecosystem" width="980">
+</p>
+
 # Microsoft Agent Skills
 
 Skills for anything you need on the Microsoft ecosystem.

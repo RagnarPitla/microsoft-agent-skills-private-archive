@@ -135,9 +135,12 @@ for (const s of skills) {
 
 // docs pages with no surviving skill
 const docsRoot = path.join(ROOT, "docs");
+// docs/ mirrors the promoted buckets, plus a flat assets dir for README artwork.
+const DOCS_NON_BUCKET_DIRS = ["assets"];
 if (existsSync(docsRoot)) {
   for (const bucket of readdirSync(docsRoot, { withFileTypes: true })) {
     if (!bucket.isDirectory()) continue;
+    if (DOCS_NON_BUCKET_DIRS.includes(bucket.name)) continue;
     if (!PROMOTED.includes(bucket.name)) {
       err(`docs/${bucket.name}/ exists, but "${bucket.name}" is not a promoted bucket.`);
       continue;
@@ -148,6 +151,21 @@ if (existsSync(docsRoot)) {
       if (!skills.some((s) => s.name === name && s.bucket === bucket.name)) {
         err(`docs/${bucket.name}/${f} has no matching skill. Delete it or restore the skill.`);
       }
+    }
+  }
+}
+
+// relative paths referenced from README must exist on disk. A broken hero image
+// or a dead skill link is visible on the repo front page to every visitor.
+{
+  const readme = read("README.md") || "";
+  const rel = new Set();
+  for (const m of readme.matchAll(/(?:src|href)="(\.[^"]+)"/g)) rel.add(m[1]);
+  for (const m of readme.matchAll(/\]\((\.[^)\s]+)\)/g)) rel.add(m[1]);
+  for (const r of rel) {
+    const target = r.replace(/[#?].*$/, "");
+    if (!existsSync(path.join(ROOT, target))) {
+      err(`README.md references "${r}", which does not exist on disk.`);
     }
   }
 }

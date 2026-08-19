@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1960 720" width="1960" height="720" role="img" aria-label="Microsoft Agent Skills - curated skills for building agents across the Microsoft ecosystem">
+  <title>Microsoft Agent Skills</title>
+
+  <defs>
+    <style>
+      .wm    { font-family: "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+      .eyebrow { font-size: 26px; font-weight: 600; letter-spacing: 6px; fill: #888888; }
+      .title   { font-size: 96px; font-weight: 700; letter-spacing: -2px; fill: #111111; }
+      .sub     { font-size: 31px; font-weight: 400; fill: #444444; }
+      .rule    { stroke: #0066FF; stroke-width: 6; stroke-linecap: square; }
+      .link    { stroke: #0066FF; stroke-width: 2.5; fill: none; opacity: .55; }
+      .cardln  { stroke: #0066FF; stroke-width: 2.5; fill: #FFFFFF; }
+      .hair    { stroke: #888888; stroke-width: 1.5; opacity: .5; }
+      .bucket  { font-size: 21px; font-weight: 600; letter-spacing: 1.5px; fill: #0066FF; }
+    </style>
+    <clipPath id="frame"><rect width="1960" height="720" rx="0"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect width="1960" height="720" fill="#FFFFFF"/>
+    <rect x="980" width="980" height="720" fill="#f7f9ff"/>
+    <path d="M980 0 L1240 720 L980 720 Z" fill="#FFFFFF"/>
+
+    <g class="hair" stroke-dasharray="1 15">
+      <path d="M1100 60 H1900 M1100 180 H1900 M1100 300 H1900 M1100 420 H1900 M1100 540 H1900 M1100 660 H1900"/>
+    </g>
+
+    <!-- wordmark block, left third -->
+    <g class="wm">
+      <line class="rule" x1="120" y1="214" x2="212" y2="214"/>
+      <text class="eyebrow" x="120" y="176">FIELD GUIDE</text>
+      <text class="title" x="116" y="330">Microsoft</text>
+      <text class="title" x="116" y="426">Agent Skills</text>
+      <text class="sub" x="120" y="500">Hard-won practice for building agents</text>
+      <text class="sub" x="120" y="542">across the Microsoft ecosystem.</text>
+
+      <!-- four-colour accent: separated, abstract, deliberately not the logo -->
+      <g>
+        <rect x="120" y="596" width="26" height="26" rx="3" fill="#F25022"/>
+        <rect x="166" y="596" width="26" height="26" rx="3" fill="#7FBA00"/>
+        <rect x="212" y="596" width="26" height="26" rx="3" fill="#00A4EF"/>
+        <rect x="258" y="596" width="26" height="26" rx="3" fill="#FFB900"/>
+        <rect x="316" y="596" width="26" height="26" rx="3" fill="#e65c00"/>
+      </g>
+    </g>
+
+    <!-- systems diagram, right -->
+    <g transform="translate(1090 130) scale(0.86)">
+      <g class="link">
+        <path d="M232 96 H392"/>
+        <path d="M232 96 V276 H392"/>
+        <path d="M232 276 H392"/>
+        <path d="M232 276 V456 H392"/>
+        <path d="M624 96 H716 V276 H624"/>
+        <path d="M624 276 H716"/>
+        <path d="M624 456 H716 V276"/>
+        <path d="M84 186 V96 M84 186 V276 M84 186 V456"/>
+      </g>
+
+      <!-- source spine -->
+      <rect class="cardln" x="26" y="150" width="58" height="72" rx="6" fill="#e8f0ff"/>
+      <rect x="42" y="170" width="26" height="4" rx="2" fill="#0066FF"/>
+      <rect x="42" y="182" width="26" height="4" rx="2" fill="#0066FF" opacity=".55"/>
+      <rect x="42" y="194" width="16" height="4" rx="2" fill="#0066FF" opacity=".35"/>
+
+      <g class="wm">
+        <!-- column 1 -->
+        <rect class="cardln" x="392" y="56" width="232" height="80" rx="8"/>
+        <text class="bucket" x="416" y="94">BUILD</text>
+        <rect x="416" y="108" width="104" height="5" rx="2.5" fill="#888888" opacity=".45"/>
+        <rect x="528" y="108" width="52" height="5" rx="2.5" fill="#888888" opacity=".25"/>
+
+        <rect class="cardln" x="392" y="236" width="232" height="80" rx="8"/>
+        <text class="bucket" x="416" y="274">CONNECT</text>
+        <rect x="416" y="288" width="132" height="5" rx="2.5" fill="#888888" opacity=".45"/>
+        <rect x="556" y="288" width="34" height="5" rx="2.5" fill="#888888" opacity=".25"/>
+
+        <rect class="cardln" x="392" y="416" width="232" height="80" rx="8"/>
+        <text class="bucket" x="416" y="454">REVIEW</text>
+        <rect x="416" y="468" width="88" height="5" rx="2.5" fill="#888888" opacity=".45"/>
+        <rect x="512" y="468" width="66" height="5" rx="2.5" fill="#888888" opacity=".25"/>
+
+        <!-- column 2 -->
+        <rect class="cardln" x="716" y="56" width="232" height="80" rx="8" fill="#e8f0ff"/>
+        <text class="bucket" x="740" y="94">OPERATE</text>
+        <rect x="740" y="108" width="112" height="5" rx="2.5" fill="#0066FF" opacity=".4"/>
+
+        <rect class="cardln" x="716" y="236" width="232" height="80" rx="8" fill="#e6f0ff"/>
+        <text class="bucket" x="740" y="274">DELIVER</text>
+        <rect x="740" y="288" width="72" height="5" rx="2.5" fill="#0066FF" opacity=".4"/>
+        <circle cx="932" cy="252" r="7" fill="#e65c00"/>
+
+        <rect class="cardln" x="716" y="416" width="232" height="80" rx="8" fill="#e8f0ff"/>
+        <text class="bucket" x="740" y="454">LEARN</text>
+        <rect x="740" y="468" width="126" height="5" rx="2.5" fill="#0066FF" opacity=".4"/>
+      </g>
+
+      <g fill="#0066FF">
+        <circle cx="232" cy="96" r="6"/><circle cx="232" cy="276" r="6"/>
+        <circle cx="232" cy="456" r="6"/><circle cx="84" cy="186" r="6"/>
+      </g>
+    </g>
+  </g>
+</svg>
