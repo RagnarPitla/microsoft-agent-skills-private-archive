@@ -115,20 +115,26 @@ Both are link-checked, as is every URL cited inside a skill or docs page. A link
 
 ## Contributing
 
-Read [AGENTS.md](./AGENTS.md) first. It describes the bucket taxonomy, the invocation model and the sync obligations that keep the repo honest.
+Start with [CONTRIBUTING.md](./CONTRIBUTING.md). It covers the bucket decision, the front matter, the five sync obligations and what makes a review fail. [AGENTS.md](./AGENTS.md) is the same ground stated for a coding agent.
+
+The toolchain has no dependencies, so a fresh clone can run every check without installing anything:
 
 ```
 npm run build     # regenerate every harness artefact from SKILL.md
 npm run check     # scrub gate, staleness check and repo validation
 npm run validate  # repo validation on its own
+npm test          # fixture tests for the checks themselves
 
 npm run refresh:stars  # re-pull registry star counts and archive flags from GitHub
 ```
 
-Two things are enforced rather than trusted:
+Three things are enforced rather than trusted:
 
-- **The scrub gate.** This is a public repo written by someone who works on real customer engagements. `npm run scrub` runs on every commit. Read [.agents/confidentiality.md](./.agents/confidentiality.md) before publishing anything.
-- **Accuracy.** Our readers spot a wrong CLI flag or an invented connector instantly, and that costs more credibility than a missing skill. Verify against `learn.microsoft.com` before writing it down, and say so where you could not.
+- **The scrub gate.** This is a public repo written by someone who works on real customer engagements. `npm run scrub` runs on every commit, and fails closed if its baseline denylist is missing. Read [.agents/confidentiality.md](./.agents/confidentiality.md) before publishing anything.
+- **Accuracy.** Our readers spot a wrong CLI flag or an invented connector instantly, and that costs more credibility than a missing skill. Verify against `learn.microsoft.com` before writing it down, and say so where you could not. Every skill carries `verified_on` and `provenance`, and a weekly job opens an issue for anything overdue.
+- **The checks themselves.** `npm test` breaks one rule at a time and asserts the gate fails. A gate nobody tests is a gate that quietly stops gating.
+
+Also here: [SECURITY.md](./SECURITY.md), [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md), [CHANGELOG.md](./CHANGELOG.md).
 
 ## Who writes this
 

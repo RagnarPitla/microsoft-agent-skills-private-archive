@@ -26,6 +26,13 @@ jobs:
       - name: Validate repository
         run: npm run check
 
+      # The gates above are the load-bearing part of this repo, and a regression
+      # in one of them fails open: the build stays green and the promise quietly
+      # stops being kept. These tests break the repository on purpose and assert
+      # each gate notices, which is the only shape of test that catches that.
+      - name: Test the gates
+        run: npm test
+
       # Deliberately separate from `check`. Link rot is not the contributor's
       # fault and should never block their pull request - it is caught on a
       # schedule instead, where it becomes maintenance rather than a blocker.

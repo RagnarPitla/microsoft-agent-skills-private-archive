@@ -1,0 +1,58 @@
+name: pages
+
+# The docs pages were written, structured and then reachable only by someone
+# already browsing the repository tree. This publishes them.
+#
+# One manual step, once: set Settings > Pages > Source to "GitHub Actions".
+# Until that is done this workflow fails at the deploy step, which is honest -
+# nothing is silently half-published.
+#
+# Pinned by SHA like every other workflow here: this one holds `pages: write`
+# and `id-token: write`, so a mutable tag would be the weakest link in the repo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "README.md"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a running deploy: a half-deployed site is worse than an old one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      # Renders the Markdown that is already in docs/ - no site generator config
+      # to maintain, and nothing that has to be kept in step with the pages
+      # themselves. The source of truth stays the Markdown in the repository.
+      - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
+        with:
+          source: ./docs
+          destination: ./_site
+
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

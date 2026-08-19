@@ -40,6 +40,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Same reasoning again, applied to the skills themselves. A skill states
+      # current product behaviour and carries the date it was last checked; that
+      # claim goes stale on Microsoft's schedule, not on ours. Surfaced here as a
+      # to-do rather than discovered by a reader hitting a retired CLI flag.
+      - name: Check no skill is overdue for re-verification
+        if: always()
+        run: node scripts/validate-repo.mjs --stale 2>&1 | tee -a link-report.txt
+
       - name: Open an issue if anything rotted
         if: failure()
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
@@ -52,7 +60,7 @@ jobs:
             } catch {
               report = "No report captured; see the workflow log.";
             }
-            const title = "Registry maintenance: link rot or stale repository facts";
+            const title = "Maintenance: link rot, stale repository facts, or overdue skills";
             const existing = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -60,13 +68,14 @@ jobs:
               labels: "link-rot",
             });
             const body = [
-              "The weekly maintenance check failed - a cited URL rotted, or a registry repository was renamed, archived or drifted. Each entry names the file that cites it.",
+              "The weekly maintenance check failed - a cited URL rotted, a registry repository was renamed, archived or drifted, or a skill is overdue for re-verification. Each entry names the file it came from.",
               "",
               "```",
               report.trim().slice(0, 55000),
               "```",
               "",
               "Fix by correcting the URL, or - if no verified replacement exists - removing the link and saying so.",
+              "For an overdue skill, re-read it against current documentation and correct what has changed before moving its verified_on date. Bumping the date without re-reading it turns an honest unknown into a false assurance.",
               "Do not substitute a plausible-looking URL: roughly one in three guessed documentation paths is a 404.",
             ].join("\n");
 

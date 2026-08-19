@@ -41,3 +41,5 @@ tooling that keeps them honest.
   templates, and Dependabot for actions and npm.
 - Every skill carries `verified_on` and `provenance`, both validated; staleness
   surfaces in the weekly maintenance job instead of being discovered by a reader.
+- `docs/` published via GitHub Pages. One manual step is required once, by a
+  maintainer: set Settings > Pages > Source to "GitHub Actions".

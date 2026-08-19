@@ -10,6 +10,7 @@
  * Usage:
  *   node scripts/validate-repo.mjs           structural checks
  *   node scripts/validate-repo.mjs --links   also HEAD every registry URL (slow, needs network)
+ *   node scripts/validate-repo.mjs --stale   exit non-zero if any skill is overdue for re-verification
  */
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
@@ -17,8 +18,10 @@ import path from "node:path";
 import { ROOT, loadSkills, PROMOTED, UNPROMOTED, ALL_BUCKETS } from "./lib/skills.mjs";
 
 const checkLinks = process.argv.includes("--links");
+const failOnStale = process.argv.includes("--stale");
 const errors = [];
 const warnings = [];
+const stale = [];
 
 const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
@@ -100,11 +103,15 @@ function checkFreshness(s) {
       err(`${where}: \`verified_on: ${date}\` is in the future. Date it when you actually checked.`);
     } else {
       const days = Math.floor((TODAY - when) / 86400000);
-      // A warning, never an error. Staleness is a maintenance queue, not a
-      // contributor's fault, and failing their unrelated pull request over it
-      // is how a check gets routed around.
+      // A warning in the ordinary run, never an error. Staleness is a
+      // maintenance queue, not a contributor's fault, and failing their
+      // unrelated pull request over it is how a check gets routed around. The
+      // weekly job runs with --stale, where it does fail - and there it opens
+      // an issue, which is what a maintenance queue should look like.
       if (days > STALE_AFTER_DAYS) {
-        warn(`${where}: last verified ${days} days ago (${date}). Re-check its claims against current documentation.`);
+        const msg = `${where}: last verified ${days} days ago (${date}). Re-check its claims against current documentation.`;
+        warn(msg);
+        stale.push(msg);
       }
     }
   }
@@ -741,6 +748,18 @@ if (errors.length) {
   console.error(`Repository validation FAILED with ${errors.length} error(s):\n`);
   errors.forEach((e) => console.error(`  ${e}`));
   console.error("");
+  process.exit(1);
+}
+
+if (failOnStale && stale.length) {
+  console.error(`${stale.length} skill(s) are overdue for re-verification:\n`);
+  stale.forEach((s) => console.error(`  ${s}`));
+  console.error(
+    `\nRe-read each against current Microsoft documentation, correct what has changed, ` +
+      `and only then move its verified_on date. Bumping the date without re-reading the ` +
+      `skill is worse than leaving it stale, because it converts an honest unknown into a ` +
+      `false assurance.\n`,
+  );
   process.exit(1);
 }
 

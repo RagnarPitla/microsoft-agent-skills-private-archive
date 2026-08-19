@@ -15,7 +15,8 @@ Skills are organized into bucket folders under `skills/`. Buckets are named for 
 1. a reference in the top-level `README.md`, with the skill name linked to its `SKILL.md`
 2. an entry in `.claude-plugin/plugin.json`'s `skills` array
 3. a human-facing docs page at `docs/<bucket>/<skill-name>.md`
-4. a route in [`ask-ragnar`](./skills/deliver/ask-ragnar/SKILL.md) if it is user-reachable
+4. an entry in [`docs/README.md`](./docs/README.md), the index of that docs folder
+5. a route in [`ask-ragnar`](./skills/deliver/ask-ragnar/SKILL.md) if it is user-reachable
 
 Skills in `misc/`, `in-progress/` and `deprecated/` must not appear in the top-level `README.md`, in `plugin.json`, or in `docs/`.
 
@@ -45,11 +46,11 @@ Star counts and archive flags are the one thing here that goes stale without any
 
 ## Docs
 
-Skills in promoted buckets have a human-facing docs page at `docs/<bucket>/<skill-name>.md`. A finished page carries four sections — **What it does**, **When to reach for it**, **Common questions**, **It's working if**. The template and the rules live in [.agents/writing-docs.md](./.agents/writing-docs.md). Docs pages describe outcomes; they never restate the execution steps in `SKILL.md`, and never duplicate install commands.
+Skills in promoted buckets have a human-facing docs page at `docs/<bucket>/<skill-name>.md`, listed in [`docs/README.md`](./docs/README.md). A finished page carries four sections — **What it does**, **When to reach for it**, **Common questions**, **It's working if**. The template and the rules live in [.agents/writing-docs.md](./.agents/writing-docs.md). Docs pages describe outcomes; they never restate the execution steps in `SKILL.md`, and never duplicate install commands.
 
 ## Sync obligations
 
-Whenever you add, rename, remove or change the behaviour of a promoted skill, re-sync all four of: the top-level `README.md`, the bucket `README.md`, `.claude-plugin/plugin.json`, and the docs page. If the skill is user-reachable, also re-read [`ask-ragnar`](./skills/deliver/ask-ragnar/SKILL.md) and update it. A router that omits a new skill, or still routes to a deleted one, is a router that lies.
+Whenever you add, rename, remove or change the behaviour of a promoted skill, re-sync all five of: the top-level `README.md`, the bucket `README.md`, `.claude-plugin/plugin.json`, the docs page, and `docs/README.md`. If the skill is user-reachable, also re-read [`ask-ragnar`](./skills/deliver/ask-ragnar/SKILL.md) and update it. A router that omits a new skill, or still routes to a deleted one, is a router that lies. Every one of these is enforced by `npm run validate`; none of them relies on you remembering.
 
 Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md), which is the single source of truth for installation language. `.claude-plugin/marketplace.json` makes the repo its own single-plugin marketplace, a fallback the install block explains rather than the documented route.
 
@@ -60,3 +61,7 @@ This is a public repository written by a Microsoft Principal PM who works on rea
 ## Accuracy
 
 Our audience will spot a wrong CLI flag, an invented connector or a retired exam code instantly, and that costs more credibility than a missing skill. Verify Microsoft technical detail against `learn.microsoft.com` before writing it down. Where something could not be verified, say so in the skill rather than guessing. Prefer linking to Microsoft's documentation over restating it, because their docs update and our copy does not.
+
+Because their docs update and ours does not, every `SKILL.md` carries two front matter fields that make its accuracy checkable rather than asserted: `verified_on`, the date its claims were last read against current documentation, and `provenance`, one line on where the knowledge came from — stated generally enough to stay inside the confidentiality rule. `npm run validate` requires both. The weekly job runs it with `--stale` and opens an issue for anything overdue. Move a `verified_on` date only after re-reading the skill; bumping it to silence the warning converts an honest unknown into a false assurance, which is worse than the stale date was.
+
+The checks themselves are tested. `npm test` runs fixture cases that break one rule at a time and assert the gate *fails* — a test that only asserts the repo is green would pass just as happily against a validator that checks nothing.

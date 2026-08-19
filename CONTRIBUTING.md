@@ -153,11 +153,21 @@ npm run build      # regenerate harness artefacts from SKILL.md
 npm run check      # scrub + staleness + validation + version sync
 npm test           # fixture tests: prove each gate fails on bad input
 npm run validate -- --links   # also HEAD every cited URL (slow, needs network)
+npm run validate -- --stale   # fail if any skill is overdue for re-verification
 npm run check:stars           # registry star counts and archive flags
 ```
 
 There is no linter and no build step beyond the harness renderer. Tests use
 `node --test` and no test framework, for the same reason as everything else here.
+
+`--stale` is deliberately not part of `npm run check`. Only the weekly job runs
+it, where it opens a maintenance issue instead of blocking a pull request that
+has nothing to do with the skill that aged out.
+
+The docs folder is published to GitHub Pages by `.github/workflows/pages.yml`.
+That workflow needs one manual step, once, from someone with repository admin:
+set **Settings > Pages > Source** to **GitHub Actions**. Until then it fails at
+the deploy step rather than half-publishing.
 
 ## Releases
 

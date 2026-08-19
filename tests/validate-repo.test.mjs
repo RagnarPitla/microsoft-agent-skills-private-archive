@@ -214,6 +214,18 @@ test("a stale verified_on warns but does not fail", (t) => {
   assert.match(result.output, /last verified \d+ days ago/);
 });
 
+test("--stale turns the same warning into a failure", (t) => {
+  // What the weekly maintenance job runs. Same finding, different audience:
+  // there it opens an issue instead of blocking a contributor. Deliberately not
+  // asserted in the other direction - a test that the real skills are currently
+  // fresh would start failing a pull request a year from now for a reason that
+  // has nothing to do with it, which is the enforcement this design refuses.
+  const dir = scratchRepo(t, (s) => {
+    s.setFrontMatter("skills/build/write-a-skill/SKILL.md", "verified_on", "2020-01-01");
+  });
+  failsWith(validate(dir, ["--stale"]), /1 skill\(s\) are overdue for re-verification/);
+});
+
 // ---------------------------------------------------------------- registries
 
 test("a connector row missing a required field fails", (t) => {
