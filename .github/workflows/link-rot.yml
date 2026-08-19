@@ -1,0 +1,74 @@
+name: link-rot
+
+# Documentation URLs rot silently. A skill that confidently sends a reader to a
+# 404 does more damage than a missing skill, so the whole index is re-checked on
+# a schedule and a failure opens an issue rather than waiting to be noticed.
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check every cited URL
+        id: links
+        run: node scripts/validate-repo.mjs --links 2>&1 | tee link-report.txt
+
+      - name: Open an issue if links have rotted
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            let report = "";
+            try {
+              report = fs.readFileSync("link-report.txt", "utf8");
+            } catch {
+              report = "No report captured; see the workflow log.";
+            }
+            const title = "Link rot detected in registry, skills or docs";
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "link-rot",
+            });
+            const body = [
+              "The weekly link check failed. Each entry names the file that cites it.",
+              "",
+              "```",
+              report.trim().slice(0, 55000),
+              "```",
+              "",
+              "Fix by correcting the URL, or - if no verified replacement exists - removing the link and saying so.",
+              "Do not substitute a plausible-looking URL: roughly one in three guessed documentation paths is a 404.",
+            ].join("\n");
+
+            if (existing.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["link-rot"],
+              });
+            }
