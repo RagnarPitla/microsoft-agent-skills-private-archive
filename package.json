@@ -2,7 +2,7 @@
   "name": "microsoft-agent-skills",
   "version": "0.1.0",
   "private": true,
-  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Azure AI Foundry, Power Platform, Dynamics 365, Microsoft 365, Cowork and Scout",
+  "description": "Agent skills for the Microsoft ecosystem - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 and Azure",
   "repository": {
     "type": "git",
     "url": "https://github.com/RagnarPitla/microsoft-agent-skills"
