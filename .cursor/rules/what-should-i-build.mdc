@@ -113,17 +113,26 @@ Some of what people ask to build already exists as a product, and the
 correct response is a licence and thirty minutes of onboarding rather than a
 project.
 
-**Microsoft Scout** is an always-on autonomous personal agent that runs
-continuously on someone's behalf rather than waiting to be prompted. If the
-request is "I want my own recurring work handled without me thinking about
-it", the person in front of you is an end user, and building them a bespoke
-agent means spending a quarter to reproduce something they could have next
-week. See https://learn.microsoft.com/en-us/microsoft-scout/overview.
+**Microsoft Scout** is a desktop application for Windows and macOS that acts
+on someone's behalf: it reads and writes files, runs shell commands, drives a
+browser, reaches their Microsoft 365 data, and can work in the background on
+schedules and triggers rather than only when prompted. If the request is "I
+want my own recurring work handled without me thinking about it", the person
+in front of you is an end user, and building them a bespoke agent means
+reproducing a product.
 
-**Microsoft 365 Copilot Cowork** coordinates several agents inside a single
-Copilot Chat session so they hand work between each other. If the ask is
-"can the document one and the spreadsheet one work on this together", that
-is a coordination surface, not an orchestration project. See
+Check availability before you route anyone here. Scout is a Frontier preview:
+the documentation is prerelease, access requires joining the Frontier program
+and accepting its terms, and preview features may never reach general
+availability. That makes it a real answer for "stop building this yourself"
+and a bad answer for "and it will be in production next quarter". See
+https://learn.microsoft.com/en-us/microsoft-scout/overview.
+
+**Microsoft 365 Copilot Cowork** carries out tasks across someone's Microsoft
+365 environment - sending mail, scheduling meetings, drafting documents,
+posting in Teams, managing a calendar - with the user approving each action
+before it happens. If the ask is "I want it to actually send the follow-up,
+not tell me to", that is a licence, not a project. See
 https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/.
 
 The tell for this whole branch is that the requirement is phrased in the
@@ -260,7 +269,10 @@ decision."
 
 ## Verified references
 
-Each returned HTTP 200 on 2026-08-18.
+Each returned HTTP 200 on 2026-08-18. Scout's and Cowork's pages were also
+read, not just pinged, on 2026-08-18: what each product actually does, and
+Scout's Frontier preview gating, are described from those pages. Both are
+moving surfaces. Re-read them before you rely on the consume branch.
 
 - Microsoft Scout: https://learn.microsoft.com/en-us/microsoft-scout/overview
 - Microsoft 365 Copilot Cowork:
