@@ -165,6 +165,20 @@ if (existsSync(docsRoot)) {
   for (const f of readdirSync(path.join(ROOT, ".agents"))) {
     if (f.endsWith(".md")) rootDocs.push(`.agents/${f}`);
   }
+  // Source skills and the artefacts generated from them. A skill that links to
+  // ./references/x.md is only correct if that file travels with it: the emitted
+  // copy is what a user actually installs, and it shipped the link without the
+  // file. Checking the source alone would not have caught that.
+  for (const s of skills) rootDocs.push(`${s.relDir}/SKILL.md`);
+  for (const dir of [".github/skills", ".cursor/rules"]) {
+    const abs = path.join(ROOT, dir);
+    if (!existsSync(abs)) continue;
+    for (const e of readdirSync(abs, { withFileTypes: true, recursive: true })) {
+      if (e.isFile() && /\.(md|mdc)$/.test(e.name)) {
+        rootDocs.push(path.relative(ROOT, path.join(e.parentPath ?? e.path, e.name)));
+      }
+    }
+  }
   for (const doc of rootDocs) {
     const body = read(doc);
     if (!body) continue;

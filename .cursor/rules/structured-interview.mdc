@@ -43,7 +43,7 @@ The interview is not done because the functional behaviour is clear. On the Micr
 - **Governance.** What has to be approved, and by whom, before this is allowed to exist.
 - **Done.** What observable thing proves it works.
 
-See [references/dimensions.md](./references/dimensions.md) for the specific question to ask under each, and the answers that should worry you.
+See [references/dimensions.md](../../skills/deliver/structured-interview/references/dimensions.md) for the specific question to ask under each, and the answers that should worry you.
 
 Do not turn this into a form. Fold these in as branches of the tree when they become relevant. If one is genuinely irrelevant, say so and move on.
 

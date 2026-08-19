@@ -33,6 +33,31 @@ function yamlString(value) {
   return `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
+// A SKILL.md links relatively to its own location: ./references/x.md, or
+// ../../../registry/y.yaml. Emitting the body verbatim to a different depth
+// silently breaks every one of those links. .cursor/rules/<name>.mdc is a flat
+// file, so ask-ragnar's registry links pointed three levels above the repo and
+// structured-interview's reference pointed at a sibling that was never there.
+// Re-anchor each link: resolve against the source directory, then re-relativize
+// against wherever the artefact actually lands. Links to files copied alongside
+// the artefact are left alone.
+function reanchorLinks(body, srcRelDir, artefactRel, copiedAlongside = new Set()) {
+  const srcAbs = path.join(ROOT, srcRelDir);
+  const outDir = path.dirname(path.join(ROOT, artefactRel));
+  const rewrite = (link) => {
+    const [target, suffix = ""] = link.split(/(?=[#?])/);
+    if (copiedAlongside.has(target.replace(/^\.\//, ""))) return link;
+    const abs = path.resolve(srcAbs, target);
+    if (!existsSync(abs)) return link;
+    let out = path.relative(outDir, abs);
+    if (!out.startsWith(".")) out = `./${out}`;
+    return out + suffix;
+  };
+  return body
+    .replace(/\]\((\.[^)\s]+)\)/g, (m, l) => `](${rewrite(l)})`)
+    .replace(/((?:src|href)=")(\.[^"]+)(")/g, (m, a, l, b) => `${a}${rewrite(l)}${b}`);
+}
+
 for (const skill of skills) {
   // Deprecated skills are history, not shipped surface area.
   if (skill.bucket === "deprecated") continue;
@@ -63,20 +88,35 @@ for (const skill of skills) {
   if (skill.userInvoked) ghFrontmatter.push("disable-model-invocation: true");
   ghFrontmatter.push("---");
 
+  const copiedAlongside = new Set();
+  for (const sub of ["references", "scripts", "assets"]) {
+    const dir = path.join(ROOT, skill.relDir, sub);
+    if (!existsSync(dir)) continue;
+    for (const entry of readdirSync(dir, { withFileTypes: true, recursive: true })) {
+      if (!entry.isFile()) continue;
+      const from = path.join(entry.parentPath ?? entry.path, entry.name);
+      const relInside = path.relative(path.join(ROOT, skill.relDir), from);
+      artefacts.set(`.github/skills/${skill.name}/${relInside}`, readFileSync(from, "utf8"));
+      copiedAlongside.add(relInside);
+    }
+  }
+
+  const ghRel = `.github/skills/${skill.name}/SKILL.md`;
   artefacts.set(
-    `.github/skills/${skill.name}/SKILL.md`,
-    [...ghFrontmatter, "", header + skill.body, ""].join("\n"),
+    ghRel,
+    [...ghFrontmatter, "", header + reanchorLinks(skill.body, skill.relDir, ghRel, copiedAlongside), ""].join("\n"),
   );
 
+  const cursorRel = `.cursor/rules/${skill.name}.mdc`;
   artefacts.set(
-    `.cursor/rules/${skill.name}.mdc`,
+    cursorRel,
     [
       "---",
       `description: ${yamlString(skill.description)}`,
       `alwaysApply: false`,
       "---",
       "",
-      header + skill.body,
+      header + reanchorLinks(skill.body, skill.relDir, cursorRel),
       "",
     ].join("\n"),
   );

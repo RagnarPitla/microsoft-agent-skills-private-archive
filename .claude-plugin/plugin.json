@@ -9,19 +9,19 @@
   "homepage": "https://github.com/RagnarPitla/microsoft-agent-skills",
   "license": "MIT",
   "skills": [
-    "skills/build/copilot-studio-knowledge-grounding/SKILL.md",
-    "skills/build/copilot-studio-production-patterns/SKILL.md",
-    "skills/build/migrate-agent-to-skills/SKILL.md",
-    "skills/build/write-a-skill/SKILL.md",
-    "skills/connect/copilot-studio-auth-patterns/SKILL.md",
-    "skills/connect/ground-agents-in-work-context/SKILL.md",
-    "skills/deliver/ask-ragnar/SKILL.md",
-    "skills/deliver/choose-agent-platform/SKILL.md",
-    "skills/deliver/discovery/SKILL.md",
-    "skills/deliver/structured-interview/SKILL.md",
-    "skills/deliver/what-should-i-build/SKILL.md",
-    "skills/learn/explain-concept/SKILL.md",
-    "skills/operate/power-platform-alm-connection-refs/SKILL.md",
-    "skills/review/review-copilot-studio-agent/SKILL.md"
+    "./skills/build/copilot-studio-knowledge-grounding",
+    "./skills/build/copilot-studio-production-patterns",
+    "./skills/build/migrate-agent-to-skills",
+    "./skills/build/write-a-skill",
+    "./skills/connect/copilot-studio-auth-patterns",
+    "./skills/connect/ground-agents-in-work-context",
+    "./skills/deliver/ask-ragnar",
+    "./skills/deliver/choose-agent-platform",
+    "./skills/deliver/discovery",
+    "./skills/deliver/structured-interview",
+    "./skills/deliver/what-should-i-build",
+    "./skills/learn/explain-concept",
+    "./skills/operate/power-platform-alm-connection-refs",
+    "./skills/review/review-copilot-studio-agent"
   ]
 }

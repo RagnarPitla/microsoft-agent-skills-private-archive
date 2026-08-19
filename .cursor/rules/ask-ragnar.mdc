@@ -112,8 +112,8 @@ Say so. The repo is early and most of the map is still empty. Naming the gap is 
 
 When nothing fits, give them the honest alternative:
 
-- Point at [registry/microsoft-ecosystem.yaml](../../../registry/microsoft-ecosystem.yaml) if Microsoft or the community already solves it well. Routing to someone else's good work is a success, not a failure.
-- Point at [registry/connectors.yaml](../../../registry/connectors.yaml) if the question is how to reach a particular system.
+- Point at [registry/microsoft-ecosystem.yaml](../../registry/microsoft-ecosystem.yaml) if Microsoft or the community already solves it well. Routing to someone else's good work is a success, not a failure.
+- Point at [registry/connectors.yaml](../../registry/connectors.yaml) if the question is how to reach a particular system.
 - Otherwise say plainly that this is a gap, and suggest they open an issue describing it. A described gap is how the next skill gets chosen.
 
 ## How to answer

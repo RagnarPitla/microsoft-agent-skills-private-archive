@@ -1,5 +1,6 @@
 {
   "name": "microsoft-agent-skills",
+  "description": "Ragnar Pitla's skills for building agents on the Microsoft stack - Copilot Studio, Microsoft Foundry, Power Platform, Dynamics 365, Microsoft 365 Copilot, Work IQ and Azure",
   "owner": {
     "name": "Ragnar Pitla",
     "url": "https://github.com/RagnarPitla"

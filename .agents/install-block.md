@@ -2,20 +2,20 @@ This file is the single source of truth for installation language. Copy these bl
 
 ## Claude Code
 
-The documented route is the plugin:
-
-```
-/plugin install microsoft-agent-skills@ragnarpitla
-```
-
-If that marketplace is not registered yet, add it first:
+The repo is its own single-plugin marketplace, so registering it and installing from it are two steps:
 
 ```
 /plugin marketplace add RagnarPitla/microsoft-agent-skills
 /plugin install microsoft-agent-skills@microsoft-agent-skills
 ```
 
-The repo is its own single-plugin marketplace, which is why the second command names it twice. That is a fallback, not the route to lead with.
+The name appears twice because the plugin and the marketplace that carries it share a name. That is correct, not a typo.
+
+Verify the manifests before publishing a change to either:
+
+```
+claude plugin validate . --strict
+```
 
 ## GitHub Copilot
 
@@ -32,11 +32,14 @@ These are deliberately **not** shipped as `.instructions.md` files. An instructi
 
 ## Codex
 
+Codex reads the same `SKILL.md` standard, from `<name>/SKILL.md` directories under `~/.codex/skills`. The generated tree is already in that shape, so copy it across:
+
 ```
 git clone https://github.com/RagnarPitla/microsoft-agent-skills
+cp -r microsoft-agent-skills/.github/skills/* ~/.codex/skills/
 ```
 
-Point your Codex configuration at `agents/openai.yaml`. Every skill is listed there with its display name and whether it may be invoked implicitly.
+`agents/openai.yaml` is this repo's own manifest of which skills may be invoked implicitly. It is used by the validator, not by Codex - do not point a Codex config at it.
 
 ## Cursor
 
