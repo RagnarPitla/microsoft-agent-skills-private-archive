@@ -48,23 +48,37 @@ jobs:
       # secret, so the customer/codename denylist is mandatory here. A trusted
       # run that silently skipped the denylist would be worse than no check at
       # all, because it would look identical to one that enforced it.
+      #
+      # Dependabot is excluded despite opening same-repository pull requests:
+      # its runs read from a separate Dependabot secret store, so a repository
+      # Actions secret is not visible to them and this step would fail every
+      # dependency pull request forever, for a reason the author cannot fix.
+      # A permanently red check is one people learn to merge past, which costs
+      # more than it protects. Those pull requests take the baseline path below.
       - name: Scrub gate (trusted - denylist required)
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        if: >-
+          github.actor != 'dependabot[bot]' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
         run: node scripts/scrub.mjs --all --require-denylist
         env:
           SCRUB_DENYLIST: ${{ secrets.SCRUB_DENYLIST }}
 
-      # A pull request from a fork never has access to repository secrets, so
-      # SCRUB_DENYLIST is not available here regardless of what this step asks
-      # for. Running --require-denylist anyway would just fail every fork PR
-      # for a reason contributors cannot fix, so this path is explicitly
-      # structural-only and says so in the log rather than pretending
-      # otherwise. The trusted run above still enforces the full denylist once
-      # the change lands on main.
-      - name: Scrub gate (fork PR - structural checks only)
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+      # A pull request from a fork never has access to repository secrets, and
+      # a Dependabot pull request cannot see this one, so SCRUB_DENYLIST is not
+      # available on either path regardless of what this step asks for. Running
+      # --require-denylist anyway would just fail them for a reason the author
+      # cannot fix, so this path is explicitly baseline-only and says so in the
+      # log rather than pretending otherwise. It is not toothless: the committed
+      # .scrub-baseline-denylist.txt still runs here, and the full
+      # customer/codename denylist is enforced again on the trusted merge to main.
+      - name: Scrub gate (fork or Dependabot PR - baseline denylist only)
+        if: >-
+          github.event_name == 'pull_request' &&
+          (github.actor == 'dependabot[bot]' ||
+           github.event.pull_request.head.repo.full_name != github.repository)
         run: |
-          echo "::notice::Fork pull request: SCRUB_DENYLIST is not available to fork PRs, so only structural patterns are checked here. The customer/codename denylist is enforced again on the trusted merge to main."
+          echo "::notice::SCRUB_DENYLIST is not available to fork or Dependabot pull requests, so only structural patterns and the committed baseline denylist are checked here. The customer/codename denylist is enforced again on the trusted merge to main."
           node scripts/scrub.mjs --all
 
       # Deliberately separate from the checks above. Link rot is not the
@@ -89,6 +103,11 @@ jobs:
 
       - name: Upload quality report artifact
         if: always()
+        # Also non-blocking. The report is a convenience, not a gate: this job
+        # went red once on "Artifact storage quota has been hit", an
+        # account-level condition that says nothing about the repository and
+        # that no contributor can act on.
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: quality-report

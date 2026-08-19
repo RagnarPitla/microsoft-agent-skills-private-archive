@@ -152,6 +152,12 @@ if (!denylistSupplied) {
     console.error("Scrub gate FAILED: --require-denylist was set, but no denylist terms were loaded.");
     console.error(emptySource);
     console.error("This run is treated as trusted (main/schedule/release), where the denylist is mandatory.");
+    console.error("");
+    console.error("To fix in CI: add a repository secret named SCRUB_DENYLIST containing one term per");
+    console.error("line (customer names, codenames, internal identifiers). Settings > Secrets and");
+    console.error("variables > Actions > New repository secret. The secret is never echoed: a match");
+    console.error("is reported as [redacted denylist match] with the term withheld.");
+    console.error("To fix locally: copy .scrub-denylist.example.txt to .scrub-denylist.txt and fill it in.");
     process.exit(1);
   }
   console.warn(`WARNING: no customer/codename denylist terms loaded. ${emptySource}`);
