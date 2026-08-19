@@ -34,11 +34,50 @@ if (!skills.length) err("No skills found under skills/. Expected at least one SK
 const ROUTER = "ask-ragnar";
 
 // ---------------------------------------------------------------- skill shape
+
+// The description is the whole ballgame for a model-invoked skill. It is the
+// only text the model sees when deciding whether to load the body, so a
+// description that summarises contents instead of naming the situation means
+// the skill never fires - the most common way a good skill is wasted, and the
+// failure write-a-skill exists to prevent. Enforced rather than merely
+// documented, because it is the one rule where being wrong is silent.
+//
+// User-invoked skills are held to a different standard on purpose. Nothing
+// matches them against a task: a human picks them from a list, so their
+// description is a menu label and being short is correct.
+function checkDescriptionIsTrigger(s) {
+  const d = s.description.trim();
+  const where = s.skillMdRel;
+
+  // VS Code truncates past this, so anything beyond it is invisible.
+  if (d.length > 1024) {
+    err(`${where}: description is ${d.length} characters; the limit is 1024 and the overflow is dropped.`);
+  }
+
+  const SUMMARY_OPENERS = /^(this skill|the skill|a skill|skill (for|that)|helps you|helps the|covers |provides |contains |documentation (for|on)|guidance (for|on)|everything you need)/i;
+  if (SUMMARY_OPENERS.test(d)) {
+    err(`${where}: description opens like a summary ("${d.slice(0, 40)}..."). Say when to reach for it, not what it contains.`);
+  }
+
+  if (s.userInvoked) return;
+
+  if (!/\buse when\b/i.test(d)) {
+    err(`${where}: model-invoked description has no "Use when" clause, so nothing tells the model which situation matches. See skills/build/write-a-skill/SKILL.md.`);
+  }
+  // Every trigger description in this repo that names real situations runs to
+  // several hundred characters. One that fits in a tweet is a summary wearing
+  // a "Use when" hat.
+  if (d.length < 150) {
+    err(`${where}: model-invoked description is only ${d.length} characters. Name the concrete situations a reader would recognise, not the topic.`);
+  }
+}
+
 for (const s of skills) {
   if (!ALL_BUCKETS.includes(s.bucket)) {
     err(`${s.skillMdRel}: unknown bucket "${s.bucket}". Expected one of ${ALL_BUCKETS.join(", ")}.`);
   }
   if (!s.description) err(`${s.skillMdRel}: front matter is missing a description.`);
+  else checkDescriptionIsTrigger(s);
   if (s.name !== s.dirName) {
     err(`${s.skillMdRel}: front matter name "${s.name}" does not match its folder "${s.dirName}".`);
   }

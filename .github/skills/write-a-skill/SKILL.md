@@ -48,6 +48,18 @@ empty) rather than the mechanism (token propagation), because the person with
 the problem knows the symptom and does not yet know the mechanism. That is
 the whole trick.
 
+This one is checked by machine, because getting it wrong fails silently: a
+summary-shaped description does not error, it just never matches, and the
+skill sits unused looking installed. In this repo the validator rejects a
+model-invoked skill whose description opens like a summary, carries no
+"Use when" clause, or is too short to name a real situation. It also rejects
+anything past 1024 characters, which is where the description gets truncated
+and the tail you wrote is simply not read.
+
+User-invoked skills are held to none of that. Nothing matches them against a
+task - a human picks them off a list - so their description is a menu label
+and short is right.
+
 What belongs in the trigger clause:
 
 - Failure phrasings, not only intentions. Skills get reached for by people in
