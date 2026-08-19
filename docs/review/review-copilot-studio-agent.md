@@ -43,7 +43,7 @@ Just the files. That is the limit of what it claims. Anything needing the live e
 
 **Is there a shared review engine for the other technologies?**
 
-Not yet. The research designed one, but this is the first review skill and extracting a shared abstraction from a single instance is guesswork. The engine gets extracted when the second review skill lands and the genuinely common parts are visible rather than predicted.
+Still no, and the second review skill landing is what settled it. `evaluate-agent-quality` turned out to be a different shape entirely - it runs an agent and measures answers over time rather than reading files and reporting findings by severity - so the two share a bucket and almost no machinery. The common abstraction stays unextracted until two skills actually want the same one.
 
 ## It's working if
 

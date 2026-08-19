@@ -48,6 +48,14 @@ skills:
       short_description: "A structured interview that pins down what you are actually building before you build it."
     policy:
       allow_implicit_invocation: false
+  - name: evaluate-agent-quality
+    bucket: review
+    path: skills/review/evaluate-agent-quality/SKILL.md
+    interface:
+      display_name: "Evaluate Agent Quality"
+      short_description: "Measure whether an agent works, and whether it still works, with a recorded eval set."
+    policy:
+      allow_implicit_invocation: true
   - name: explain-concept
     bucket: learn
     path: skills/learn/explain-concept/SKILL.md

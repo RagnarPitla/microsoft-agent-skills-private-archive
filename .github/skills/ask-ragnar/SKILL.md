@@ -89,6 +89,14 @@ Model-invoked, and often already applicable, since agent YAML is usually in cont
 
 The clean split across the Copilot Studio skills is *what kind of wrong*. Configuration wrong is this one. Content wrong is `copilot-studio-knowledge-grounding`. Behaviour wrong under load is `copilot-studio-production-patterns`. Sign-in, tokens and channel reach are `copilot-studio-auth-patterns`. Never deployed properly is `power-platform-alm-connection-refs`.
 
+**`evaluate-agent-quality`** - when the question is not what the agent is configured to do but whether its answers are actually any good, and still as good as they were: it is about to ship on the strength of somebody typing a few questions into the test pane, it used to answer correctly and now does not and nobody can say when it broke, a knowledge source or model version changed and the blast radius is unknown, or a stakeholder wants an accuracy number that nobody has.
+
+Model-invoked, so you can start using it directly.
+
+Against `review-copilot-studio-agent`: that one reads the agent, this one runs it. A review is a point-in-time read of configuration and can be done on a pull request without an environment; an evaluation is a measurement of behaviour over time and needs the agent to actually answer. They fail differently too - a review catches a defect you can see in the YAML, an evaluation catches the fluent, confident, subtly wrong answer that no amount of reading configuration would ever reveal. Route to this one whenever the complaint is about answer quality, or whenever somebody says "it got worse".
+
+One routing trap. "It gives bad answers" arrives constantly and usually means `copilot-studio-knowledge-grounding` - a single reproducible answer citing the wrong source is a grounding defect, not a measurement problem. Come here when nobody can say *which* answers are bad, or whether there are more of them than last month.
+
 **`explain-concept`** - when they are not stuck on a system at all, they are stuck on an idea. They have read the documentation and it did not land, they are describing how the product worked somewhere else, or they cannot find something that was renamed.
 
 Model-invoked, so you can start using it directly.

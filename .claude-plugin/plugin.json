@@ -22,6 +22,7 @@
     "./skills/deliver/what-should-i-build",
     "./skills/learn/explain-concept",
     "./skills/operate/power-platform-alm-connection-refs",
+    "./skills/review/evaluate-agent-quality",
     "./skills/review/review-copilot-studio-agent"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "$comment": "Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.",
   "generator": "scripts/build-harnesses.mjs",
-  "count": 14,
+  "count": 15,
   "skills": [
     {
       "name": "ask-ragnar",
@@ -56,6 +56,15 @@
       "promoted": true,
       "path": "skills/deliver/discovery/SKILL.md",
       "docs": "docs/deliver/discovery.md"
+    },
+    {
+      "name": "evaluate-agent-quality",
+      "bucket": "review",
+      "description": "Establish whether an agent actually works, and whether it still works, using a recorded eval set rather than ad hoc chats. Use when an agent is about to ship and the only testing was somebody typing a few questions into the test pane, when an agent that used to answer correctly now does not and nobody can say when it broke, when a knowledge source or model version changed and you need to know what it affected, when a stakeholder asks how accurate it is and there is no number to give them, when you cannot decide what \"correct\" even means for a generative answer, or when the agent works for the builder and fails for a user with different permissions. For a one-off read of a single agent's configuration, review-copilot-studio-agent is the better fit; this one is about measurement over time.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/review/evaluate-agent-quality/SKILL.md",
+      "docs": "docs/review/evaluate-agent-quality.md"
     },
     {
       "name": "explain-concept",

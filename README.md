@@ -83,6 +83,7 @@ Your agent reaches for these on its own when the task fits.
 - [copilot-studio-auth-patterns](./skills/connect/copilot-studio-auth-patterns/SKILL.md) - choose and debug authentication for a Copilot Studio agent, including which channels a choice forecloses and whether it can ever yield a token.
 - [copilot-studio-knowledge-grounding](./skills/build/copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./skills/build/copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
+- [evaluate-agent-quality](./skills/review/evaluate-agent-quality/SKILL.md) - establish whether an agent works, and whether it still works, using a recorded eval set rather than ad hoc chats.
 - [explain-concept](./skills/learn/explain-concept/SKILL.md) - explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands.
 - [ground-agents-in-work-context](./skills/connect/ground-agents-in-work-context/SKILL.md) - choose the right grounding layer across the Microsoft IQ stack, and avoid the naming collision that sends people to the wrong one.
 - [migrate-agent-to-skills](./skills/build/migrate-agent-to-skills/SKILL.md) - move a prompt-stuffed or legacy agent onto a portable skills-based harness without carrying its rot forward.
