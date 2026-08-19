@@ -182,8 +182,10 @@ layout or interface.
 - Keep harness-specific paths, slash commands and settings out of the body.
 - Assume a model-invoked skill can be entered cold, mid-conversation, with no
   warm-up and no earlier context.
-- Keep front matter to the fields every harness agrees on - a name, a
-  description, and the flag that declares invocation.
+- Keep front matter to the fields every harness agrees on - a name and a
+  description, plus the flag that withholds model invocation on the skills
+  that must wait to be asked. Model-invoked is the default everywhere, so
+  the absence of that flag is what declares it; do not add a field to say so.
 
 Portability is also a hedge. Harness formats change far more often than the
 discipline being written down does, and a body written against one tool's

@@ -55,7 +55,7 @@ Install commands are copied verbatim from [.agents/install-block.md](./.agents/i
 
 ## Confidentiality
 
-This is a public repository written by a Microsoft field architect. Nothing in it may contain: a named customer, data from any customer tenant, internal Microsoft tooling or roadmap, anything under NDA, or a screenshot containing real tenant data. Examples must use invented scenarios and synthetic data. When a skill needs a worked example, invent a fictional company. Check [.agents/confidentiality.md](./.agents/confidentiality.md) before publishing anything.
+This is a public repository written by a Microsoft Principal PM who works on real customer engagements. Nothing in it may contain: a named customer, data from any customer tenant, internal Microsoft tooling or roadmap, anything under NDA, or a screenshot containing real tenant data. Examples must use invented scenarios and synthetic data. When a skill needs a worked example, invent a fictional company. Check [.agents/confidentiality.md](./.agents/confidentiality.md) before publishing anything.
 
 ## Accuracy
 
