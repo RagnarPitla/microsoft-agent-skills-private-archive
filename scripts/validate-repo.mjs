@@ -141,11 +141,13 @@ for (const s of skills) {
 // docs pages with no surviving skill
 const docsRoot = path.join(ROOT, "docs");
 // docs/ mirrors the promoted buckets, plus a flat assets dir for README artwork.
+// Directories starting with "_" belong to Jekyll (_layouts, _data) and are the
+// site chrome, not content, so they are never skill buckets.
 const DOCS_NON_BUCKET_DIRS = ["assets"];
 if (existsSync(docsRoot)) {
   for (const bucket of readdirSync(docsRoot, { withFileTypes: true })) {
     if (!bucket.isDirectory()) continue;
-    if (DOCS_NON_BUCKET_DIRS.includes(bucket.name)) continue;
+    if (DOCS_NON_BUCKET_DIRS.includes(bucket.name) || bucket.name.startsWith("_")) continue;
     if (!PROMOTED.includes(bucket.name)) {
       err(`docs/${bucket.name}/ exists, but "${bucket.name}" is not a promoted bucket.`);
       continue;

@@ -1,12 +1,20 @@
-# Jekyll needs a theme to render Markdown into something readable; without one
-# the published pages arrive as unstyled HTML. Nothing else here is
-# configuration the pages depend on - the Markdown in this folder is the source
-# of truth and stays readable in the repository tree without any of this.
+# The Markdown in this folder stays the source of truth and stays readable in
+# the repository tree. Jekyll only wraps it in the site chrome.
+#
+# No gem theme: _layouts/default.html carries the same design as the generated
+# landing page, so a skill page and the front page look like one site rather
+# than two. A theme would fight that and add a dependency to keep current.
 title: Microsoft Agent Skills
 description: Skills for building, connecting, reviewing, operating and delivering agents on Microsoft surfaces.
-theme: jekyll-theme-primer
 
-# README.md becomes the site index. Machine-readable files are excluded so the
-# published site is prose only.
+# Applied without touching the pages themselves, so the Markdown carries no
+# front matter and reads the same in the repo as it does published.
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# Machine-readable files are excluded so the published site is prose only.
 exclude:
   - "*.json"

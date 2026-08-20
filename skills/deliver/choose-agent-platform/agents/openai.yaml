@@ -1,5 +1,5 @@
 interface:
-  display_name: Choose Agent Platform
+  display_name: Choose agent platform
   short_description: Work out which Microsoft platform an agent should be built on, and write down why.
 policy:
   allow_implicit_invocation: false

@@ -122,6 +122,7 @@ export function run(dir, script, args = []) {
 
 export const validate = (dir, args = []) => run(dir, "validate-repo.mjs", args);
 export const build = (dir, args = []) => run(dir, "build-harnesses.mjs", args);
+export const site = (dir, args = []) => run(dir, "build-site.mjs", args);
 export const scrub = (dir, args = []) => run(dir, "scrub.mjs", args);
 
 /** A minimal, valid model-invoked skill, used when a test needs to add one. */

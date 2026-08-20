@@ -1,5 +1,5 @@
 interface:
-  display_name: Copilot Studio Auth Patterns
+  display_name: Copilot Studio auth patterns
   short_description: Choose and debug authentication for a Copilot Studio agent, including channel reach and token access.
 policy:
   allow_implicit_invocation: true

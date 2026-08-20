@@ -1,0 +1,120 @@
+---
+---
+<!doctype html>
+<!-- Layout for every Markdown page in docs/. Hand-maintained.
+     Skill metadata comes from _data/skills.yml, which is generated, so a page
+     can never advertise an invocation model or a bucket the repo no longer has. -->
+{% assign skill = site.data.skills | where: "url", page.url | first %}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% if skill %}{{ skill.title }} - {% endif %}{{ site.title }}</title>
+{% if skill %}<meta name="description" content="{{ skill.short }}">{% endif %}
+<link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}">
+</head>
+<body class="doc-page">
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="{{ '/' | relative_url }}">
+      <img src="{{ '/assets/favicon.svg' | relative_url }}" alt="" width="22" height="22">
+      <strong>Microsoft Agent Skills</strong>
+    </a>
+    <nav class="nav-links">
+      <a href="{{ '/#how' | relative_url }}">How it works</a>
+      <a href="{{ '/#skills' | relative_url }}">Skills</a>
+      <a href="{{ '/#faq' | relative_url }}">FAQ</a>
+      <a href="https://github.com/RagnarPitla/microsoft-agent-skills">GitHub</a>
+      <a class="btn dark" href="{{ '/#install' | relative_url }}">Install</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc">
+  <div class="wrap narrow">
+
+    {% if skill %}
+    <p class="crumb">
+      <a href="{{ '/#skills' | relative_url }}">Skills</a>
+      <span>/</span>
+      <a href="{{ '/#' | append: skill.bucket | relative_url }}">{{ skill.bucket }}</a>
+    </p>
+
+    <h1 class="doc-title">{{ skill.title }}</h1>
+    <p class="doc-sub">{{ skill.short }}</p>
+
+    <div class="doc-meta">
+      {% if skill.user_invoked %}
+        <span class="badge you">You invoke it</span>
+      {% else %}
+        <span class="badge auto">Reached for automatically</span>
+      {% endif %}
+      <code>{{ skill.name }}</code>
+      <a href="{{ skill.source }}">View the skill on GitHub</a>
+    </div>
+
+    <div class="invoke">
+      <p class="invoke-label">{% if skill.user_invoked %}Ask for it by name{% else %}Ask for it directly, or let it fire on its own{% endif %}</p>
+      <pre><code>/{{ skill.name }}</code></pre>
+    </div>
+    {% endif %}
+
+    <article class="prose{% if skill %} has-title{% endif %}">
+      {{ content }}
+    </article>
+
+    {% if skill %}
+    <nav class="doc-nav">
+      {% if skill.prev %}
+        <a class="prev" href="{{ skill.prev_url | relative_url }}"><span>Previous</span>{{ skill.prev }}</a>
+      {% else %}
+        <span></span>
+      {% endif %}
+      {% if skill.next %}
+        <a class="next" href="{{ skill.next_url | relative_url }}"><span>Next</span>{{ skill.next }}</a>
+      {% endif %}
+    </nav>
+    {% endif %}
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://github.com/RagnarPitla">GitHub</a>
+      <a href="https://www.linkedin.com/in/ragnarpitla">LinkedIn</a>
+      <a href="https://www.youtube.com/@RagnarPitla">YouTube</a>
+      <a href="https://rbuild.ai">RBuild.ai</a>
+    </div>
+    <p>Written by Ragnar Pitla, Principal PM on Microsoft's agentic team and founder of <a href="https://rbuild.ai">RBuild.ai</a>. Everything customer-specific is scrubbed before it lands here.</p>
+    <p class="fine">Views here are my own and do not represent Microsoft's official position. MIT licensed.</p>
+  </div>
+</footer>
+
+<script>
+// The Markdown in docs/ is written to be read in the repository tree, so its
+// links point at .md files and at paths above docs/. Both 404 once published.
+// Rewriting them here keeps the source readable in git without shipping a
+// broken link, which this repo treats as worse than a missing page.
+(function () {
+  var REPO = "https://github.com/RagnarPitla/microsoft-agent-skills/blob/main/";
+  document.querySelectorAll(".prose a[href]").forEach(function (a) {
+    var href = a.getAttribute("href");
+    if (!href || /^([a-z]+:|#|\/)/i.test(href)) return;
+
+    // Anything reaching above docs/ lives in the repository, not on the site.
+    if (href.indexOf("../../") === 0) {
+      a.href = REPO + href.replace(/^(\.\.\/)+/, "");
+      return;
+    }
+    // Jekyll publishes .md as .html; a raw .md link would download or 404.
+    a.href = href.replace(/\.md(?=$|[#?])/, ".html");
+  });
+})();
+</script>
+
+</body>
+</html>

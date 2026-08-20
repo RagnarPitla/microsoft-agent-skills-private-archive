@@ -1,5 +1,5 @@
 interface:
-  display_name: Power Platform ALM Connection References
+  display_name: Power Platform ALM connection references
   short_description: Fix and prevent Power Platform solution imports that break on connection references, environment variables and flow ownership.
 policy:
   allow_implicit_invocation: true

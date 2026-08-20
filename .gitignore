@@ -8,3 +8,6 @@ node_modules
 quality-report.md
 link-report.txt
 freshness-report.txt
+
+# Browser-automation scratch output from checking the published site locally.
+.playwright-mcp/

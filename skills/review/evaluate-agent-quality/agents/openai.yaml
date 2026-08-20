@@ -1,5 +1,5 @@
 interface:
-  display_name: Evaluate Agent Quality
+  display_name: Evaluate agent quality
   short_description: Measure whether an agent works, and whether it still works, with a recorded eval set.
 policy:
   allow_implicit_invocation: true

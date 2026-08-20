@@ -1,5 +1,5 @@
 interface:
-  display_name: Review Copilot Studio Agent
+  display_name: Review Copilot Studio agent
   short_description: Review a Copilot Studio agent's YAML for defects that matter before it ships.
 policy:
   allow_implicit_invocation: true

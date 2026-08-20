@@ -1,5 +1,5 @@
 interface:
-  display_name: Ground Agents In Work Context
+  display_name: Ground agents in work context
   short_description: Choose the right grounding layer for an agent across the Microsoft IQ stack, and live with what that choice costs.
 policy:
   allow_implicit_invocation: true

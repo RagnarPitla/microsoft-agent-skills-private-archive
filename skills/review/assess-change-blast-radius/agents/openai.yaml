@@ -1,5 +1,5 @@
 interface:
-  display_name: Assess Change Blast Radius
+  display_name: Assess change blast radius
   short_description: Work out what a Power Platform or Copilot Studio change breaks somewhere else, before it ships.
 policy:
   allow_implicit_invocation: true

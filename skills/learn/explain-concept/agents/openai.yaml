@@ -1,5 +1,5 @@
 interface:
-  display_name: Explain Concept
+  display_name: Explain concept
   short_description: Explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands.
 policy:
   allow_implicit_invocation: true
