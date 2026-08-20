@@ -199,15 +199,6 @@ repositories:
     verdict: route
     why: The strongest argument that skills encode methodology rather than reference material. Borrow the stance, not the content.
 
-  - name: mattpocock/skills
-    url: https://github.com/mattpocock/skills
-    provenance: community
-    description: Engineering skills with a strict bucket taxonomy, invocation model and validated sync obligations.
-    covers: [build, review, operate]
-    stars: 221682
-    verdict: route
-    why: The structural model this repo is built on - buckets, user versus model invocation, and a validator that enforces the contract.
-
   - name: github/awesome-copilot
     url: https://github.com/github/awesome-copilot
     provenance: microsoft-adjacent
