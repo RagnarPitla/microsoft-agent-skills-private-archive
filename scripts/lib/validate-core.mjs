@@ -331,3 +331,87 @@ export function checkRegistrySchema(text, buckets) {
 
   return problems;
 }
+
+// ------------------------------------------------------------------ prose slop
+
+/**
+ * The de-slop skill names the vocabulary that makes writing sound generated.
+ * Asserting that rule in 21 SKILL.md files would mean 21 copies to keep in
+ * step; enforcing it once here is the same trade this repo already makes for
+ * descriptions, provenance, freshness and links. A reader who finds "seamless"
+ * in a skill that tells them not to write "seamless" stops believing the rest.
+ *
+ * Only phrases with no honest use in this register are listed. Words that are
+ * slop in marketing but legitimate in technical prose - robust, crucial,
+ * leverage, holistic, deep dive - are deliberately absent: a gate that fires
+ * on correct writing teaches people to disable the gate.
+ */
+const SLOP_PATTERNS = [
+  [/\bseamless(ly)?\b/gi, "name what it does instead"],
+  [/\bcutting[- ]edge\b/gi, "say what is new about it"],
+  [/\bgroundbreaking\b/gi, "say what it broke with"],
+  [/\bgame[- ]chang(ing|er)\b/gi, "say what changed"],
+  [/\bbest[- ]in[- ]class\b/gi, "compared with what, on what measure?"],
+  [/\bworld[- ]class\b/gi, "compared with what, on what measure?"],
+  [/\bdelve\b/gi, "\"look at\""],
+  [/\btapestry\b/gi, "drop the metaphor"],
+  [/\btestament to\b/gi, "state what happened"],
+  [/\bpivotal moment\b/gi, "state what happened"],
+  [/\b(ever[- ])?evolving landscape\b/gi, "say what is changing"],
+  [/\bat the forefront\b/gi, "say what they did"],
+  [/\bparadigm shift\b/gi, "say what changed"],
+  [/\bsynerg(y|ies|istic)\b/gi, "say what fits together and how"],
+  [/\butiliz(e|es|ed|ing|ation)\b/gi, "\"use\""],
+  [/\bmyriad\b/gi, "\"many\", or give the number"],
+  [/\bplethora\b/gi, "\"many\", or give the number"],
+  [/\bmeticulous(ly)?\b/gi, "say what care was taken"],
+  [/\bvibrant\b/gi, "drop it"],
+  [/\btreasure trove\b/gi, "drop the metaphor"],
+  [/\ba beacon of\b/gi, "drop the metaphor"],
+  [/\bin the realm of\b/gi, "\"in\""],
+  [/\bunlock the (full )?(power|potential)\b/gi, "say what becomes possible"],
+  [/\bharness the power\b/gi, "say what it is used for"],
+  [/\bnavigat(e|ing) the complexit(y|ies)\b/gi, "name the hard part"],
+  [/\bit is important to note\b/gi, "delete the preamble and state the point"],
+  [/\bit('s| is) worth noting\b/gi, "delete the preamble and state the point"],
+  [/\bin today's [a-z-]+ (world|landscape|environment)\b/gi, "delete the throat-clearing"],
+];
+
+/**
+ * Blanks out spans where a slop word is being quoted, shown as an example or
+ * used as a URL rather than written in earnest - the use/mention distinction,
+ * which is what lets de-slop list the vocabulary it bans. Replacement preserves
+ * length and newlines so reported line numbers still point at the real line.
+ */
+function redactNonProse(text) {
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  return String(text ?? "")
+    .replace(/```[\s\S]*?```/g, blank)      // fenced code
+    .replace(/`[^`\n]*`/g, blank)           // inline code
+    .replace(/"[^"\n]*(?:\n[^"\n]*){0,2}"/g, blank)      // straight-quoted mention, may wrap
+    .replace(/\u201C[^\u201D\n]*(?:\n[^\u201D\n]*){0,2}\u201D/g, blank) // curly-quoted mention, may wrap
+    .replace(/\]\([^)\s]*\)/g, blank)       // markdown link targets
+    .replace(/^\s*>.*$/gm, blank);          // blockquoted example
+}
+
+/**
+ * @param {string} text - markdown body, front matter already stripped
+ * @param {object} [ctx]
+ * @param {string} [ctx.where] - file label used in the reported problem
+ * @returns {string[]} problems, empty when the prose is clean
+ */
+export function checkProseIsNotSlop(text, { where = "" } = {}) {
+  const problems = [];
+  const scanned = redactNonProse(text);
+  const label = where ? `${where}: ` : "";
+
+  for (const [re, fix] of SLOP_PATTERNS) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(scanned)) !== null) {
+      const line = scanned.slice(0, m.index).split("\n").length;
+      problems.push(`${label}line ${line}: "${m[0]}" - ${fix}. See skills/deliver/de-slop/SKILL.md.`);
+    }
+  }
+  return problems;
+}

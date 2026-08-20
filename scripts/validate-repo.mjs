@@ -28,6 +28,7 @@ import {
   checkBucketReadmeGroups,
   checkConnectorSchema,
   checkRegistrySchema,
+  checkProseIsNotSlop,
 } from "./lib/validate-core.mjs";
 
 const checkLinks = process.argv.includes("--links");
@@ -206,6 +207,18 @@ for (const s of skills.filter((x) => x.promoted)) {
   for (const p of checkDocsPageSections(docs)) {
     err(`docs/${s.bucket}/${s.name}.md ${p}`);
   }
+}
+
+// prose the de-slop skill would reject. Enforced once here rather than restated
+// in every SKILL.md, so the rule cannot drift between copies.
+for (const s of skills) {
+  for (const p of checkProseIsNotSlop(s.body, { where: s.skillMdRel })) err(p);
+}
+for (const s of skills.filter((x) => x.promoted)) {
+  const rel = `docs/${s.bucket}/${s.name}.md`;
+  const docs = read(rel);
+  if (!docs) continue;
+  for (const p of checkProseIsNotSlop(docs, { where: rel })) err(p);
 }
 
 // ------------------------------------------------------------------- the router

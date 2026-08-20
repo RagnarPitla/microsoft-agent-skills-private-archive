@@ -16,6 +16,7 @@ import {
   checkBucketReadmeGroups,
   checkConnectorSchema,
   checkRegistrySchema,
+  checkProseIsNotSlop,
 } from "../scripts/lib/validate-core.mjs";
 
 // ------------------------------------------------------------ description rule
@@ -320,4 +321,63 @@ test("checkSkillProvenance rejects a malformed date format", () => {
 test("checkSkillProvenance rejects provenance too short to say anything", () => {
   const problems = checkSkillProvenance({ verified_on: "2026-08-18", provenance: "internal" }, { now: NOW });
   assert.ok(problems.some((p) => p.includes("too short")));
+});
+
+// ------------------------------------------------------------------ prose slop
+
+test("checkProseIsNotSlop passes prose that says something", () => {
+  const body = "Set the source to GitHub Actions. The deploy step fails until you do.";
+  assert.deepEqual(checkProseIsNotSlop(body), []);
+});
+
+for (const [phrase, sentence] of [
+  ["seamless", "The connector offers a seamless experience."],
+  ["utilize", "Utilize the CLI to export the solution."],
+  ["cutting-edge", "A cutting-edge approach to agent design."],
+  ["testament to", "The result is a testament to careful planning."],
+  ["myriad", "There are a myriad of reasons this fails."],
+  ["it is important to note", "It is important to note that flows turn off."],
+  ["evolving landscape", "The ever-evolving landscape of agent tooling."],
+  ["delve", "Let us delve into the topic."],
+]) {
+  test(`checkProseIsNotSlop catches "${phrase}"`, () => {
+    const problems = checkProseIsNotSlop(sentence);
+    assert.ok(problems.length > 0, `"${phrase}" was accepted`);
+  });
+}
+
+// The de-slop skill has to name the vocabulary it bans, so a word inside quotes
+// is being mentioned rather than used. Without this the rule would forbid the
+// one file whose job is to state it.
+test("checkProseIsNotSlop ignores a quoted mention", () => {
+  assert.deepEqual(checkProseIsNotSlop('Avoid "seamless" and "cutting-edge" in a proposal.'), []);
+});
+
+// Skill bodies wrap at column ~72, so a quoted list of banned phrases routinely
+// breaks across lines. An earlier version of this rule matched quotes per-line,
+// which desynchronised the pairing and reported the next phrase as real slop.
+test("checkProseIsNotSlop ignores a quoted mention that wraps across lines", () => {
+  const body = '1. Empty importance. "Pivotal moment", "testament to", "evolving\n   landscape", "at the forefront", "groundbreaking". State what happened.';
+  assert.deepEqual(checkProseIsNotSlop(body), []);
+});
+
+test("checkProseIsNotSlop ignores fenced code and inline code", () => {
+  assert.deepEqual(checkProseIsNotSlop("```\nconst seamless = utilize();\n```\nUse `utilize` here."), []);
+});
+
+test("checkProseIsNotSlop ignores a blockquoted example", () => {
+  assert.deepEqual(checkProseIsNotSlop("Before:\n\n> A seamless, cutting-edge solution.\n\nAfter: it exports the solution."), []);
+});
+
+// Words that are slop in marketing but honest in technical prose are absent
+// from the list on purpose: a gate that fires on correct writing gets disabled.
+test("checkProseIsNotSlop leaves legitimate technical vocabulary alone", () => {
+  const body = "Robust error handling is crucial here, and this is the highest-leverage fix. A holistic view helps.";
+  assert.deepEqual(checkProseIsNotSlop(body), []);
+});
+
+test("checkProseIsNotSlop reports the line the phrase is on", () => {
+  const problems = checkProseIsNotSlop("clean line\nanother clean line\na seamless thing", { where: "f.md" });
+  assert.equal(problems.length, 1);
+  assert.ok(problems[0].startsWith("f.md: line 3:"), problems[0]);
 });
