@@ -3,8 +3,16 @@ name: pages
 # The docs pages were written, structured and then reachable only by someone
 # already browsing the repository tree. This publishes them.
 #
-# One manual step, once: set Settings > Pages > Source to "GitHub Actions".
-# Until that is done this workflow fails at the deploy step, which is honest -
+# Two things must be true before this workflow can deploy, and neither can be
+# done from a commit:
+#
+#   1. The repository must be public, or the account on GitHub Pro or above.
+#      Pages is not available for a private repo on a free plan - the REST API
+#      answers "Your current plan does not support GitHub Pages for this
+#      repository" and Settings offers no Pages section at all.
+#   2. Settings > Pages > Source must be set to "GitHub Actions".
+#
+# Until both are done this workflow fails at the deploy step, which is honest -
 # nothing is silently half-published.
 #
 # Pinned by SHA like every other workflow here: this one holds `pages: write`
