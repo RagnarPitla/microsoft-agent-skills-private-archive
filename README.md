@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/assets/readme-hero.png" alt="Microsoft Agent Skills - hard-won practice for building agents across the Microsoft ecosystem" width="980">
+  <img src="./docs/assets/readme-hero.png" alt="Microsoft Agent Skills by Ragnar Pitla - hard-won practice for building agents across the Microsoft ecosystem" width="980">
 </p>
 
 # Microsoft Agent Skills
