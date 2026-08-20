@@ -8,6 +8,14 @@ skills:
       short_description: "Work out which skill in this repo fits the situation in front of you."
     policy:
       allow_implicit_invocation: false
+  - name: assess-change-blast-radius
+    bucket: review
+    path: skills/review/assess-change-blast-radius/SKILL.md
+    interface:
+      display_name: "Assess Change Blast Radius"
+      short_description: "Work out what a Power Platform or Copilot Studio change breaks somewhere else, before it ships."
+    policy:
+      allow_implicit_invocation: true
   - name: choose-agent-platform
     bucket: deliver
     path: skills/deliver/choose-agent-platform/SKILL.md
@@ -38,6 +46,14 @@ skills:
     interface:
       display_name: "Copilot Studio Production Patterns"
       short_description: "The patterns that separate a Copilot Studio agent that demos well from one that survives production."
+    policy:
+      allow_implicit_invocation: true
+  - name: de-slop
+    bucket: deliver
+    path: skills/deliver/de-slop/SKILL.md
+    interface:
+      display_name: "De-slop"
+      short_description: "Rewrite text that reads like a model wrote it into something a person would send."
     policy:
       allow_implicit_invocation: true
   - name: discovery

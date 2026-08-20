@@ -17,6 +17,7 @@
     "./skills/connect/ground-agents-in-work-context",
     "./skills/deliver/ask-ragnar",
     "./skills/deliver/choose-agent-platform",
+    "./skills/deliver/de-slop",
     "./skills/deliver/discovery",
     "./skills/deliver/structured-interview",
     "./skills/deliver/what-should-i-build",
@@ -26,6 +27,7 @@
     "./skills/operate/plan-agent-capacity-and-cost",
     "./skills/operate/power-platform-alm-connection-refs",
     "./skills/operate/respond-to-agent-incidents",
+    "./skills/review/assess-change-blast-radius",
     "./skills/review/evaluate-agent-quality",
     "./skills/review/review-copilot-studio-agent"
   ]

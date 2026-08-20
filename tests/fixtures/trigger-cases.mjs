@@ -16,6 +16,16 @@
  * longer exists - so every new model-invoked skill must be added here.
  */
 export const TRIGGER_CASES = {
+  "assess-change-blast-radius": {
+    positive: [
+      "We're repointing a connection reference before this solution goes into production and nobody can say what else uses it.",
+      "What could adding this topic break, given the agent is already published to Teams and answering real questions?",
+    ],
+    negative: [
+      "The solution import itself is failing on connection references and the flows turned themselves off afterwards.",
+    ],
+  },
+
   "copilot-studio-auth-patterns": {
     positive: [
       "Our Copilot Studio agent can't call the downstream API because the token is empty and the User variable shows Unknown.",
@@ -43,6 +53,16 @@ export const TRIGGER_CASES = {
     ],
     negative: [
       "The User variable is empty and shows Unknown, so the agent can't call the downstream API as the signed-in user.",
+    ],
+  },
+
+  "de-slop": {
+    positive: [
+      "This proposal reads like a brand deck and every sentence could be pasted into another company's document unchanged.",
+      "Can you rewrite this summary so it stops sounding like a model wrote it and actually says something?",
+    ],
+    negative: [
+      "My skill is installed but the agent never reaches for it, and the description reads like a table of contents.",
     ],
   },
 

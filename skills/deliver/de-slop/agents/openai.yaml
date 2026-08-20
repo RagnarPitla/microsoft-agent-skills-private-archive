@@ -1,0 +1,5 @@
+interface:
+  display_name: De-slop
+  short_description: Rewrite text that reads like a model wrote it into something a person would send.
+policy:
+  allow_implicit_invocation: true

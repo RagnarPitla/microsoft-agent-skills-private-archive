@@ -33,6 +33,7 @@ Wiring an agent to data, systems and tools: connectors, MCP servers, APIs.
 Reviewing something that already exists: code, YAML, solutions, architecture, security.
 
 - [evaluate-agent-quality](./review/evaluate-agent-quality.md) - whether an agent works, and whether it still works, on a recorded eval set rather than ad hoc chats.
+- [assess-change-blast-radius](./review/assess-change-blast-radius.md) - what a change breaks somewhere else, in a platform where the callers are not greppable.
 - [review-copilot-studio-agent](./review/review-copilot-studio-agent.md) - reading an agent's YAML for the defects that matter before it ships.
 
 ## operate
@@ -51,6 +52,7 @@ The consulting layer: discovery, estimating, requirements, decisions, handoff.
 
 - [ask-ragnar](./deliver/ask-ragnar.md) - which skill fits the situation in front of you, or an honest answer that none does.
 - [choose-agent-platform](./deliver/choose-agent-platform.md) - which Microsoft platform to build on, and the written reason you will need in six months.
+- [de-slop](./deliver/de-slop.md) - turning fluent, competent, information-free prose back into something worth reading.
 - [discovery](./deliver/discovery.md) - pinning down what you are actually building before you build it.
 - [structured-interview](./deliver/structured-interview.md) - the interview discipline the other interview skills are built on.
 - [what-should-i-build](./deliver/what-should-i-build.md) - whether this needs an agent at all, and whether to consume, govern or build.

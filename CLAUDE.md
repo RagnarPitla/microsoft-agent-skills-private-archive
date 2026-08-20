@@ -52,6 +52,8 @@ Skills in promoted buckets have a human-facing docs page at `docs/<bucket>/<skil
 
 Whenever you add, rename, remove or change the behaviour of a promoted skill, re-sync all five of: the top-level `README.md`, the bucket `README.md`, `.claude-plugin/plugin.json`, the docs page, and `docs/README.md`. If the skill is user-reachable, also re-read [`ask-ragnar`](./skills/deliver/ask-ragnar/SKILL.md) and update it. A router that omits a new skill, or still routes to a deleted one, is a router that lies. Every one of these is enforced by `npm run validate`; none of them relies on you remembering.
 
+A model-invoked skill carries one further obligation that `npm run validate` does not cover: an entry in `tests/fixtures/trigger-cases.mjs`, keyed by its `name`, holding `positive` utterances that should reach it and `negative` ones belonging to a neighbouring skill it is easy to confuse with. `npm test` fails when a model-invoked skill has no fixture, because a trigger description nobody has tested against a confusable neighbour is a guess.
+
 Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md), which is the single source of truth for installation language. `.claude-plugin/marketplace.json` makes the repo its own single-plugin marketplace, a fallback the install block explains rather than the documented route.
 
 ## Confidentiality

@@ -81,8 +81,10 @@ You reach for these by name.
 Your agent reaches for these on its own when the task fits.
 
 - [copilot-studio-auth-patterns](./skills/connect/copilot-studio-auth-patterns/SKILL.md) - choose and debug authentication for a Copilot Studio agent, including which channels a choice forecloses and whether it can ever yield a token.
+- [assess-change-blast-radius](./skills/review/assess-change-blast-radius/SKILL.md) - work out what a Power Platform or Copilot Studio change breaks somewhere else, before it ships.
 - [copilot-studio-knowledge-grounding](./skills/build/copilot-studio-knowledge-grounding/SKILL.md) - diagnose and fix an agent that hallucinates, cites the wrong source, or answers inconsistently.
 - [copilot-studio-production-patterns](./skills/build/copilot-studio-production-patterns/SKILL.md) - the patterns that separate a Copilot Studio agent that demos well from one that survives production.
+- [de-slop](./skills/deliver/de-slop/SKILL.md) - rewrite text that reads like a model wrote it into something a person would actually send.
 - [evaluate-agent-quality](./skills/review/evaluate-agent-quality/SKILL.md) - establish whether an agent works, and whether it still works, using a recorded eval set rather than ad hoc chats.
 - [explain-concept](./skills/learn/explain-concept/SKILL.md) - explain a Microsoft ecosystem concept after diagnosing what the person actually misunderstands.
 - [govern-agent-lifecycle](./skills/operate/govern-agent-lifecycle/SKILL.md) - decide whether an agent should still exist, who owns it, and whether it is governed the way production requires.

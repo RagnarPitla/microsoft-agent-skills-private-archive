@@ -111,7 +111,7 @@ Against the two grounding-adjacent skills: if the agent cites a document you can
 
 Model-invoked, and often already applicable, since agent YAML is usually in context when someone asks this.
 
-The clean split across the Copilot Studio skills is *what kind of wrong*. Configuration wrong is this one. Content wrong is `copilot-studio-knowledge-grounding`. Behaviour wrong under load is `copilot-studio-production-patterns`. Sign-in, tokens and channel reach are `copilot-studio-auth-patterns`. Never deployed properly is `power-platform-alm-connection-refs`.
+The clean split across the Copilot Studio skills is *what kind of wrong*. Configuration wrong is this one. Content wrong is `copilot-studio-knowledge-grounding`. Behaviour wrong under load is `copilot-studio-production-patterns`. Sign-in, tokens and channel reach are `copilot-studio-auth-patterns`. Never deployed properly is `power-platform-alm-connection-refs`. Nothing wrong yet, but about to move something else, is `assess-change-blast-radius`.
 
 **`evaluate-agent-quality`** - when the question is not what the agent is configured to do but whether its answers are actually any good, and still as good as they were: it is about to ship on the strength of somebody typing a few questions into the test pane, it used to answer correctly and now does not and nobody can say when it broke, a knowledge source or model version changed and the blast radius is unknown, or a stakeholder wants an accuracy number that nobody has.
 
@@ -120,6 +120,18 @@ Model-invoked, so you can start using it directly.
 Against `review-copilot-studio-agent`: that one reads the agent, this one runs it. A review is a point-in-time read of configuration and can be done on a pull request without an environment; an evaluation is a measurement of behaviour over time and needs the agent to actually answer. They fail differently too - a review catches a defect you can see in the YAML, an evaluation catches the fluent, confident, subtly wrong answer that no amount of reading configuration would ever reveal. Route to this one whenever the complaint is about answer quality, or whenever somebody says "it got worse".
 
 One routing trap. "It gives bad answers" arrives constantly and usually means `copilot-studio-knowledge-grounding` - a single reproducible answer citing the wrong source is a grounding defect, not a measurement problem. Come here when nobody can say *which* answers are bad, or whether there are more of them than last month.
+
+**`assess-change-blast-radius`** - when the change itself is fine and the question is what *else* moves when it lands: a solution about to be imported into production, a connection reference being repointed, a connector heading into a DLP policy's blocked group, a shared component someone wants to delete, trigger phrases or a knowledge source changing on an agent that already answers real questions, or a publish on an agent that is already live in Teams.
+
+Model-invoked, so you can start using it directly.
+
+Against `review-copilot-studio-agent`: that one asks whether the thing in front of you is correct, this one assumes it is and asks who else feels it. The two most common arrivals are "is this safe to deploy" and "what could this break", and both belong here rather than with the review skill. If it has already broken and users are affected, neither applies - that is `respond-to-agent-incidents`. If the import itself is failing rather than something downstream, that is `power-platform-alm-connection-refs`.
+
+**`de-slop`** - when the artefact is prose rather than an agent: a proposal or customer email that reads like a brand deck, a summary where every sentence could be pasted into another company's document unchanged, a draft leaning on "seamless" and "robust", or a page a reviewer called fine without being able to say what it told them.
+
+Model-invoked, so you can start using it directly.
+
+Route here for the writing, not the thinking. If someone does not yet know what they are trying to say, no rewrite rescues the draft, and `structured-interview` or `discovery` comes first. If the complaint is that a skill never fires rather than that its prose is flabby, that is `write-a-skill`.
 
 **`explain-concept`** - when they are not stuck on a system at all, they are stuck on an idea. They have read the documentation and it did not land, they are describing how the product worked somewhere else, or they cannot find something that was renamed.
 

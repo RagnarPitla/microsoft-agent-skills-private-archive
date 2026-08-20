@@ -1,7 +1,7 @@
 {
   "$comment": "Generated from SKILL.md by scripts/build-harnesses.mjs. Do not edit by hand; run `npm run build`.",
   "generator": "scripts/build-harnesses.mjs",
-  "count": 19,
+  "count": 21,
   "skills": [
     {
       "name": "ask-ragnar",
@@ -13,6 +13,17 @@
       "docs": "docs/deliver/ask-ragnar.md",
       "verified_on": "2026-08-18",
       "provenance": "Watching people install a skill collection and then ask which one to use, which is the question the collection itself should answer."
+    },
+    {
+      "name": "assess-change-blast-radius",
+      "bucket": "review",
+      "description": "Work out what a Power Platform or Copilot Studio change breaks somewhere else, before it ships. Use when a solution is about to be imported into production, when a connection reference or environment variable is being repointed, when a connector is being added to a DLP policy, when trigger phrases or a knowledge source are changing, when a shared component is being deleted, when an agent is about to be published, or when someone asks \"what could this break\".",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/review/assess-change-blast-radius/SKILL.md",
+      "docs": "docs/review/assess-change-blast-radius.md",
+      "verified_on": "2026-08-20",
+      "provenance": "Power Platform and Copilot Studio changes that passed review and broke something in a different solution, environment or channel, and the platform dependency views that would have caught them first."
     },
     {
       "name": "choose-agent-platform",
@@ -57,6 +68,17 @@
       "docs": "docs/build/copilot-studio-production-patterns.md",
       "verified_on": "2026-08-18",
       "provenance": "Agents that passed a demo and then failed against real tenant latency, real volumes and real users."
+    },
+    {
+      "name": "de-slop",
+      "bucket": "deliver",
+      "description": "Rewrite text that reads like a model wrote it into something a person would actually send. Use when a proposal, customer email, README or executive summary reads like a brand deck, when a draft leans on \"seamless\", \"robust\", \"pivotal moment\" or \"evolving landscape\", when every sentence could be pasted into another company's blog post unchanged, when a document hedges instead of taking a position, or when a reviewer says a page is fine but cannot say what it told them.",
+      "invocation": "model",
+      "promoted": true,
+      "path": "skills/deliver/de-slop/SKILL.md",
+      "docs": "docs/deliver/de-slop.md",
+      "verified_on": "2026-08-20",
+      "provenance": "Editing agent-project prose - proposals, handover notes, README pages and skill bodies - that passed review, said nothing, and had to be rewritten before a customer read it."
     },
     {
       "name": "discovery",
